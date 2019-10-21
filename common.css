@@ -1,0 +1,59 @@
+
+/***********************
+Pane formatting
+************************/
+
+body {
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+
+/* Container to hold all the panes */
+
+.pane-container {
+	width: 1000px;
+	height: 800px;
+	margin-top: 100px;
+	margin: auto;
+}
+
+.pane-container>div {
+	border-color: black;
+	border-width: 3px;
+	border-style: solid;
+	margin: 2px;
+}
+
+.top-pane {
+	//background-color: blue;
+	height: 20%
+}
+
+.left-pane {
+	//background-color: green;
+	float: left;
+	width: 29%;
+	height: 80%;
+}
+
+.right-pane {
+	//background-color: purple;
+	float: right;
+	width: 69%;
+	height: 80%;
+}
+
+/* Black title bar */
+.pane-title {
+	background-color: black;
+	padding: 2px;
+	margin-top: 0px;
+	color: white;
+	overflow: auto;
+}
+
+/* Label for elements within panes */
+.label {
+	display: block;
+	text-align: center;
+	padding-bottom: 3px;
+}
