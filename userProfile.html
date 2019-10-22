@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>User Profile</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="userProfile.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="userProfile.js"></script>
+
+</head>
+<body>
+
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="#">Dashboard</a>
+    <a href="#">Profile</a>
+    <a href="#">Walk History</a>
+    <a href="#">Settings</a>
+  </div>
+
+  <div class="topPanelBox"></div>
+
+  <span style="font-size:30px;cursor:pointer" onclick="openNav()" class="front">&#9776; open</span>
+
+  <div id="main">
+    <div class="page-header">
+      <h1>Walker Profile</h1>
+    </div>
+
+    <div class="media">
+      <div class="media-left">
+        <img src="defaultprofile.jpg" class="media-object" style="width:200px">
+      </div>
+      <div class="media-body">
+        <div class="container">
+          <div class="row">
+            <p> <span class="grey">First Name:</span> Jane </p>
+            <p> <span class="grey">Last Name:</span> Doe </p>
+            <p> <span class="grey">Phone Number:</span> 111 111 1111 </p>
+            <p> <span class="grey">E-mail:</span> jane.doe@doguber.ca </p>
+            <p> <span class="grey">Qualifications:</span> Certified Dog Walker </p>
+            <p> <span class="grey">Languages:</span> English, French </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+
+    <h4 class="grey">Short description shown to dog owners: </h4>
+    <p> I love dogs and am a certified dog walker. </p>
+
+    <hr />
+
+  </div>
+
+</body>
+</html>
