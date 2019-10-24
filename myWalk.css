@@ -11,14 +11,14 @@
 .sidebar {
   background: #DFDFDF;
   height: 400px;
-  width: 257px;
+  width: 260px;
   float: left;
 }
 
 .walkMap {
   background: white;
   height: 400px;
-  width: 700px;
+  width: 740px;
   float: left;
 }
 
@@ -35,10 +35,27 @@
   padding-left: 10px;
 }
 
-.walkPrice:hover {
-  color: white;
+.walkPrice {
+  color: black;
   font: Arial;
-  float: right;
+  margin-top: 50px;
+  text-align: center;
+}
+
+.walkDur {
+  color: black;
+  font: Arial;
+  text-align: center;
+}
+
+.rating {
+  color: black;
+  text-align: center;
+}
+
+.activity {
+  color: black;
+  text-align: center;
 }
 
 .topPanelBox {
