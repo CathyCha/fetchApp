@@ -40,12 +40,12 @@ function toggleNeed(e) {
     e.preventDefault();
 
     if (e.target.classList.contains('walk-need')) {
-        //select the styling for the need that was clicked on 
+        //select the styling for the need that was clicked on
         const need = e.target.style;
-        if (need.backgroundColor === "" || need.backgroundColor == "white") { 
+        if (need.backgroundColor === "" || need.backgroundColor == "white") {
             need.backgroundColor = "black";
             need.color = "white";
-            
+
             //update number of needs for pricing
             numWalkNeeds++;
         }

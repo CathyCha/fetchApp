@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="userProfile.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="userProfile.js"></script>
+  <script type="text/javascript" src="adminpage.js"></script>
 
 </head>
 <body>
@@ -33,11 +33,11 @@
 
     <div class="reports">
       <h4>Reports</h4>
-      Search: <input type="text" value="Report ID"><br>
+      <input type="submit" value="Search"> <input id="search" type="text" placeholder="Report ID"><br>
     </div>
     <br />
 
-    <table class="table">
+    <table id="reportTable" class="table">
       <thead>
         <tr>
           <th scope="col">Report ID</th>
@@ -51,70 +51,70 @@
         <tr>
           <th scope="row"><a href="#">1</a></th>
           <td>Misbehaving Dog</td>
-          <td><a href="#">Tim</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">Tim</span></td>
           <td>Closed</td>
           <td>Block</td>
         </tr>
         <tr>
           <th scope="row"><a href="#">2</a></th>
           <td>Rude walker</td>
-          <td><a href="#">John</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">John</span></td>
           <td>Closed</td>
           <td>Refund</td>
         </tr>
         <tr>
           <th scope="row"><a href="#">3</a></th>
           <td>Cancelled Walk</td>
-          <td><a href="#">Sarah</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">Sarah</span></td>
           <td>Open</td>
           <td>Pending</td>
         </tr>
         <tr>
           <th scope="row"><a href="#">4</a></th>
           <td>Misbehaving Dog</td>
-          <td><a href="#">Julia</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">Julia</span></td>
           <td>Pending</td>
           <td>Pending</td>
         </tr>
         <tr>
           <th scope="row"><a href="#">5</a></th>
           <td>Misbehaving Dog</td>
-          <td><a href="#">Tim</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">Tim</span></td>
           <td>Pending</td>
           <td>Pending</td>
         </tr>
         <tr>
           <th scope="row"><a href="#">6</a></th>
           <td>Rude walker</td>
-          <td><a href="#">John</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">John</span></td>
           <td>Pending</td>
           <td>Pending</td>
         </tr>
         <tr>
           <th scope="row"><a href="#">7</a></th>
           <td>Cancelled Walk</td>
-          <td><a href="#">Sarah</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">Sarah</span></td>
           <td>Pending</td>
           <td>Pending</td>
         </tr>
         <tr>
           <th scope="row"><a href="#">8</a></th>
           <td>Misbehaving Dog</td>
-          <td><a href="#">Julia</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">Julia</span></td>
           <td>Pending</td>
           <td>Pending</td>
         </tr>
         <tr>
           <th scope="row"><a href="#">9</a></th>
           <td>Misbehaving Dog</td>
-          <td><a href="#">Tim</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">John</span></td>
           <td>Pending</td>
           <td>Pending</td>
         </tr>
         <tr>
           <th scope="row"><a href="#">10</a></th>
           <td>Cancelled Walk</td>
-          <td><a href="#">Sarah</a></td>
+          <td><span class="link" onclick="javascript:showProfile();">Sarah</span></td>
           <td>Pending</td>
           <td>Pending</td>
         </tr>

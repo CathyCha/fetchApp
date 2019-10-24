@@ -1,3 +1,46 @@
+.container {
+  padding-bottom: 50px;
+}
+
+.topbar {
+  background: black;
+  height: 70px;
+  width: 1000px;
+}
+
+.sidebar {
+  background: #DFDFDF;
+  height: 400px;
+  width: 257px;
+  float: left;
+}
+
+.walkMap {
+  background: white;
+  height: 400px;
+  width: 700px;
+  float: left;
+}
+
+.dateinfo {
+  color: white;
+  font: Arial;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.walkerName {
+  color: grey;
+  font: Arial;
+  padding-left: 10px;
+}
+
+.walkPrice:hover {
+  color: white;
+  font: Arial;
+  float: right;
+}
+
 .topPanelBox {
 	height:100px;
   background: #DFDFDF;
