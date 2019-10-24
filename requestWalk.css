@@ -234,3 +234,7 @@ Select walker popup
 	display: block;
 	margin-top: 20px;
 }
+
+.walker-popup-stars {
+	font-size: 125%;
+}

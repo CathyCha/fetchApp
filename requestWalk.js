@@ -247,7 +247,13 @@ function selectWalker(e) {
     walkerRatingDisplay.appendChild(walkerRatingNumberSpan);
     selectWalkerPopup.appendChild(walkerRatingDisplay);
 
-    
+    const confirmationMessage = document.createElement("p");
+    confirmationMessage.classList.add("popup-confirmation");
+    confirmationMessage.innerText = "Hire this walker?"
+    selectWalkerPopup.appendChild(confirmationMessage);
+
+//TODO: add in yes/no buttons
+
     //add box as child for area
     const walkerArea = document.querySelector("#right-pane-body");
     walkerArea.appendChild(selectWalkerPopup);
