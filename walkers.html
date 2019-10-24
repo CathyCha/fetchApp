@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Admin</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="userProfile.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="adminpage.js"></script>
+
+</head>
+<body>
+
+  <div class="sidenav">
+    <img class="logo" src="logo.png" style="width:200px">
+    <a href="#">Dashboard</a>
+    <a href="#">Statistics</a>
+    <a href="adminpage.html">Reports</a>
+    <a href="walkers.html">Walkers</a>
+    <a href="dogs.html">Dogs</a>
+    <a href="#">Walks</a>
+  </div>
+
+  <div class="topPanelBox"></div>
+
+  <div id="main">
+    <div class="page-header">
+      <h1>Walkers</h1>
+    </div>
+
+
+    <div class="reports">
+      <input type="submit" value="Search"> <input id="search" type="text" placeholder="Walker ID"><br>
+    </div>
+    <br />
+
+    <table id="reportTable" class="table">
+      <thead>
+        <tr>
+          <th scope="col">Walker ID</th>
+          <th scope="col">Number of Walks</th>
+          <th scope="col">Name</th>
+          <th scope="col">Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row"><a href="#">1</a></th>
+          <td>10</td>
+          <td><span class="link" onclick="javascript:showProfile();">Tim</span></td>
+          <td>4.3</td>
+        </tr>
+        <tr>
+          <th scope="row"><a href="#">2</a></th>
+          <td>25</td>
+          <td><span class="link" onclick="javascript:showProfile();">John</span></td>
+          <td>4.9</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</body>
+</html>
