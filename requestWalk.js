@@ -126,6 +126,7 @@ function toggleNeed(e) {
 /**********************************
  * manipulating walkers on the page
  **********************************/
+
 function addWalker(walker) {
 
     //get the area to add the walker
@@ -185,4 +186,75 @@ function addWalker(walker) {
     desc.innerText = walker.description;
 
     walkerBio.appendChild(desc);
+}
+
+//get the walker display area
+const walkerArea = document.querySelector('#right-pane-body');
+walkerArea.addEventListener('click', selectWalker);
+
+//variable to store popup when walker has been selected
+let selectWalkerPopup = null;
+
+function selectWalker(e) {
+    console.dir(e);
+    //only allow selecting one walker at a time
+    if (selectWalkerPopup != null) {
+        return;
+    }
+
+    let targetWalker = e.target;
+    while (!(targetWalker.classList.contains("walker"))) {
+        targetWalker = targetWalker.parentElement;
+    }
+
+    //get walker's data
+    const walkerPic = targetWalker.children[0].src;
+    targetWalker = targetWalker.children[1];
+    const walkerName = targetWalker.children[0].innerText;
+    const walkerRating = targetWalker.children[1].children[1].innerText;
+    const walkerRatingStars = targetWalker.children[1].children[0].innerText;
+
+    console.log(walkerPic, walkerName, walkerRating);
+
+    //box for the popup
+    selectWalkerPopup = document.createElement("div");
+    selectWalkerPopup.classList.add("walkerPopup");
+
+    //add walker's picture
+    const walkerImage = document.createElement("img");
+    walkerImage.classList.add("walker-popup-image");
+    walkerImage.src = walkerPic;
+    selectWalkerPopup.appendChild(walkerImage);
+
+    //add walker's name
+    const walkerNameSpan = document.createElement("span");
+    walkerNameSpan.classList.add("walker-popup-name");
+    walkerNameSpan.innerText = walkerName;
+    selectWalkerPopup.appendChild(walkerNameSpan);
+
+    //add walker's rating
+    const walkerRatingDisplay = document.createElement("div");
+    
+    const walkerRatingStarsSpan = document.createElement("span");
+    walkerRatingStarsSpan.classList.add("walker-popup-stars");
+    walkerRatingStarsSpan.innerText = walkerRatingStars;
+
+    const walkerRatingNumberSpan = document.createElement("span");
+    walkerRatingNumberSpan.classList.add("walker-popup-rating");
+    walkerRatingNumberSpan.innerText = walkerRating;
+
+    walkerRatingDisplay.appendChild(walkerRatingStarsSpan);
+    walkerRatingDisplay.appendChild(walkerRatingNumberSpan);
+    selectWalkerPopup.appendChild(walkerRatingDisplay);
+
+    
+    //add box as child for area
+    const walkerArea = document.querySelector("#right-pane-body");
+    walkerArea.appendChild(selectWalkerPopup);
+
+}
+
+function removePopup() {
+    selectwalkerPopup = null;
+    //removeChild function here
 }
