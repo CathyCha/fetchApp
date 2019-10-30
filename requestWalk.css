@@ -84,9 +84,10 @@ top pane styling
 .walk-need {
 	display: inline;
 	border: 1px;
-	border-color: black;
+	border-color: green;
 	border-style: solid;
 	padding: 4px;
+	color: green;
 
 	margin: 2px 2px 2px 2px;
 	white-space:nowrap; /* prevents line break mid-box */
@@ -126,12 +127,12 @@ left pane styling
 /* Marker on the map where the user clicked */
 .marker {
 	background-color: orange;
-	width: 10px;
-	height: 10px;
+	width: 20px;
+	height: 20px;
 	border-radius: 50%;
 	border: 2px;
 	border-style: solid;
-	border-color: black;
+	border-color: green;
 	position: absolute;
 }
 
@@ -146,7 +147,7 @@ right pane styling
 
 #right-pane-body {
 	margin-top: 0px;
-	height: 95%;
+	height: 100%;
 	width: 100%;
 	position: relative;
 	overflow-y: auto; /* add a scroll bar if there's too many walkers */
@@ -154,7 +155,7 @@ right pane styling
 }
 
 .walker {
-	width: 93%;
+	width: 100%;
 	min-height: 105px;
 	display: block;
 	padding: 10px;

@@ -32,7 +32,7 @@ let marker = null;
 
 /* Function to handle the user clicking on the map */
 function mapClick(e) {
-    const markerRadius = 5;
+    const markerRadius = 10;
     const xCoordinate = e.layerX;
     const yCoordinate = e.layerY;
     //send these coordinates to the server and query nearby walkers
@@ -98,7 +98,7 @@ function toggleNeed(e) {
         //select the styling for the need that was clicked on 
         const need = e.target.style;
         if (need.backgroundColor === "" || need.backgroundColor == "white") { 
-            need.backgroundColor = "black";
+            need.backgroundColor = "green";
             need.color = "white";
             
             //update number of needs for pricing
@@ -106,7 +106,7 @@ function toggleNeed(e) {
         }
         else {
             need.backgroundColor = "white";
-            need.color = "black";
+            need.color = "green";
 
             //update number of needs for pricing
             numWalkNeeds--;
