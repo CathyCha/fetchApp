@@ -1,6 +1,5 @@
 .topPanelBox {
 	height:100px;
-  background: #DFDFDF;
 }
 
 
@@ -12,7 +11,8 @@
   z-index: 1;
   top: 0px;
   left: 0;
-  background-color: black;
+  background-color: white;
+	border-right: 3px solid green;
   overflow-x: hidden;
   padding-top: 20px;
 }
@@ -22,17 +22,19 @@
   padding: 6px 8px 6px 16px;
   text-decoration: none;
   font-size: 25px;
-  color: #818181;
+  color: green;
   display: block;
+	margin-left: 35px;
 }
 
 /* When you mouse over the navigation links, change their color */
 .sidenav a:hover {
-  color: #f1f1f1;
+  color: orange;
 }
 
 .logo {
   margin-bottom: 15px;
+	margin-left: 15px;
 }
 
 .grey {
