@@ -13,39 +13,9 @@
 <div class="pane-container">
 	<div class="top-pane">
 		<h2 class="pane-title">
-			Dog Pickup Location and Instructions
-		</h2>
-		<div id="top-pane-body"> 
-			<div id="gps-coordinates">
-				<span class="label">
-					GPS Coordinates:
-				</span>
-				<form id="coordinates-form">
-					<input type="text" name="n-coordinate"> N    
-					<input type="text" name="e-coordinate"> E
-				</form>
-			</div>
-			<div id="address-input">
-				<span class="label">
-					Pickup address:
-				</span>
-				<form id="address-form">
-					<input type="text" name="address">
-				</form>
-			</div>
-			<div id="pickup-instructions">
-				<span class="label">
-					Pickup instructions:
-				</span>
-				<textarea id="pickup-instructions-textarea"></textarea>
-			</div>
-		</div>
-	</div>
-	<div class="left-pane">
-		<h2 class="pane-title">
 			Walk Parameters
 		</h2>
-		<div id="left-pane-body">
+		<div id="top-pane-body"> 
 			<div id="walk-length">
 				<span class="label">
 					Walk length
@@ -92,6 +62,17 @@
 				</span>
 			</div>
 		</div>
+	</div>
+	<div class="left-pane">
+		<h2 class="pane-title">
+			Select Pickup Location
+		</h2>
+		<div id="left-pane-body">
+			<div id="map">
+				
+			</div>
+			
+		</div>
 		
 	</div>
 	<div class="right-pane">
@@ -99,39 +80,8 @@
 			Available Walkers
 		</h2>
 		<div id="right-pane-body">
-		
-			<div class="walker">
-				<img class="walker-pic" src="profilepic.png">
-				<div class="walker-bio">
-					<span class="walker-name">
-						John Smith
-					</span>
-					<span class="rating">
-						<span class="rating-stars">
-							&#9733;&#9733;&#9733;&#9733;&#9734;
-						</span>
-						<span class="rating-number">
-							4.42
-						</span>
-					</span>
-					<p class="walker-description">
-						Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs. By the way, did you know one of my hobbies is writing ridiculously long descriptions for testing CSS styling? It's a very handy hobby to have, but some people complain about it. I tell those people that testing is an important part of development and they grumble and walk away.
-					</p>
-				</div>
-			</div>
-			
-			<div class="walker">
-				<img class="walker-pic" src="profilepic.png">
-				<div class="walker-bio">
-					<span class="walker-name">John Smith</span>
-					<span class="rating">
-						<span class="rating-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
-						<span class="rating-number">4.42</span>
-					</span>
-					<p class="walker-description">
-						Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs. 
-					</p>
-				</div>
+			<div id="walker-container">
+				<!--Walkers go here-->
 			</div>
 		</div>
 	</div>

@@ -14,54 +14,46 @@ class Walker {
 }
 
 /******************************
- * Location input functionality
+ * Map click functionality
  ******************************/
-//Note: the first two are forms, the third is a textarea
-const coordinateForm = document.querySelector('#coordinates-form');
-const addressForm = document.querySelector('#address-form');
-const pickupInstructions = document.querySelector('#pickup-instructions-textarea');
-
-//filter for numbers only
-coordinateForm.addEventListener('input', function() {
-    this.children[0].value = this.children[0].value.replace(/[^-0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/([^-]+)-/g, '$1');
-    this.children[1].value = this.children[1].value.replace(/[^-0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/([^-]+)-/g, '$1');
-  });
-
-//find matching walkers if location changes
-coordinateForm.addEventListener('submit', doSomething);
-coordinateForm.addEventListener('change', doSomething);
-addressForm.addEventListener('submit', doSomething);
-addressForm.addEventListener('change', doSomething);
-pickupInstructions.addEventListener('change', doSomething);
 
 /* Test walker */
 const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
 const john = new Walker("John Smith", "profilepic.png", 4.42, johnDescription);
 
-function doSomething(e) {
-    e.preventDefault();
-    const NCoordinate = coordinateForm.children[0].value;
-    const ECoordinate = coordinateForm.children[1].value;
-    if (NCoordinate && ECoordinate) {
-        console.log("Client requesting a walker at: " + NCoordinate + "N, " + NCoordinate + "E");
-    }
+function testAddWalker() {
+    const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
+    const john = new Walker("John Smith", "profilepic.png", 4.42, johnDescription);
+    addWalker(john);
+}
 
-    const address = addressForm.children[0].value;
-    if (address) {
-        console.log("Client's address: " + address);
-    }
+const map = document.querySelector("#map");
+let marker = null;
 
-    const instructions = pickupInstructions.value;
-    if (instructions) {
-        console.log("Provided pickup instructions: " + instructions);
-    }
+/* Function to handle the user clicking on the map */
+function mapClick(e) {
+    const markerRadius = 5;
+    const xCoordinate = e.layerX;
+    const yCoordinate = e.layerY;
+    //send these coordinates to the server and query nearby walkers
+    addWalker(john);
 
-    if (NCoordinate && ECoordinate && address && instructions) {
-        //here the server would be queried to find available nearby walkers
-        //instead we just use john.
-        addWalker(john);
+    if (!marker) {
+        marker = document.createElement("div");
+        marker.classList.add("marker");
+        marker.style.top = (yCoordinate - markerRadius).toString() + "px";
+        marker.style.left = (xCoordinate - markerRadius).toString() + "px";
+        map.appendChild(marker);
+    }
+    else {
+        marker.style.top = (yCoordinate - markerRadius).toString() + "px";
+        marker.style.left = (xCoordinate - markerRadius).toString() + "px";
     }
 }
+
+
+map.addEventListener('click', mapClick);
+
 
 /****************************
  * Setting walk cost estimate
@@ -130,7 +122,7 @@ function toggleNeed(e) {
 function addWalker(walker) {
 
     //get the area to add the walker
-    const walkerArea = document.querySelector('#right-pane-body');
+    const walkerArea = document.querySelector('#walker-container');
     
     const walkerDiv = document.createElement("div");
     walkerDiv.classList.add("walker");
@@ -167,9 +159,7 @@ function addWalker(walker) {
 
     let numStars = Math.floor(walker.rating);
     const fullStar = "\u2605";
-    const emptyStar = "\u2606";
-    ratingStars.innerText = fullStar.repeat(numStars);
-    ratingStars.innerText = ratingStars.innerText.concat(emptyStar.repeat(5 - numStars));
+    ratingStars.innerText = fullStar;
 
     //add the stars to the rating
     rating.appendChild(ratingStars);
@@ -194,13 +184,34 @@ walkerArea.addEventListener('click', selectWalker);
 
 //variable to store popup when walker has been selected
 let selectWalkerPopup = null;
+let savedWalkers = null;
+
+function removePopup(e) {
+    e.preventDefault();
+    selectWalkerPopup.remove();
+    selectWalkerPopup = -1;
+    
+    const walkerArea = document.querySelector("#right-pane-body");
+    walkerArea.appendChild(savedWalkers);
+    savedwalkers = null;
+}
 
 function selectWalker(e) {
-    console.dir(e);
+    //clicking the no button causes this function to be called again, so suppress this extra call
+    if (selectWalkerPopup === -1) {
+        selectWalkerPopup = null;
+        return;
+    }
+    
+    /* not sure if still necessary - keeping in case */
     //only allow selecting one walker at a time
     if (selectWalkerPopup != null) {
         return;
     }
+
+    savedWalkers = document.querySelector("#walker-container");
+    savedWalkers.remove();
+
 
     let targetWalker = e.target;
     while (!(targetWalker.classList.contains("walker"))) {
@@ -213,8 +224,6 @@ function selectWalker(e) {
     const walkerName = targetWalker.children[0].innerText;
     const walkerRating = targetWalker.children[1].children[1].innerText;
     const walkerRatingStars = targetWalker.children[1].children[0].innerText;
-
-    console.log(walkerPic, walkerName, walkerRating);
 
     //box for the popup
     selectWalkerPopup = document.createElement("div");
@@ -252,7 +261,22 @@ function selectWalker(e) {
     confirmationMessage.innerText = "Hire this walker?"
     selectWalkerPopup.appendChild(confirmationMessage);
 
-//TODO: add in yes/no buttons
+    const buttonsDiv = document.createElement("div");
+
+    const yesButton = document.createElement("button");
+    yesButton.classList.add("yes-button");
+    yesButton.innerText = "Yes";
+
+    const noButton = document.createElement("button");
+    noButton.classList.add("no-button");
+    noButton.innerText = "No";
+
+    noButton.addEventListener("click", removePopup); 
+
+    buttonsDiv.appendChild(yesButton);
+    buttonsDiv.appendChild(noButton);
+
+    selectWalkerPopup.appendChild(buttonsDiv);
 
     //add box as child for area
     const walkerArea = document.querySelector("#right-pane-body");
@@ -260,7 +284,3 @@ function selectWalker(e) {
 
 }
 
-function removePopup() {
-    selectwalkerPopup = null;
-    //removeChild function here
-}

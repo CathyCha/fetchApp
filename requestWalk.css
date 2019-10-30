@@ -11,62 +11,22 @@ top pane styling
 /* stack the top pane's contents beside each other */
 #top-pane-body > div { 
 	float:left;
-	width: 31%;
 }
 
-#top-pane-body form {
-	display: block;
-	text-align: center;
+#walk-length {
+	width: 30%;
+	margin-top: 7px;
 }
 
-#gps-coordinates {
-	margin-top: 10px;
-	height: 80%;
+#walk-needs {
+	width: 40%;
 }
 
-#address-input {
-	margin-top: 10px;
-	height: 80%;
+#price-estimate {
+	width: 30%;
+	margin-top: 15px;
 }
 
-#pickup-instructions {
-	height: 90%;
-}
-
-#gps-coordinates input {
-	width: 70px;
-	margin-left: 3px;
-}
-
-#address-input input {
-	width: 200px;
-}
-
-#pickup-instructions textarea {
-	width: 300px;
-	height: 50px;
-	resize: none;
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
-}
-
-/******************* 
-left pane styling 
-*******************/
-
-/* needed to make the below styling work */
-#left-pane-body {
-	height: 100%;
-}
-
-/* Make each section take up a third of the column */
-#left-pane-body > div {
-	height: 25%;
-	width: 100%;
-}
-
-#left-pane-body .label {
-	margin-top: 60px;
-}
 
 #walk-length-slider-container {
 	width: 100%;
@@ -130,7 +90,6 @@ left pane styling
 
 	margin: 2px 2px 2px 2px;
 	white-space:nowrap; /* prevents line break mid-box */
-	
 }
 
 #price {
@@ -140,19 +99,62 @@ left pane styling
 }
 
 /******************* 
+left pane styling 
+*******************/
+
+/* needed to make the below styling work */
+#left-pane-body {
+	height: 95%;
+	position: relative;
+	overflow: hidden;
+}
+
+/* centered in the div */
+#map {
+	background-image: url("map.png");
+	width: 1159px;
+	height: 704px;
+	position: absolute;
+	top: -9999px;
+    bottom: -9999px;
+    left: -9999px;
+    right: -9999px;
+    margin: auto;
+
+}
+
+/* Marker on the map where the user clicked */
+.marker {
+	background-color: orange;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	border: 2px;
+	border-style: solid;
+	border-color: black;
+	position: absolute;
+}
+
+/******************* 
 right pane styling 
 *******************/
+
+#walker-container {
+	width: 100%;
+	height: 100%;
+}
 
 #right-pane-body {
 	margin-top: 0px;
 	height: 95%;
 	width: 100%;
 	position: relative;
-	overflow: auto; /* add a scroll bar if there's too many walkers */
+	overflow-y: auto; /* add a scroll bar if there's too many walkers */
+	overflow-x: hidden;
 }
 
 .walker {
-	width: 98%;
+	width: 93%;
 	min-height: 105px;
 	display: block;
 	padding: 10px;
@@ -169,7 +171,7 @@ right pane styling
 	border: 1px;
 	border-color: black;
 	border-style: solid;
-	margin: 0px 0px 5px 5px;
+	margin: 0px 0px 2px 2px;
 }
 
 .walker-bio {
@@ -177,21 +179,23 @@ right pane styling
 }
 
 .walker-name {
-	font-size: 150%;
+	font-size: 90%;
+	font-weight: bold;
 }
 
 .rating-stars {
-	font-size: 150%;
-	padding-left: 5px;
-	padding-right: 5px;
+	font-size: 100%;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
 .rating-number {
 	font-weight: bold;
-	font-size: 120%;
+	font-size: 90%;
 }
 
 .walker-description {
+	font-size: 80%;
 	margin-top: 2px;
 }
 
@@ -201,18 +205,15 @@ Select walker popup
 
 .walkerPopup {
 	position: absolute;
-	top: 50px;
-	left: 20%;
+	top: 0%;
+	left: 0%;
 
-	width: 400px;
-	height: 500px;
+	width: 100%;
+	height: 100%;
 
 	text-align: center;
 
 	background-color: white;
-	border-color: black;
-	border: 3px;
-	border-style: dashed;
 }
 
 .walker-popup-image {
@@ -237,4 +238,16 @@ Select walker popup
 
 .walker-popup-stars {
 	font-size: 125%;
+}
+
+.yes-button {
+	width: 20%;
+	position: relative;
+	right: 20px;
+}
+
+.no-button {
+	width: 20%;
+	position: relative;
+	left: 20px;
 }

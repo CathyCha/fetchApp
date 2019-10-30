@@ -39,14 +39,14 @@ body {
 .left-pane {
 	//background-color: green;
 	float: left;
-	width: 29%;
+	width: 69%;
 	height: 80%;
 }
 
 .right-pane {
 	//background-color: purple;
 	float: right;
-	width: 69%;
+	width: 29%;
 	height: 80%;
 }
 
