@@ -256,12 +256,24 @@ Select walker popup
 	width: 20%;
 	position: relative;
 	right: 20px;
+	color: green;
 }
 
 .no-button {
 	width: 20%;
 	position: relative;
 	left: 20px;
+}
+
+.confirmation-div {
+	margin-top: 10px;
+}
+
+.detailsBox {
+	resize: none;
+	width: 300px;
+	height: 100px;
+	margin-bottom: 10px;
 }
 
 /****************************

@@ -48,6 +48,7 @@ function mapClick(e) {
     else {
         marker.style.top = (yCoordinate - markerRadius).toString() + "px";
         marker.style.left = (xCoordinate - markerRadius).toString() + "px";
+        console.log(xCoordinate, yCoordinate);
     }
 }
 
@@ -185,6 +186,8 @@ walkerArea.addEventListener('click', selectWalker);
 //variable to store popup when walker has been selected
 let selectWalkerPopup = null;
 let savedWalkers = null;
+let confirmationDiv = null;
+let statusMessage = null;
 
 function removePopup(e) {
     e.preventDefault();
@@ -193,7 +196,8 @@ function removePopup(e) {
     
     const walkerArea = document.querySelector("#right-pane-body");
     walkerArea.appendChild(savedWalkers);
-    savedwalkers = null;
+    savedWalkers = null;
+    confirmationDiv = null;
 }
 
 function selectWalker(e) {
@@ -256,11 +260,16 @@ function selectWalker(e) {
     walkerRatingDisplay.appendChild(walkerRatingNumberSpan);
     selectWalkerPopup.appendChild(walkerRatingDisplay);
 
+    confirmationDiv = document.createElement("div");
+    confirmationDiv.classList.add("confirmation-div")
+    selectWalkerPopup.appendChild(confirmationDiv);
+
     const confirmationMessage = document.createElement("p");
     confirmationMessage.classList.add("popup-confirmation");
     confirmationMessage.innerText = "Hire this walker?"
-    selectWalkerPopup.appendChild(confirmationMessage);
+    confirmationDiv.appendChild(confirmationMessage);
 
+    /* add buttons for confirmation */
     const buttonsDiv = document.createElement("div");
 
     const yesButton = document.createElement("button");
@@ -272,11 +281,12 @@ function selectWalker(e) {
     noButton.innerText = "No";
 
     noButton.addEventListener("click", removePopup); 
+    yesButton.addEventListener("click", requestDetails)
 
     buttonsDiv.appendChild(yesButton);
     buttonsDiv.appendChild(noButton);
 
-    selectWalkerPopup.appendChild(buttonsDiv);
+    confirmationDiv.appendChild(buttonsDiv);
 
     //add box as child for area
     const walkerArea = document.querySelector("#right-pane-body");
@@ -284,3 +294,82 @@ function selectWalker(e) {
 
 }
 
+function requestDetails(e) {
+    e.preventDefault();
+    
+    //we create a box requesting additional details on how to pick up the dog
+    const detailsRequest = document.createElement("div");
+    detailsRequest.classList.add("confirmation-div")
+    
+    //prompt text
+    const detailsMessage = document.createElement("p");
+    detailsMessage.innerText = "Please enter pickup instructions:";
+    detailsRequest.appendChild(detailsMessage);
+
+    const detailsBox = document.createElement("textarea");
+    detailsBox.classList.add("detailsBox");
+    detailsRequest.appendChild(detailsBox);
+
+    const newButtonsDiv = document.createElement("div");
+    detailsRequest.appendChild(newButtonsDiv);
+
+    const confirmButton = document.createElement("button");
+    confirmButton.classList.add("yes-button");
+    confirmButton.innerText = "Confirm";
+    newButtonsDiv.appendChild(confirmButton);
+
+    const cancelButton = document.createElement("button");
+    cancelButton.classList.add("no-button");
+    cancelButton.innerText = "Cancel";
+    newButtonsDiv.appendChild(cancelButton);
+
+    confirmationDiv.before(detailsRequest);
+    confirmationDiv.remove();
+    confirmationDiv = detailsRequest;
+
+    //add in event listeners
+    cancelButton.addEventListener("click", removePopup);
+    confirmButton.addEventListener("click", submitWalkRequest);
+}
+
+function submitWalkRequest(e) {
+    e.preventDefault();
+    
+    const detailsBox = document.querySelector(".detailsBox");
+    const pickupInstructions = detailsBox.value;
+    console.log(pickupInstructions);
+
+    //submit the walk request to the server here
+
+    //replace the confirmation requests with a message telling user to wait
+    const requestingDiv = document.createElement("div");
+    requestingDiv.classList.add("confirmation-div");
+
+    statusMessage = document.createElement("p");
+    statusMessage.innerText = "Requesting a walk...";
+
+    requestingDiv.appendChild(statusMessage);
+
+    confirmationDiv.before(requestingDiv);
+
+    confirmationDiv.remove();
+    confirmationDiv = requestingDiv;
+
+    //this string of calls simulates communicating with the server
+    setTimeout(waiting, 1000)
+}
+
+/* the below string of function calls simulates talking to the server */
+function waiting() {
+    statusMessage.innerText = "Waiting...";
+    setTimeout(walkAccepted, 1000);
+}
+
+function walkAccepted() {
+    statusMessage.innerText = "Walk accepted!";
+    setTimeout(redirect, 1000);
+}
+
+function redirect() {
+    window.location.href = 'walkStatus.html';
+}
