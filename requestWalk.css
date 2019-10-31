@@ -57,7 +57,7 @@ top pane styling
 	appearance: none;
 	width: 25px;
 	height: 25px;
-	background: #e32020;
+	background: orange;
 	cursor: pointer;
 	border-radius: 50%;
 }
@@ -65,7 +65,7 @@ top pane styling
 #walk-length-slider::-moz-range-thumb {
 	width: 25px;
 	height: 25px;
-	background: #e32020;
+	background: orange;
 	cursor: pointer;
 	border-radius: 50%;
 }
@@ -82,14 +82,17 @@ top pane styling
 }
 
 .walk-need {
-	display: inline;
-	border: 1px;
+	display: inline-block;
+	border: 2px;
 	border-color: green;
 	border-style: solid;
-	padding: 4px;
+	padding: 0px 5px;
+	min-width: 110px;
 	color: green;
+	font-weight: bold;
+	font-size: 70%;
 
-	margin: 2px 2px 2px 2px;
+	margin: 2px;
 	white-space:nowrap; /* prevents line break mid-box */
 }
 
@@ -105,7 +108,7 @@ left pane styling
 
 /* needed to make the below styling work */
 #left-pane-body {
-	height: 95%;
+	height: 100%;
 	position: relative;
 	overflow: hidden;
 }
@@ -185,12 +188,14 @@ right pane styling
 }
 
 .rating-stars {
+	color: orange;
 	font-size: 100%;
 	padding-left: 2px;
-	padding-right: 2px;
+	padding-right: 0px;
 }
 
 .rating-number {
+	color: orange;
 	font-weight: bold;
 	font-size: 90%;
 }
@@ -238,7 +243,13 @@ Select walker popup
 }
 
 .walker-popup-stars {
+	color: orange;
 	font-size: 125%;
+}
+
+.walker-popup-rating {
+	color: orange;
+	font-weight: bold;
 }
 
 .yes-button {
@@ -251,4 +262,11 @@ Select walker popup
 	width: 20%;
 	position: relative;
 	left: 20px;
+}
+
+/****************************
+Empty space at bottom
+*****************************/
+.bottomPanelBox {
+	height: 200px;
 }

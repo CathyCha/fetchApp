@@ -4,7 +4,6 @@ Pane formatting
 ************************/
 
 body {
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
 	/* the following lines prevent all text from being highlighted */
 	-webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -34,13 +33,13 @@ body {
 
 .left-pane {
 	float: left;
-	width: 69.5%;
+	width: 69.8%;
 	height: 80%;
 }
 
 .right-pane {
 	float: right;
-	width: 29.5%;
+	width: 29.8%;
 	height: 80%;
 }
 
