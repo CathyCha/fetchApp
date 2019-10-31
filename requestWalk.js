@@ -158,7 +158,6 @@ function addWalker(walker) {
     const ratingStars = document.createElement("span");
     ratingStars.classList.add("rating-stars");
 
-    let numStars = Math.floor(walker.rating);
     const fullStar = "\u2605";
     ratingStars.innerText = fullStar;
 
