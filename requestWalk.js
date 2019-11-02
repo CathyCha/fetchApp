@@ -35,6 +35,7 @@ function mapClick(e) {
     const markerRadius = 10;
     const xCoordinate = e.layerX;
     const yCoordinate = e.layerY;
+    console.log(xCoordinate, yCoordinate);
     //send these coordinates to the server and query nearby walkers
     addWalker(john);
 
@@ -307,6 +308,7 @@ function requestDetails(e) {
 
     const detailsBox = document.createElement("textarea");
     detailsBox.classList.add("detailsBox");
+    detailsBox.placeholder = "e.g. My address is 123 Main St. The key is under the flowerpot. Please put it back when you're done."
     detailsRequest.appendChild(detailsBox);
 
     const newButtonsDiv = document.createElement("div");

@@ -28,7 +28,7 @@ top pane styling
 }
 
 #notes-div {
-    
+    min-height: 100px;
 }
 
 #notes-div ul {
@@ -88,15 +88,27 @@ left pane styling
 
 }
 
-/* Marker on the map where the user clicked */
-.marker {
+/* Marker to show where the dog was picked up from */
+.pickup-marker {
+	background-color: green;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 2px;
+	border-style: solid;
+	border-color: black;
+	position: absolute;
+}
+
+/* Marker to show where the walker is now */
+.walker-marker {
 	background-color: orange;
 	width: 20px;
 	height: 20px;
 	border-radius: 50%;
 	border: 2px;
 	border-style: solid;
-	border-color: green;
+	border-color: black;
 	position: absolute;
 }
 
@@ -188,6 +200,71 @@ Select walker popup
 	width: 300px;
 	height: 100px;
 	margin-bottom: 10px;
+}
+
+/***************************
+Walker rating box
+****************************/
+
+.rating-request {
+	font-size: 120%;
+	margin-top: 15px;
+}
+
+.rating-star {
+	color: orange;
+	font-size: 200%;
+	margin: 2px;
+}
+
+.rating-text {
+	color: #a0a0a0;
+	font-size: 80%;
+}
+
+.feedback-container {
+	max-width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.feedback {
+	display: inline-block;
+	border: 2px;
+	border-color: green;
+	border-style: solid;
+	padding: 2px 5px;
+	min-width: 70px;
+	color: green;
+	font-weight: bold;
+	font-size: 70%;
+
+	margin: 2px;
+	white-space:nowrap; /* prevents line break mid-box */
+}
+
+.report-problem-link {
+	color: red;
+	margin-top: 10px;
+	font-size: 70%;
+}
+
+.feedback-box {
+	resize: none;
+	width: 90%;
+	height: 100px;
+	margin-bottom: 10px;
+	font-size: 80%;
+}
+
+.submit {
+	position: absolute;
+	bottom: 110px;
+	left: 10%;
+	height: 30px;
+	width: 80%;
+	color: white;
+	background-color: grey;
 }
 
 /****************************
