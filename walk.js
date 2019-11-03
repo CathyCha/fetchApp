@@ -27,7 +27,7 @@
    }
  }
 
- const rufusDescription = "energetic and playful, quite the handul!";
+ const rufusDescription = "energetic and playful, quite the handul!"; // these fields get filled by server
  const rufusNeeds = new Array("Hyperactive", "Treats", "Puppy", "Water breaks")
 
  const rufus = new User("Rufus", "rufus.jpg", 4.42, rufusDescription);

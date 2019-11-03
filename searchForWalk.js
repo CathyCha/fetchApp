@@ -18,7 +18,7 @@ class Request {
     this.price = price
   }
 }
-const rufusDescription = "energetic and playful, quite the handul!";
+const rufusDescription = "energetic and playful, quite the handul!"; // These fields would normally be filled by the server
 const rufusNeeds = new Array("Hyperactive", "Treats", "Puppy", "Water breaks")
 
 const rufus = new User("Rufus", "rufus.jpg", 4.42, rufusDescription);
@@ -52,7 +52,7 @@ function walkFound() {
 }
 
 
-search.addEventListener('click', waiting);
+search.addEventListener('click', waiting); // Simulates Server retrieval
 
 function fillWalkInfo(dog, request){
   const info = document.getElementById("dog-info");
