@@ -10,18 +10,21 @@ function showProfile() {
 
 }
 
+function editButton() {
+  window.location.href='profileEdit.html';
+}
 
-// const searchForm = document.querySelector('#search');
-// searchForm.addEventListener('submit', searchResult);
-//
-// const reportTable = document.querySelector('#reportTable')
-//
-// function searchResult(e) {
-//     e.preventDefault();
-//     //make the searched report id show up in the table
-// }
+function deleteacc() {
+  alert('Are you sure you want to delete this account? You can not restore the account once it is deleted');
+  alert('Account deleted.');
+  window.location.replace('index.html');
+}
 
-function editProfile() {
-  const editProf = "profileEdit.html"
-  window.location.href = editProf;
+function signout() {
+  alert('Successfully signed out');
+  window.location.replace('index.html');
+}
+
+function profileupload() {
+  alert('Upload Profile Picture from Location');
 }

@@ -110,6 +110,28 @@
 	height: 400px;
 }
 
+#editInfo {
+	float: right;
+}
+
+.media-object {
+	width:200px;
+}
+
+#uploadPic {
+	width:200px;
+}
+
+#deleteacc {
+	float: right;
+	color: red;
+}
+
+#signout {
+	float: left;
+	color: red;
+}
+
 /* Style page content */
 #main {
   margin-left: 250px; /* Same as the width of the sidebar */

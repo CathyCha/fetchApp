@@ -28,11 +28,11 @@
     </div>
 
     <div class="media">
-      <input id="editInfo" type="button" value="Edit" onclick="location.href='profileEdit.html';" style="float: right;">
+      <input id="editInfo" type="button" value="Edit" onclick="editButton(); return false;">
 
       <div class="media-left">
-        <img src="defaultprofile.jpg" class="media-object" style="width:200px">
-        <input id="uploadPic" type="button" value="Upload Profile Picture" onclick="alert('Upload Profile Picture from Location')" style="width:200px;">
+        <img src="defaultprofile.jpg" class="media-object">
+        <input id="uploadPic" type="button" value="Upload Profile Picture" onclick="profileupload(); return false;">
       </div>
       <div class="media-body">
         <div id="profInfo" class="container">
@@ -57,10 +57,11 @@
               <span class="rating-number">4.42</span>
             </div>
             Energetic and playful, quite the handul!
+
+            <input id="editInfo" type="button" value="Edit">
           </div>
         </div>
     </div>
-    <input id="editInfo" type="button" value="Edit" style="float: right;">
 
     <hr />
     <br />
@@ -69,9 +70,14 @@
     <br />
     <br />
     <br />
-    <input id="editInfo" type="button" value="Delete your account" onclick="alert('Are you sure you want to delete this account?')" style="float: right; color:red;">
-    <input id="editInfo" type="button" value="Sign out" onclick="alert('Successfully signed out'); window.location.replace('index.html');" style="float: left; color:red;">
+    <input id="deleteacc" type="button" value="Delete your account" onclick="deleteacc(); return false;">
+    <input id="signout" type="button" value="Sign out" onclick="signout(); return false;">
   </div>
+
+<br>
+<br>
+<br>
+<br>
 
 </body>
 </html>
