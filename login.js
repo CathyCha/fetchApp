@@ -15,7 +15,7 @@ function checkSubmit(e) {
         window.location.replace("walkerProfile.html");
       }
       //user and pass = valid admin
-      else if (e.target.value == "Admin") {
+      else if (e.target.value == "admin") {
         window.location.replace("adminpage.html");
       }
       // not a valid user
