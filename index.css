@@ -27,11 +27,6 @@
   margin-top: 180px;
 }
 
-p.psw {
-  float: right;
-  padding-top: 20px;
-}
-
 #user {
   margin-top: 20px;
   height: 40px;
@@ -87,7 +82,7 @@ p.psw {
 }
 
 .Admin {
-  font:
+  font: 14px Arial;
   text-decoration: none;
   background-color: white;
   border-radius: 5px;
@@ -107,20 +102,108 @@ p.psw {
   font-family: "Arial";
 }
 
+.Register {
+  font: 14px Arial;
+  text-decoration: none;
+  background-color: white;
+  border-radius: 5px;
+  color: seagreen;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  padding-left: 80px;
+  padding-right: 80px;
+  border-top: 2px solid seagreen;
+  border-right: 2px solid seagreen;
+  border-bottom: 2px solid seagreen;
+  border-left: 2px solid seagreen;
+}
+
 .loginbutton {
   height: 30px;
   width: 280px;
   margin-bottom: 10px;
 }
 
-/* Change styles for span and cancel button on extra small screens */
-@media screen and (max-width: 300px) {
-  span.psw {
-     display: block;
-     float: none;
-  }
-  .cancelbtn {
-     width: 100%;
-  }
+.line {
+ height: 2px;
+ width: 100%;
+ background-color: orange;
 }
+
+.grass {
+ position: fixed;
+ bottom: -5px;
+ margin-top: 100;
+ height: 100px;
+ z-index: -1;
+}
+
+.grass2 {
+ position: fixed;
+ bottom: -5px;
+ left: 700px;
+ margin-top: 100;
+ height: 100px;
+ z-index: -1;
+}
+
+.signup {
+ border: 10px solid #55B17E;
+ background-color: white;
+ height: 400px;
+ width: 60%;
+ margin: auto;
+ margin-top: 50px;
+}
+
+
+.placeholder {
+ height:200px;
+ width:100%;
+}
+
+.register-form {
+ width: 90%;
+ margin: auto;
+ margin-top: 40px;
+}
+
+.regDog {
+  font: 14px Arial;
+  text-decoration: none;
+  background-color: white;
+  border-radius: 5px;
+  color: seagreen;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  padding-left: 90px;
+  padding-right: 90px;
+  border-top: 2px solid seagreen;
+  border-right: 2px solid seagreen;
+  border-bottom: 2px solid seagreen;
+  border-left: 2px solid seagreen;
+}
+
+.regWalker {
+  font: 14px Arial;
+  text-decoration: none;
+  background-color: white;
+  border-radius: 5px;
+  color: orange;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  padding-left: 80px;
+  padding-right: 80px;
+  border-top: 2px solid orange;
+  border-right: 2px solid orange;
+  border-bottom: 2px solid orange;
+  border-left: 2px solid orange;
+}
+
+.logoSignup {
+  width: 200px;
+  margin-top: 10px;
+}
+
+
 </style>
