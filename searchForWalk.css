@@ -205,10 +205,19 @@ Select walker popup
 
 #searchForWalkButton {
 	width: 20%;
+	height: 50px;
 	position: relative;
 	right: 20px;
 	color: green;
-  margin-left: 100px;
+  margin-left: 30%;
+	margin-right: 30%;
+	background-color: white;
+	border: 1px solid green;
+}
+
+#searchForWalkButton:hover {
+	color: orange;
+	border: 1px solid orange;
 }
 
 #acceptJobButton {
