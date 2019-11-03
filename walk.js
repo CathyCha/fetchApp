@@ -7,25 +7,38 @@
  * class definitions
  *******************/
 
-class Walker {
-    constructor(name, picture, rating, description) {
-        this.name = name;
-        this.picture = picture;
-        this.rating = rating;
-        this.description = description;
-    }
-}
+ class User {
+     constructor(name, picture, rating, description) {
+         this.name = name;
+         this.picture = picture;
+         this.rating = rating;
+         this.description = description;
 
-/* Test walker */
-const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
-const john = new Walker("John Smith", "profilepic.png", 4.42, johnDescription);
+     }
+ }
+
+ class Request {
+   constructor(xCoord, yCoord, length, needs, price){
+     this.x = xCoord
+     this.y = yCoord
+     this.length = length
+     this.needs = needs
+     this.price = price
+   }
+ }
+
+ const rufusDescription = "energetic and playful, quite the handul!";
+ const rufusNeeds = new Array("Hyperactive", "Treats", "Puppy", "Water breaks")
+
+ const rufus = new User("Rufus", "profilepic.png", 4.42, rufusDescription);
+ const req = new Request(680, 330, 30, rufusNeeds, 25)
 
 /***********************
  * Add a new walker note
  **********************/
 
 function addWalkerNote(message) {
-    const notesList = document.querySelector("#notes-div").children[0];
+    const notesList = document.getElementById("notes-div");
     const newNote = document.createElement("li");
     newNote.innerText = message;
     notesList.appendChild(newNote);
@@ -36,7 +49,6 @@ function addWalkerNote(message) {
  ***********************/
 
 let timeLeft = 31;
-let walkerNotes = ["Cute dog", "Stopped for water", "Fought with another dog", "Won the fight", "Heading back"];
 let xCoordinates = [475, 520, 705, 632, 383, 346, 436];
 let yCoordinates = [215, 375, 400, 591, 563, 344, 235];
 let updateIndex = 0;
@@ -54,9 +66,6 @@ function updatePage() {
         timeLeft--;
         updateTimeLeft(timeLeft);
         if (timeLeft % 5 == 0) {
-            if (updateIndex < walkerNotes.length) {
-                addWalkerNote(walkerNotes[updateIndex]);
-            }
             if (updateIndex < xCoordinates.length) {
                 updateWalkerMarkerLocation(xCoordinates[updateIndex], yCoordinates[updateIndex]);
             }
@@ -81,6 +90,8 @@ let feedbackDiv = null;
 let doneButton = null;
 
 function finishWalk() {
+    const dogNeeds = document.getElementById("walk-needs-container")
+    dogNeeds.parentNode.removeChild(dogNeeds)
     //resize the picture
     const walkerPic = document.querySelector(".walker-popup-image");
     walkerPic.style.maxHeight = "100px";
@@ -88,10 +99,10 @@ function finishWalk() {
     walkerPic.nextSibling.remove();
     walkerPic.nextSibling.remove();
 
-    //text to request a rating for the walker
+    //text to request a rating for the dog
     const ratingRequest = document.createElement("h4");
     ratingRequest.classList.add("rating-request");
-    ratingRequest.innerText = "Please rate your Walker";
+    ratingRequest.innerText = "How did the walk go?";
     walkerPic.after(ratingRequest);
 
     //create a div to hold the stars
@@ -182,10 +193,18 @@ function selectStar(e) {
     //if the user had a problem, prompt them for feedback
     if (rating < 5) {
         //do not add div more than once
-        if (feedbackDiv == null) {
+        if (!feedbackDiv) {
+            const notes = document.querySelector(".submitNoteForm")
+            if(notes){
+              notes.parentNode.removeChild(notes);
+            }
+            const submitNoteLabel = document.querySelector(".submitNoteLabel")
+            if(submitNoteLabel){
+              submitNoteLabel.parentNode.removeChild(submitNoteLabel)
+            }
             feedbackDiv = document.createElement("div");
             feedbackDiv.classList.add("feedback-container");
-            const feedbackOptions = ["Professionalism", "Lost", "Dog Neglected", "Other"];
+            const feedbackOptions = ["Biting", "Misbehaved", "Aggressive", "Other"];
             for (let i = 0; i < feedbackOptions.length; i++) {
                 const feedback = document.createElement("span");
                 feedback.classList.add("feedback");
@@ -243,12 +262,12 @@ function toggleFeedback(e) {
 
 //allow the user to report an issue
 function reportProblem(e) {
-  if(!document.querySelector(".feedback-box")){
-    const feedbackBox = document.createElement("textarea");
-    feedbackBox.classList.add("feedback-box");
-    feedbackBox.placeholder = "Please describe the problems you encountered.";
-    document.querySelector(".report-problem-link").after(feedbackBox);
-  }
+    if(!document.querySelector(".feedback-box")){
+      const feedbackBox = document.createElement("textarea");
+      feedbackBox.classList.add("feedback-box");
+      feedbackBox.placeholder = "Please describe the problems you encountered.";
+      document.querySelector(".report-problem-link").after(feedbackBox);
+    }
 }
 
 function submit(e) {
@@ -306,42 +325,77 @@ function blinkWalkerMarker () {
  * - Do this dynamically since it will be a server call
  *****************************************************/
 
-function displayWalker(walker) {
+function displayUser(user, request) {
 
     //box for the popup
-    const selectWalkerPopup = document.createElement("div");
-    selectWalkerPopup.classList.add("walkerDisplay");
+    const selectUserPopup = document.createElement("div");
+    selectUserPopup.classList.add("walkerDisplay");
 
     //add walker's picture
-    const walkerImage = document.createElement("img");
-    walkerImage.classList.add("walker-popup-image");
-    walkerImage.src = walker.picture;
-    selectWalkerPopup.appendChild(walkerImage);
+    const userImage = document.createElement("img");
+    userImage.classList.add("walker-popup-image");
+    userImage.src = user.picture;
+    selectUserPopup.appendChild(userImage);
 
     //add walker's name
-    const walkerNameSpan = document.createElement("span");
-    walkerNameSpan.classList.add("walker-popup-name");
-    walkerNameSpan.innerText = walker.name;
-    selectWalkerPopup.appendChild(walkerNameSpan);
+    const userNameSpan = document.createElement("span");
+    userNameSpan.classList.add("walker-popup-name");
+    userNameSpan.innerText = user.name;
+    selectUserPopup.appendChild(userNameSpan);
 
     //add walker's rating
-    const walkerRatingDisplay = document.createElement("div");
+    const userRatingDisplay = document.createElement("div");
 
-    const walkerRatingStarsSpan = document.createElement("span");
-    walkerRatingStarsSpan.classList.add("walker-popup-stars");
-    walkerRatingStarsSpan.innerText = "\u2605";
+    const userRatingStarsSpan = document.createElement("span");
+    userRatingStarsSpan.classList.add("walker-popup-stars");
+    userRatingStarsSpan.innerText = "\u2605";
 
-    const walkerRatingNumberSpan = document.createElement("span");
-    walkerRatingNumberSpan.classList.add("walker-popup-rating");
-    walkerRatingNumberSpan.innerText = walker.rating;
+    const userRatingNumberSpan = document.createElement("span");
+    userRatingNumberSpan.classList.add("walker-popup-rating");
+    userRatingNumberSpan.innerText = user.rating;
 
-    walkerRatingDisplay.appendChild(walkerRatingStarsSpan);
-    walkerRatingDisplay.appendChild(walkerRatingNumberSpan);
-    selectWalkerPopup.appendChild(walkerRatingDisplay);
+    userRatingDisplay.appendChild(userRatingStarsSpan);
+    userRatingDisplay.appendChild(userRatingNumberSpan);
+    selectUserPopup.appendChild(userRatingDisplay);
+
+    const walkNeedsContainer = document.createElement("ul")
+    walkNeedsContainer.id = "walk-needs-container"
+
+    var newNeed;
+    var newNeedTxt;
+    request.needs.forEach(function(item, index){
+      newNeed = document.createElement("li")
+      newNeed.className = "walk-need"
+      newNeedTxt = document.createTextNode(item)
+      newNeed.appendChild(newNeedTxt)
+      walkNeedsContainer.appendChild(newNeed)
+      });
+
+    selectUserPopup.appendChild(walkNeedsContainer)
+
+    const submitNoteLabel = document.createElement("span")
+    submitNoteLabel.className = "submitNoteLabel"
+    submitNoteLabel.innerText = "Add Note"
+    selectUserPopup.appendChild(submitNoteLabel)
+
+    const submitNoteForm = document.createElement("form")
+    const noteText = document.createElement("textarea")
+    const submitNote = document.createElement("input")
+    noteText.placeholder = "Write something.."
+    submitNote.type = "submit"
+    submitNote.onclick = function (e){
+      addWalkerNote(noteText.value)
+      e.preventDefault()};
+    submitNoteForm.className = "submitNoteForm"
+    submitNoteForm.appendChild(noteText)
+    submitNoteForm.appendChild(submitNote)
+    selectUserPopup.appendChild(submitNoteForm)
 
     //add box as child for area
-    const walkerArea = document.querySelector("#right-pane-body");
-    walkerArea.appendChild(selectWalkerPopup);
+    const userArea = document.querySelector("#right-pane-body");
+    userArea.appendChild(selectUserPopup);
+
+
 
 }
 
@@ -357,6 +411,6 @@ function displayWalker(walker) {
     //start the blinking of the walker marker
     setTimeout(blinkWalkerMarker, 500);
     //get the walker's data from the server - here we just use john
-    displayWalker(john);
+    displayUser(rufus, req);
 
 })();
