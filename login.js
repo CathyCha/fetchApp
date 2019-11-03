@@ -8,11 +8,11 @@ function checkSubmit(e) {
    if(e && e.keyCode == 13) {
       // user and pass = valid dog user
       if (e.target.value == "Dog") {
-        window.location.replace("requestWalk.html");
+        window.location.replace("userProfile.html");
       }
       // user and pass = valid walker user
       else if (e.target.value == "Walker") {
-        window.location.replace("userProfile.html");
+        window.location.replace("walkerProfile.html");
       }
       //user and pass = valid admin
       else if (e.target.value == "Admin") {
