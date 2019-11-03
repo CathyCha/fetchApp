@@ -21,6 +21,7 @@ class Walker {
 const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
 const john = new Walker("John Smith", "profilepic.png", 4.42, johnDescription);
 
+/* debugging function, called from the console */
 function testAddWalker() {
     const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
     const john = new Walker("John Smith", "profilepic.png", 4.42, johnDescription);

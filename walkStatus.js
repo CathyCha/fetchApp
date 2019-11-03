@@ -114,6 +114,9 @@ function finishWalk() {
     ratingText = document.createElement("p");
     ratingText.classList.add("rating-text");
     starsSpan.after(ratingText);
+
+    //change page title
+    document.title = "Walk complete!";
 }
 
 //animation for when the user hovers over the stars to select
@@ -185,7 +188,7 @@ function selectStar(e) {
         if (feedbackDiv == null) {
             feedbackDiv = document.createElement("div");
             feedbackDiv.classList.add("feedback-container");
-            const feedbackOptions = ["Professionalism", "Lost", "Dog Neglected", "Other"];
+            const feedbackOptions = ["Professionalism", "Lost", "Dog Neglected", "Need Not Met", "Other"];
             for (let i = 0; i < feedbackOptions.length; i++) {
                 const feedback = document.createElement("span");
                 feedback.classList.add("feedback");
@@ -254,7 +257,7 @@ function reportProblem(e) {
 function submit(e) {
     e.preventDefault();
     //submit all info to the server here
-    console.log("I'm done!");
+    window.location.replace("mywalk.html");
 }
 
 /***************************************************************

@@ -7,11 +7,11 @@ document.documentElement.addEventListener("keyup", checkSubmit, false);
 function checkSubmit(e) {
    if(e && e.keyCode == 13) {
       // user and pass = valid dog user
-      if (e.target.value == "Dog") {
+      if (e.target.value == "user") { //Dog
         window.location.replace("userProfile.html");
       }
       // user and pass = valid walker user
-      else if (e.target.value == "Walker") {
+      else if (e.target.value == "user2") { //Walker
         window.location.replace("walkerProfile.html");
       }
       //user and pass = valid admin

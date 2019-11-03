@@ -21,7 +21,7 @@ class Request {
 const rufusDescription = "energetic and playful, quite the handul!";
 const rufusNeeds = new Array("Hyperactive", "Treats", "Puppy", "Water breaks")
 
-const rufus = new User("Rufus", "profilepic.png", 4.42, rufusDescription);
+const rufus = new User("Rufus", "rufus.jpg", 4.42, rufusDescription);
 const req = new Request(680, 330, 30, rufusNeeds, 25)
 
 const search = document.querySelector("#searchForWalkButton");
