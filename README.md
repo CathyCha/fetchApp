@@ -31,7 +31,7 @@ Login credentials are case sensitive.
 
 ---
 
-**To login as Dog user:**
+<strong>To login as Dog user:</strong>
 
 Username: user
 
@@ -39,7 +39,7 @@ Password: user
 
 ---
 
-**To login as Walker user: **
+<strong>To login as Walker user: </strong>
 
 Username: user2
 
@@ -47,7 +47,7 @@ Password: user2
 
 ---
 
-**To login as an Admin: **
+<strong>To login as an Admin: </strong>
 
 Username: admin
 
@@ -74,7 +74,7 @@ The user can edit their profile, their dog's profile, delete their account, sign
 
 <br>
 
-**Request Walker **
+<strong>Request Walker </strong>
 
 On this page, the user selects the dog that they would like walked and the parameters of the walk, such as length and needs. 
 
@@ -111,7 +111,7 @@ Once you sign in as a Dog user, this takes the user to the User Profile page (sa
 
 <br>
 
-**Accept Walk **
+<strong>Accept Walk </strong>
 
 On this page, the walker clicks "Find Walk" to start looking for walks. 
 
