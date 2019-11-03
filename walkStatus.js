@@ -251,6 +251,7 @@ function reportProblem(e) {
 
 function submit(e) {
     e.preventDefault();
+    //submit all info to the server here
     console.log("I'm done!");
 }
 
