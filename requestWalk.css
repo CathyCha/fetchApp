@@ -1,5 +1,5 @@
-/******************* 
-top pane styling 
+/*******************
+top pane styling
 *******************/
 
 #top-pane-body {
@@ -9,7 +9,7 @@ top pane styling
 }
 
 /* stack the top pane's contents beside each other */
-#top-pane-body > div { 
+#top-pane-body > div {
 	float:left;
 }
 
@@ -81,6 +81,40 @@ top pane styling
 	text-align: center;
 }
 
+.dogList {
+	x-overflow: auto;
+	width: 500px;
+	margin-left: 250px;
+	margin-top: 0px;
+	display: inline-block;
+}
+
+.dogListItem {
+	padding: 10px;
+	font-size: 50%;
+	background-color: white;
+	border: 2px solid green;
+	color: green;
+}
+
+.dogListSel {
+	padding: 10px;
+	font-size: 50%;
+	background-color: white;
+	border: 2px solid orange;
+	color: orange;
+}
+
+.dogListItem:hover{
+	cursor: pointer;
+}
+
+.dogListSel:hover{
+	cursor: pointer;
+}
+
+
+
 .walk-need {
 	display: inline-block;
 	border: 2px;
@@ -102,8 +136,8 @@ top pane styling
 	font-size: 150%;
 }
 
-/******************* 
-left pane styling 
+/*******************
+left pane styling
 *******************/
 
 /* needed to make the below styling work */
@@ -139,8 +173,8 @@ left pane styling
 	position: absolute;
 }
 
-/******************* 
-right pane styling 
+/*******************
+right pane styling
 *******************/
 
 #walker-container {
@@ -236,7 +270,7 @@ Select walker popup
 
 .walker-popup-name {
 	font-size: 200%;
-	
+
 	/* add some space between image and name */
 	display: block;
 	margin-top: 20px;

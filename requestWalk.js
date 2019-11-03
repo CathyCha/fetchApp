@@ -3,6 +3,24 @@
 /*******************
  * class definitions
  *******************/
+class User {
+   constructor(name, picture, rating, description) {
+       this.name = name;
+       this.picture = picture;
+       this.rating = rating;
+       this.description = description;
+   }
+}
+
+class Request {
+ constructor(xCoord, yCoord, length, needs, price){
+   this.x = xCoord
+   this.y = yCoord
+   this.length = length
+   this.needs = needs
+   this.price = price
+ }
+}
 
 class Walker {
     constructor(name, picture, rating, description) {
@@ -12,6 +30,8 @@ class Walker {
         this.description = description;
     }
 }
+
+let selDogs = new Array();
 
 /******************************
  * Map click functionality
@@ -28,11 +48,30 @@ function testAddWalker() {
     addWalker(john);
 }
 
+let dogs = document.querySelectorAll(".dogListItem")
+let numDogs = dogs.length
+for (let i = 0; i<numDogs; i++){
+  dogs[i].addEventListener('click', toggleDog)
+}
+
+function toggleDog(e){
+  let dog = e.currentTarget
+  if(dog.className == "dogListItem"){
+    dog.className = "dogListSel"
+    // Get data from server getDog(dog)
+    // selDogs.push(dog)
+  }
+  else{
+    dog.className = "dogListItem"
+  }
+}
+
 const map = document.querySelector("#map");
 let marker = null;
 
 /* Function to handle the user clicking on the map */
 function mapClick(e) {
+    // Handle no dogs being selected 
     const markerRadius = 10;
     const xCoordinate = e.layerX;
     const yCoordinate = e.layerY;
@@ -98,12 +137,12 @@ function toggleNeed(e) {
     e.preventDefault();
 
     if (e.target.classList.contains('walk-need')) {
-        //select the styling for the need that was clicked on 
+        //select the styling for the need that was clicked on
         const need = e.target.style;
-        if (need.backgroundColor === "" || need.backgroundColor == "white") { 
+        if (need.backgroundColor === "" || need.backgroundColor == "white") {
             need.backgroundColor = "green";
             need.color = "white";
-            
+
             //update number of needs for pricing
             numWalkNeeds++;
         }
@@ -126,7 +165,7 @@ function addWalker(walker) {
 
     //get the area to add the walker
     const walkerArea = document.querySelector('#walker-container');
-    
+
     const walkerDiv = document.createElement("div");
     walkerDiv.classList.add("walker");
 
@@ -194,7 +233,7 @@ function removePopup(e) {
     e.preventDefault();
     selectWalkerPopup.remove();
     selectWalkerPopup = -1;
-    
+
     const walkerArea = document.querySelector("#right-pane-body");
     walkerArea.appendChild(savedWalkers);
     savedWalkers = null;
@@ -207,7 +246,7 @@ function selectWalker(e) {
         selectWalkerPopup = null;
         return;
     }
-    
+
     /* not sure if still necessary - keeping in case */
     //only allow selecting one walker at a time
     if (selectWalkerPopup != null) {
@@ -248,7 +287,7 @@ function selectWalker(e) {
 
     //add walker's rating
     const walkerRatingDisplay = document.createElement("div");
-    
+
     const walkerRatingStarsSpan = document.createElement("span");
     walkerRatingStarsSpan.classList.add("walker-popup-stars");
     walkerRatingStarsSpan.innerText = walkerRatingStars;
@@ -281,7 +320,7 @@ function selectWalker(e) {
     noButton.classList.add("no-button");
     noButton.innerText = "No";
 
-    noButton.addEventListener("click", removePopup); 
+    noButton.addEventListener("click", removePopup);
     yesButton.addEventListener("click", requestDetails)
 
     buttonsDiv.appendChild(yesButton);
@@ -297,11 +336,11 @@ function selectWalker(e) {
 
 function requestDetails(e) {
     e.preventDefault();
-    
+
     //we create a box requesting additional details on how to pick up the dog
     const detailsRequest = document.createElement("div");
     detailsRequest.classList.add("confirmation-div")
-    
+
     //prompt text
     const detailsMessage = document.createElement("p");
     detailsMessage.innerText = "Please enter pickup instructions:";
@@ -336,7 +375,7 @@ function requestDetails(e) {
 
 function submitWalkRequest(e) {
     e.preventDefault();
-    
+
     const detailsBox = document.querySelector(".detailsBox");
     const pickupInstructions = detailsBox.value;
     console.log(pickupInstructions);
