@@ -30,7 +30,7 @@
  const rufusDescription = "energetic and playful, quite the handul!";
  const rufusNeeds = new Array("Hyperactive", "Treats", "Puppy", "Water breaks")
 
- const rufus = new User("Rufus", "profilepic.png", 4.42, rufusDescription);
+ const rufus = new User("Rufus", "rufus.jpg", 4.42, rufusDescription);
  const req = new Request(680, 330, 30, rufusNeeds, 25)
 
 /***********************
@@ -189,19 +189,19 @@ function selectStar(e) {
     }
     //update text
     ratingText.innerText = ratingDescriptions[rating - 1];
-
+    const notes = document.querySelector(".submitNoteForm")
+    if(notes){
+      notes.parentNode.removeChild(notes);
+    }
+    const submitNoteLabel = document.querySelector(".submitNoteLabel")
+    if(submitNoteLabel){
+      submitNoteLabel.parentNode.removeChild(submitNoteLabel)
+    }
     //if the user had a problem, prompt them for feedback
     if (rating < 5) {
         //do not add div more than once
         if (!feedbackDiv) {
-            const notes = document.querySelector(".submitNoteForm")
-            if(notes){
-              notes.parentNode.removeChild(notes);
-            }
-            const submitNoteLabel = document.querySelector(".submitNoteLabel")
-            if(submitNoteLabel){
-              submitNoteLabel.parentNode.removeChild(submitNoteLabel)
-            }
+
             feedbackDiv = document.createElement("div");
             feedbackDiv.classList.add("feedback-container");
             const feedbackOptions = ["Biting", "Misbehaved", "Aggressive", "Other"];
