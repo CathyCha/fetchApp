@@ -16,12 +16,9 @@
 
 <div class="sidenav">
 	<img class="logo" src="Logo_copy.png" style="width:200px">
-	<a href="#">Dashboard</a>
-	<a href="#">Statistics</a>
-	<a href="adminpage.html">Reports</a>
-	<a href="walkers.html">Walkers</a>
-	<a href="dogs.html">Dogs</a>
-	<a href="#">Walks</a>
+	<a id="curr" href="requestWalk.html">Request Walker</a>
+	<a href="userProfile.html">Profile</a>
+	<a href="myWalk.html">Walk History</a>
 </div>
 
 <div class="topPanelBox"></div>
@@ -31,7 +28,7 @@
 		<h2 class="pane-title">
 			Walk Parameters
 		</h2>
-		<div id="top-pane-body"> 
+		<div id="top-pane-body">
 			<div id="walk-length">
 				<span class="label">
 					Walk length
@@ -39,7 +36,7 @@
 				<div id="walk-length-slider-container">
 					<input type="range" min="5" max="120" step="5" value="30" id="walk-length-slider">
 				</div>
-				
+
 				<span id="walk-length-number">
 				30min
 				</span>
@@ -85,11 +82,11 @@
 		</h2>
 		<div id="left-pane-body">
 			<div id="map">
-				
+
 			</div>
-			
+
 		</div>
-		
+
 	</div>
 	<div class="right-pane">
 		<h2 class="pane-title">

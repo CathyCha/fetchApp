@@ -19,6 +19,34 @@ top pane styling
     text-align: center;
 }
 
+#walk-needs {
+	width: 40%;
+  margin-left: 105px;
+}
+
+.walk-need {
+	display: inline-block;
+	border: 2px;
+	border-color: green;
+	border-style: solid;
+	padding: 0px 5px;
+	min-width: 110px;
+	color: green;
+	font-weight: bold;
+	font-size: 70%;
+
+	margin: 2px;
+	white-space:nowrap; /* prevents line break mid-box */
+}
+
+#walk-needs-container {
+  /*display: block;*/
+	margin: 0px 20px 20px -20px;
+	line-height: 31px;
+	text-align: center;
+
+}
+
 #finish-time {
     font-size: 150%;
 }
@@ -269,6 +297,47 @@ Walker rating box
 	width: 80%;
 	color: white;
 	background-color: grey;
+}
+
+.submitNoteLabel {
+  font-weight: bold;
+  border-right: 0px;
+  border-left: 0px;
+  border-top: 0px;
+  border-bottom: 1px;
+  border-style: solid;
+}
+
+.submitNoteForm {
+  padding-left: 60px;
+  padding-right: 60px;
+  box-sizing: border-box;
+}
+
+.submitNoteForm textarea {
+  float:left;
+  font-size: 80%;
+  resize: vertical;
+  border: 2px solid green;
+  width: 100%;
+  min-height: 60px;
+}
+
+.submitNoteForm textarea:selection {
+  border-color: #45a049;
+}
+
+.submitNoteForm input[type=submit]{
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
 }
 
 /****************************
