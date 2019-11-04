@@ -1,15 +1,5 @@
 "use strict";
 
-
-function showProfile() {
-    const userProf = "userProfile.html"
-    window.location.href = userProf;
-
-    // where the function would change the DOM of the userProfile html to reflect
-    // the user in selection
-
-}
-
 function editButton() {
   window.location.href='profileEdit.html';
 }
@@ -27,4 +17,45 @@ function signout() {
 
 function profileupload() {
   alert('Upload Profile Picture from Location');
+}
+
+// -------------------------------------------------------
+// -------------------------------------------------------
+// --------- Functions to be added after phase 1 ---------
+// Functions that need access to data and server calls
+// -------------------------------------------------------
+// -------------------------------------------------------
+
+function populateReportTable() {
+  // populates the reports data table
+  // DOM manipulation
+  // updates with new report submissions
+}
+
+function searchReports() {
+  // changes DOM to return the Report ID in search
+}
+
+function populateDogTable() {
+  // populates the all dog users table
+  // DOM manipulation
+  // updates with new user registration
+}
+
+function searchUser() {
+  // changes DOM to return the Dog User ID in search
+}
+
+function populateWalkerTable() {
+  // populates the all walker users table
+  // DOM manipulation
+  // updates with new user registration
+}
+
+function searchWalker() {
+  // changes DOM to return the Walker User ID in search
+}
+
+function populateAllWalks() {
+  // manipulates DOM to show all walks in data
 }
