@@ -82,8 +82,10 @@ top pane styling
 }
 
 .dogList {
-	x-overflow: auto;
-	width: 500px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	width: 1200px;
+	min-height: 100px;
 	margin-left: 250px;
 	margin-top: 0px;
 	display: inline-block;

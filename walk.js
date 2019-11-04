@@ -385,6 +385,7 @@ function displayUser(user, request) {
     submitNote.type = "submit"
     submitNote.onclick = function (e){
       addWalkerNote(noteText.value)
+      noteText.value = "";
       e.preventDefault()};
     submitNoteForm.className = "submitNoteForm"
     submitNoteForm.appendChild(noteText)

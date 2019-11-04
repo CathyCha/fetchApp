@@ -50,6 +50,7 @@ function updateTimeLeft(minutes) {
 
 function updatePage() {
     //query server for walker's current status
+    //here we simulate a walk in progress
     if (timeLeft > 0) {
         timeLeft--;
         updateTimeLeft(timeLeft);

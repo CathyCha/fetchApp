@@ -48,6 +48,7 @@ function testAddWalker() {
     addWalker(john);
 }
 
+//get a list of the user's dogs from the server and display them - here we use rufus
 let dogs = document.querySelectorAll(".dogListItem")
 let numDogs = dogs.length
 for (let i = 0; i<numDogs; i++){
@@ -63,6 +64,7 @@ function toggleDog(e){
   }
   else{
     dog.className = "dogListItem"
+    //remove dog from selDogs
   }
 }
 
@@ -77,6 +79,7 @@ function mapClick(e) {
     const yCoordinate = e.layerY;
     console.log(xCoordinate, yCoordinate);
     //send these coordinates to the server and query nearby walkers
+    //here we use john
     addWalker(john);
 
     if (!marker) {
@@ -161,6 +164,7 @@ function toggleNeed(e) {
  * manipulating walkers on the page
  **********************************/
 
+//add walker to the "Available Walkers" panel
 function addWalker(walker) {
 
     //get the area to add the walker
