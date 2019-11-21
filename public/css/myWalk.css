@@ -1,0 +1,81 @@
+.container {
+  padding-bottom: 50px;
+}
+
+.topbar {
+  background: green;
+  height: 70px;
+  width: 1000px;
+}
+
+.sidebar {
+  border: 2px solid green;
+  border-top: 0px;
+  height: 400px;
+  width: 260px;
+  float: left;
+}
+
+.walkMap {
+  background: white;
+  height: 400px;
+  width: 740px;
+  float: left;
+}
+
+.dateinfo {
+  color: white;
+  font: Arial;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.walkerName {
+  color: white;
+  font: Arial;
+  padding-left: 10px;
+}
+
+.walkPrice {
+  color: black;
+  font: Arial;
+  margin-top: 50px;
+  text-align: center;
+}
+
+.walkDur {
+  color: black;
+  font: Arial;
+  text-align: center;
+}
+
+.rating {
+  color: orange;
+  text-align: center;
+}
+
+.activity {
+  color: black;
+  text-align: center;
+}
+
+.topPanelBox {
+	height:100px;
+}
+
+.link {
+    color:#0000FF;
+    cursor:pointer;
+}
+
+/* Style page content */
+#main {
+  margin-left: 250px; /* Same as the width of the sidebar */
+  padding: 0px 10px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) *
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}*/

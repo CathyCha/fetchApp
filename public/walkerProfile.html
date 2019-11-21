@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>User Profile</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/userProfile.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/adminpage.js"></script>
+
+</head>
+<body>
+
+  <div class="sidenav">
+    <img class="logo" src="images/Logo_copy.png">
+    <a href="searchForWalk.html">Start Walking</a>
+    <a id="curr" href="userProfile.html">Profile</a>
+    <a href="pastWalks.html">Walk History</a>
+  </div>
+
+  <div class="topPanelBox"></div>
+
+  <div id="main">
+    <div class="page-header">
+      <h1>Walker Profile</h1>
+    </div>
+
+    <div class="media">
+      <input id="editInfo" type="button" value="Edit" onclick="editButton(); return false;">
+
+      <div class="media-left">
+        <img src="defaultprofile.jpg" class="media-object">
+        <input id="uploadPic" type="button" value="Upload Profile Picture" onclick="profileupload(); return false;">
+      </div>
+      <div class="media-body">
+        <div id="profInfo" class="container">
+          <div class="row">
+            <p class="fname"> <span class="grey">First Name:</span> Jane </p>
+            <p class="lname"> <span class="grey">Last Name:</span> Doe </p>
+            <p class="number"> <span class="grey">Phone Number:</span> 111 111 1111 </p>
+            <p class="e-mail"> <span class="grey">E-mail:</span> jane.doe@doguber.ca </p>
+            <p class="qual"> <span class="grey">Qualifications:</span> Certified Dog Walker </p>
+            <p class="lang"> <span class="grey">Languages:</span> English, French </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+
+    <h4 class="grey">Short description shown to dog owners: </h4>
+    <input id="editInfo" type="button" value="Edit">
+    <p> I love dogs and am a certified dog walker. </p>
+
+    <hr />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <input id="deleteacc" type="button" value="Delete your account" onclick="deleteacc(); return false;">
+    <input id="signout" type="button" value="Sign out" onclick="signout(); return false;">
+  </div>
+
+</body>
+</html>
