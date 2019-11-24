@@ -39,12 +39,12 @@ let selDogs = new Array();
 
 /* Test walker */
 const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
-const john = new Walker("John Smith", "profilepic.png", 4.42, johnDescription);
+const john = new Walker("John Smith", "images/profilepic.png", 4.42, johnDescription);
 
 /* debugging function, called from the console */
 function testAddWalker() {
     const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
-    const john = new Walker("John Smith", "profilepic.png", 4.42, johnDescription);
+    const john = new Walker("John Smith", "images/profilepic.png", 4.42, johnDescription);
     addWalker(john);
 }
 
@@ -73,11 +73,7 @@ let marker = null;
 
 /* Function to handle the user clicking on the map */
 function mapClick(e) {
-<<<<<<< HEAD:public/js/requestWalk.js
-    // Handle no dogs being selected
-=======
     // Handle no dogs being selected 
->>>>>>> 94ed77751078566fdb55f70ef62155af321315e4:requestWalk.js
     const markerRadius = 10;
     const xCoordinate = e.layerX;
     const yCoordinate = e.layerY;
@@ -261,14 +257,17 @@ function selectWalker(e) {
         return;
     }
 
-    savedWalkers = document.querySelector("#walker-container");
-    savedWalkers.remove();
-
-
     let targetWalker = e.target;
-    while (!(targetWalker.classList.contains("walker"))) {
+    while (targetWalker && !(targetWalker.classList.contains("walker"))) {
         targetWalker = targetWalker.parentElement;
     }
+
+    if (!targetWalker) {
+        return;
+    }
+
+    savedWalkers = document.querySelector("#walker-container");
+    savedWalkers.remove();
 
     //get walker's data
     const walkerPic = targetWalker.children[0].src;
