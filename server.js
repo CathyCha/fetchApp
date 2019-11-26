@@ -140,6 +140,29 @@ app.post('/dogs/:userid', (req, res) => {
 	});
 })
 
+/// Route for getting all of a user's dogs
+// GET /dogs/userid
+app.get('/dogs/:userid', (req, res) => {
+	// Add code here
+	const id = req.params.userid;
+	
+	console.log(id);
+	
+	if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+	}
+	
+	User.findById(id).then((user) => {
+		if (!user) {
+			res.status(404).send(); //could not find user
+		} else {
+			res.send( user.userDogs );
+		}
+	}).catch((error) => {
+		res.status(500).send(); //server error
+	});
+})
+
 /** Walker resource routes **/
 // a POST route to *create* a walker
 app.post('/walker', (req, res) => {
@@ -184,8 +207,6 @@ app.post('/walker', (req, res) => {
 app.get('/walker/:id', (req, res) => {
 	// Add code here
 	const id = req.params.id;
-	
-	console.log(id);
 	
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
