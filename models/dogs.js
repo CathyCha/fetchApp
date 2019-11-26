@@ -1,20 +1,46 @@
 /* User mongoose model */
 const mongoose = require('mongoose')
 
-const dogs = mongoose.model('dogs', {
-	owner:{
+const user = mongoose.model('user', {
+	firstName: {
 		type: String,
+		required: true,
+		minlegth: 1,
+		trim: true
 	},
-	dogName:{
+	lastName: {
 		type: String,
+		required: true,
+		minlength: 1,
+		trim: true
+		// default: 1
 	},
-	needs:{
-		type: [String],
+	HomeAddress: {
+		type: String,
+		required: true,
 	},
-	weight:{
+	city: {
+		type: String,
+		// required: true,
+		default: "Toronto"
+	},
+	province:{
+		type: String,
+		default: "Ontario"
+	},
+	phoneNumber: {
 		type: Number,
+		minlength: 9,
 	},
-	
+	emailAddress: {
+		type: String,
+	},
+	dateJoined: {
+		type: Date,
+	},
+	userDogs :{
+		type: [dogs],
+	},
 })
 
-module.exports = { dogs }
+module.exports = { user }
