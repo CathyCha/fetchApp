@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 
 const DogSchema = new mongoose.Schema({
-	dogName: String,
+	dogName: { type: String, required: true },
 	needs: [String],
 	weight: Number,
 	rating: Number

@@ -80,12 +80,64 @@ app.post('/user', (req, res) => {
                     res.status(400).send(error);
                 })
             });
-          });
+        });
     }
-    
 });
 
+/// Route for getting information for one user.
+// GET /user/id
+app.get('/user/:id', (req, res) => {
+	// Add code here
+	const id = req.params.id;
+	
+	console.log(id);
+	
+	if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+	}
+	
+	User.findById(id).then((user) => {
+		if (!user) {
+			res.status(404).send(); //could not find user
+		} else {
+			res.send(user);
+		}
+	}).catch((error) => {
+		res.status(500).send(); //server error
+	});
+})
 
+/** Dog resource routes **/
+
+/// Route for adding dog to a user
+// POST /dogs/userid
+app.post('/dogs/:userid', (req, res) => {
+	// Add code here
+	const id = req.params.userid;
+	
+	if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+	}
+	const dog = {
+        dogName: req.body.dogName,
+        needs: [], //fill this in dynamically first time dog requests a walk
+        weight: req.body.weight,
+        rating: 0
+	};
+	
+	User.findById(id).then((user) => {
+		if (!user) {
+			res.status(404).send(); //could not find user
+		} else {
+			user.userDogs.push(dog);
+			return user.save();
+		}
+	}).then((result) => {
+		res.send(result);
+	}).catch((error) => {
+		res.status(500).send(); //server error
+	});
+})
 
 const port = process.env.PORT || 3001
 app.listen(port, () => {
