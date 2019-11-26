@@ -1,20 +1,13 @@
 /* User mongoose model */
 const mongoose = require('mongoose')
 
-const dogs = mongoose.model('dogs', {
-	owner:{
-		type: String,
-	},
-	dogName:{
-		type: String,
-	},
-	needs:{
-		type: [String],
-	},
-	weight:{
-		type: Number,
-	},
-	
-})
+const DogSchema = new mongoose.Schema({
+	dogName: String,
+	needs: [String],
+	weight: Number,
+	rating: Number
+});
 
-module.exports = { dogs }
+const Dog = mongoose.model('Dog', DogSchema);
+
+module.exports = { Dog, DogSchema };

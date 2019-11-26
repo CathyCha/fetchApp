@@ -1,49 +1,21 @@
 /* Walker mongoose model */
 const mongoose = require('mongoose')
 
-const walker = mongoose.model('walker', {
-	firstName: {
-		type: String,
-		required: true,
-		minlegth: 1,
-		trim: true
-	},
-	lastName: {
-		type: String,
-		required: true,
-		minlength: 1,
-		trim: true
-		// default: 1
-	},
-	homeAddress: {
-		type: String,
-		required: true,
-	},
-	city: {
-		type: String,
-		// required: true,
-		default: "Toronto"
-	},
-	province:{
-		type: String,
-		default: "Ontario"
-	},
-	phoneNumber: {
-		type: Number,
-		minlength: 9,
-	},
-	emailAddress: {
-		type: String,
-	},
-	dateJoined: {
-		type: Date,
-	},
-	languages:{
-		type: String,
-	},
-	qualifications:{
-		type: String,
-	},
-})
+const WalkerSchema = new mongoose.Schema({
+	username: { type: String, required: true, minlength: 1, trim: true},
+	firstName: { type: String, required: true, minlength: 1, trim: true},
+	lastName: { type: String, required: true, minlength: 1, trim: true},
+	homeAddress: { type: String, required: true },
+	city: { type: String, default: "Toronto" },
+	province: { type: String, default: "Ontario" },
+	phoneNumber: { type: Number, minlength: 9},
+	emailAddress: { type: String, required: true },
+	dateJoined: Date,
+	languages: String,
+	qualifications: String,
+	rating: Number
+});
 
-module.exports = { walker }
+const Walker = mongoose.model('Walker', WalkerSchema);
+
+module.exports = { Walker }
