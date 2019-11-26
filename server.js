@@ -20,6 +20,15 @@ const { ObjectID } = require('mongodb')
 // hash for passwords
 const bcrypt = require('bcryptjs')
 
+// handle file (image) uploads
+const http = require("http");
+const path = require("path");
+const fs = require("fs");
+const multer = require('multer');
+const upload = multer({
+    dest: "/public/images/uploaded"
+});
+
 // body-parser: middleware for parsing HTTP JSON body into a usable object
 const bodyParser = require('body-parser') 
 app.use(bodyParser.json())
@@ -27,16 +36,8 @@ app.use(bodyParser.json())
 
 /*** Webpage routes below **********************************/
 
-// static js directory
-app.use("/js", express.static(__dirname + '/public/js'))
-
-// static css directory
-app.use("/css", express.static(__dirname + '/public/css'))
-
-/*
-// static html directory
-app.use("/", express.static(__dirname + '/public/'))
-*/
+// static directories
+app.use(express.static(__dirname + '/public'))
 
 // route for root
 app.get('/', (req, res) => {
@@ -177,6 +178,52 @@ app.post('/walker', (req, res) => {
         });
     }
 });
+
+/// Route for getting information for one walker.
+// GET /walker/id
+app.get('/walker/:id', (req, res) => {
+	// Add code here
+	const id = req.params.id;
+	
+	console.log(id);
+	
+	if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+	}
+	
+	User.findById(id).then((walker) => {
+		if (!walker) {
+			res.status(404).send(); //could not find user
+		} else {
+			res.send(walker);
+		}
+	}).catch((error) => {
+		res.status(500).send(); //server error
+	});
+})
+
+/** Other routes **/
+
+/// Route for uploading an image for a user profile picture
+/// Image will be stored as /public/images/uploaded/id.{jpg.png} 
+// POST /upload/{userid/dogid/walkerid}
+app.post('/upload/:id', upload.single("file" /* name of file element in form */), 
+(req, res) => {
+    const id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+		res.status(404).send("Cannot find entity with that id");
+    }
+
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    const tempPath = req.file.path;
+    const targetPath = path.join(__dirname, "./public/images/uploaded/", id + ext);
+
+    fs.rename(tempPath, targetPath, err => {
+        if (err) res.status(500).send(err);
+
+        res.status(200).end("File uploaded!");
+    });
+})
 
 const port = process.env.PORT || 3001
 app.listen(port, () => {
