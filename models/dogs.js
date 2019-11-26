@@ -2,16 +2,16 @@
 const mongoose = require('mongoose')
 
 const dogs = mongoose.model('dogs', {
-	Owner:{
+	owner:{
 		type: String,
 	},
-	Dog Name:{
+	dogName:{
 		type: String,
 	},
-	Needs:{
+	needs:{
 		type: [String],
 	},
-	Weight:{
+	weight:{
 		type: Number,
 	},
 	
