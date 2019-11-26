@@ -50,7 +50,6 @@ app.get('/', (req, res) => {
 /** User resource routes **/
 // a POST route to *create* a user
 app.post('/user', (req, res) => {
-
     if (req.body.password) {
         bcrypt.genSalt(10, (err, salt) => {
             // password is hashed with the salt
@@ -82,8 +81,6 @@ app.post('/user', (req, res) => {
                 })
             });
           });
-    
-        
     }
     
 });
