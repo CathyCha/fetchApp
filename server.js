@@ -122,7 +122,7 @@ app.post('/dogs/:userid', (req, res) => {
         dogName: req.body.dogName,
         needs: [], //fill this in dynamically first time dog requests a walk
         weight: req.body.weight,
-        rating: 0
+        ratings: []
 	};
 	
 	User.findById(id).then((user) => {
@@ -138,6 +138,45 @@ app.post('/dogs/:userid', (req, res) => {
 		res.status(500).send(); //server error
 	});
 })
+
+/** Walker resource routes **/
+// a POST route to *create* a walker
+app.post('/walker', (req, res) => {
+    if (req.body.password) {
+        bcrypt.genSalt(10, (err, salt) => {
+            // password is hashed with the salt
+            bcrypt.hash(req.body.password, salt, (err, hash) => {
+                /*
+                //to compare to another password
+                bcrypt.compare("password", hash, (error, res) => {
+                    console.log(error, res);
+                });*/
+
+                const walker = new Walker({
+                    username: req.body.username,
+                    passwordHash: hash,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    homeAddress: req.body.homeAddress,
+                    city: req.body.city,
+                    province: req.body.province,
+                    phoneNumber: req.body.phoneNumber,
+                    emailAddress: req.body.emailAddress,
+                    dateJoined: new Date(),
+                    languages: req.body.languages,
+                    qualifications: req.body.qualifications,
+                    ratings: []
+                });
+            
+                walker.save().then((result) => {
+                    res.send(result);
+                }, (error) => {
+                    res.status(400).send(error);
+                })
+            });
+        });
+    }
+});
 
 const port = process.env.PORT || 3001
 app.listen(port, () => {
