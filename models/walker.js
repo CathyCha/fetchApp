@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 
 const WalkerSchema = new mongoose.Schema({
 	username: { type: String, required: true, minlength: 1, trim: true},
+	passwordHash: { type: String, required: true, trim: true },
 	firstName: { type: String, required: true, minlength: 1, trim: true},
 	lastName: { type: String, required: true, minlength: 1, trim: true},
 	homeAddress: { type: String, required: true },
