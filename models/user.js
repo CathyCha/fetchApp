@@ -2,43 +2,43 @@
 const mongoose = require('mongoose')
 
 const user = mongoose.model('user', {
-	First Name: {
+	firstName: {
 		type: String,
 		required: true,
 		minlegth: 1,
 		trim: true
 	},
-	Last Name: {
+	lastName: {
 		type: String,
 		required: true,
 		minlength: 1,
 		trim: true
 		// default: 1
 	},
-	Address: {
+	HomeAddress: {
 		type: String,
 		required: true,
 	},
-	City: {
+	city: {
 		type: String,
 		// required: true,
 		default: "Toronto"
 	},
-	Province:{
+	province:{
 		type: String,
 		default: "Ontario"
 	},
-	Phone Number: {
+	phoneNumber: {
 		type: Number,
 		minlength: 9,
 	},
-	Email Address: {
+	emailAddress: {
 		type: String,
 	},
-	Date Joined: {
+	dateJoined: {
 		type: Date,
 	},
-	Dogs :{
+	userDogs :{
 		type: [dogs],
 	},
 })
