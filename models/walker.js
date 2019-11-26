@@ -2,43 +2,43 @@
 const mongoose = require('mongoose')
 
 const walker = mongoose.model('walker', {
-	First Name: {
+	firstName: {
 		type: String,
 		required: true,
 		minlegth: 1,
 		trim: true
 	},
-	Last Name: {
+	lastName: {
 		type: String,
 		required: true,
 		minlength: 1,
 		trim: true
 		// default: 1
 	},
-	Address: {
+	homeAddress: {
 		type: String,
 		required: true,
 	},
-	City: {
+	city: {
 		type: String,
 		// required: true,
 		default: "Toronto"
 	},
-	Province:{
+	province:{
 		type: String,
 		default: "Ontario"
 	},
-	Phone Number: {
+	phoneNumber: {
 		type: Number,
 		minlength: 9,
 	},
-	Email Address: {
+	emailAddress: {
 		type: String,
 	},
-	Date Joined: {
+	dateJoined: {
 		type: Date,
 	},
-	Languages:{
+	languages:{
 		type: String,
 	},
 	qualifications:{
