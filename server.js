@@ -37,12 +37,12 @@ app.use(bodyParser.json())
 const session = require('express-session')
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//enable CORS to bypass security (baaaad, baaaad)
+//enable CORS to bypass security (bad, baaaad)
 let allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', "*");
     res.header('Access-Control-Allow-Headers', "*");
     next();
-  }
+}
 app.use(allowCrossDomain);
 
 /*** Session handling **************************************/
@@ -70,6 +70,82 @@ app.get('/', (req, res) => {
 /*********************************************************/
 
 /*** API Routes below ************************************/
+
+/** Login routes **/
+app.post('/login', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    const userType = req.body.userType;
+
+    if (!username || !password || !userType) {
+        res.status(400).send("Username or password or userType field missing/incorrect");
+        return;
+    }
+    if (username === "admin") {
+        //hardcoded credentials, hurrah!
+        if (password === "admin") {
+            req.session.user = "admin";
+            req.session.userType = "admin";
+            res.redirect('/adminpage.html')
+        }
+        else {
+            res.status(401).send(); //invalid password
+        }
+    }
+    else if (userType === "user") {
+        User.findOne({username: username}).then((user) => {
+            if (user.length == 0) {
+                res.status(401).send(); //invalid user
+            }
+            else {
+                //compare password
+                bcrypt.compare(password, user.passwordHash, (error, result) => {
+                    if (error) {
+                        res.status(400).send(error); //bcrypt error
+                    }
+                    else if (result) {
+                        req.session.user = user._id;
+                        req.session.userType = "user";
+                        res.redirect('/userProfile.html');
+                    }
+                    else {
+                        res.status(401).send(); //invalid password
+                    }
+                })
+            }
+        }).catch((error) => {
+            res.status(400).send('server error');
+        });
+    }
+    else if (userType === "walker") {
+        Walker.findOne({username: username}).then((walker) => {
+            if (!walker) {
+                res.status(401).send(); //invalid user
+            }
+            else {
+                //compare password
+                bcrypt.compare(password, walker.passwordHash, (error, result) => {
+                    if (error) {
+                        res.status(400).send(); //bcrypt error
+                    }
+                    else if (result) {
+                        req.session.user = walker._id;
+                        req.session.userType = "walker";
+                        res.redirect('/walkerProfile.html');
+                    }
+                    else {
+                        res.status(401).send(); //invalid password
+                    }
+                })
+            }
+        }).catch((error) => {
+            res.status(400).send('server error');
+        });
+    }
+    else {
+        res.status(400).send('no userType set');
+    }
+});
 
 /** User resource routes **/
 // a POST route to *create* a user
