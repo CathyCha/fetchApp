@@ -196,8 +196,43 @@
   border-left: 2px solid orange;
 }
 
+#signupSubmit:hover {
+  color: white;
+  background-color: orange
+}
+
 .dropdown-menu {
     width: 300px !important;
+}
+
+#regButtons {
+  margin-top: -15px;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+#regOwner {
+  width: 50%;
+  color: seagreen;
+  background-color: white;
+  border-color: seagreen
+}
+
+#regOwner:hover, #regOwner:focus {
+  background: seagreen;
+  color: white;
+}
+
+#regWalker {
+  width: 50%;
+  color: seagreen;
+  background-color: white;
+  border-color: seagreen
+}
+
+#regWalker:hover, #regWalker:focus {
+  background: seagreen;
+  color: white;
 }
 
 </style>
