@@ -1,6 +1,3 @@
-.background {
-  background-color: white;
-}
 
 .logo {
   width: 300px;
@@ -49,7 +46,7 @@
   border-left: 2px solid seagreen;
 }
 
-.Dog {
+.loginbutton {
   font: 14px Arial;
   text-decoration: none;
   background-color: white;
@@ -57,8 +54,8 @@
   color: orange;
   padding-top: 13px;
   padding-bottom: 13px;
-  padding-left: 99px;
-  padding-right: 99px;
+  padding-left: 121px;
+  padding-right: 121px;
   border-top: 2px solid orange;
   border-right: 2px solid orange;
   border-bottom: 2px solid orange;
@@ -126,25 +123,9 @@
 
 .line {
  height: 2px;
- width: 100%;
+ width: 100vw;
+ margin-left: -15px;
  background-color: orange;
-}
-
-.grass {
- position: fixed;
- bottom: -5px;
- margin-top: 100;
- height: 100px;
- z-index: -1;
-}
-
-.grass2 {
- position: fixed;
- bottom: -5px;
- left: 700px;
- margin-top: 100;
- height: 100px;
- z-index: -1;
 }
 
 .signup {
@@ -154,12 +135,6 @@
  width: 60%;
  margin: auto;
  margin-top: 50px;
-}
-
-
-.placeholder {
- height:200px;
- width:100%;
 }
 
 .register-form {
@@ -176,8 +151,8 @@
   color: seagreen;
   padding-top: 13px;
   padding-bottom: 13px;
-  padding-left: 90px;
-  padding-right: 90px;
+  padding-left: 81px;
+  padding-right: 81px;
   border-top: 2px solid seagreen;
   border-right: 2px solid seagreen;
   border-bottom: 2px solid seagreen;
@@ -200,10 +175,29 @@
   border-left: 2px solid orange;
 }
 
+#dropdownMenuButton {
+  background-color: white;
+  color: seagreen;
+  border: none;
+  background: none;
+}
+
 .logoSignup {
   width: 200px;
   margin-top: 10px;
 }
 
+#signupSubmit {
+  background-color: white;
+  color: orange;
+  border-top: 2px solid orange;
+  border-right: 2px solid orange;
+  border-bottom: 2px solid orange;
+  border-left: 2px solid orange;
+}
+
+.dropdown-menu {
+    width: 300px !important;
+}
 
 </style>
