@@ -53,15 +53,10 @@ function handleAnchorClick(event) {
     }
 }
 
+$('#regOwner').click(function() {
+    $(this).attr("id", "regOwner:focus")
+});
 
-// change the header of the registration form to Register as Walker or Dog
-// to be implemented after phase 1 - when we can call external APIs from handleAnchorClick
-function editWalker() {
-  const header = getElementsByTagName("h1");
-  // to be implemented after phase 1
-}
-
-function editDog() {
-  const header = getElementsByTagName("h1");
-  // to be implemented after phase 1
-}
+$('#regWalker').click(function() {
+    $(this).attr("id", "regWalker:focus")
+});
