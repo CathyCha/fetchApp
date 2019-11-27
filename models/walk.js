@@ -1,7 +1,7 @@
 /* Walk mongoose model */
 const mongoose = require('mongoose')
 
-const coordinateSChema = new mongoose.Schema
+const coordinateSchema = new mongoose.Schema
 
 const WalkSchema = new mongoose.Schema({
     walkerId: { type: String, required: true },

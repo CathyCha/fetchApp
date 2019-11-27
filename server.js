@@ -33,6 +33,29 @@ const upload = multer({
 const bodyParser = require('body-parser') 
 app.use(bodyParser.json())
 
+// express-session for managing user sessions
+const session = require('express-session')
+app.use(bodyParser.urlencoded({ extended: true }));
+
+//enable CORS to bypass security (baaaad, baaaad)
+let allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Headers', "*");
+    next();
+  }
+app.use(allowCrossDomain);
+
+/*** Session handling **************************************/
+// Create a session cookie
+app.use(session({
+    secret: 'supersecret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        expires: 60000,
+        httpOnly: true
+    }
+}));
 
 /*** Webpage routes below **********************************/
 
@@ -82,6 +105,9 @@ app.post('/user', (req, res) => {
                 })
             });
         });
+    }
+    else {
+        res.status(400).send("No data sent");   
     }
 });
 

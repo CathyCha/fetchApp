@@ -4,26 +4,29 @@ const log = console.log
 // const bcrypt = require('bcryptjs')
 function addUser(){
 
-	const url = "/user";
+	const url = "http://localhost:3001/user";
 	let data = {
 		firstName: document.querySelector('#firstName').value,
         lastName: document.querySelector('#lastName').value,
         password: document.querySelector('#password').value,
-        userName: document.querySelector('#userName').value,
+        username: document.querySelector('#userName').value,
         homeAddress: document.querySelector('#address').value,
         city: document.querySelector('#city').value,
         province: document.querySelector('#province').value,
         phoneNumber: document.querySelector('#phoneNumber').value,
         emailAddress: document.querySelector('#emailAddress').value
-	}
+    }
+ 
 	const request = new Request(url, {
         method: 'post', 
         body: JSON.stringify(data),
         headers: {
             'Accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/json'
-        }
+        },
+        mode: 'cors'
     })
+
     fetch(request)
     .then(function(res) {
 
