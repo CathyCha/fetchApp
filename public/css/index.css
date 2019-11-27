@@ -20,7 +20,8 @@
   background: white;
   width: 300px;
   height: 330px;
-  margin-left: 550px;
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 180px;
 }
 
