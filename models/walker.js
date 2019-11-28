@@ -12,8 +12,8 @@ const WalkerSchema = new mongoose.Schema({
 	phoneNumber: { type: Number, minlength: 9},
 	emailAddress: { type: String, required: true },
 	dateJoined: Date,
-	languages: String,
-	qualifications: String,
+	languages: [String],
+	qualifications: [String],
 	ratings: [Number]
 });
 

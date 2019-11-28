@@ -57,15 +57,34 @@ app.use(session({
     }
 }));
 
+// Our own express middleware to check for 
+// an active user on the session cookie (indicating a logged in user.)
+const sessionChecker = (req, res, next) => {
+    console.log("yes");
+    if (req.session.user) {
+        if (req.session.userType === "user") {
+            res.redirect('/userProfile.html');
+        }
+        else if (req.session.userType === "walker") {
+            res.redirect('/walkerProfile.html');
+        }
+        else if (req.session.userType === "admin") {
+            res.redirect('/adminpage.html');
+        }
+    } else {
+        next(); // next() moves on to the route.
+    }    
+};
+
 /*** Webpage routes below **********************************/
+
+// route for root
+app.get('/', sessionChecker, (req, res) => {
+	res.sendFile(__dirname + '/public/index.html')
+})
 
 // static directories
 app.use(express.static(__dirname + '/public'))
-
-// route for root
-app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/public/index.html')
-})
 
 /*********************************************************/
 
@@ -94,7 +113,7 @@ app.post('/login', (req, res) => {
     }
     else if (userType === "user") {
         User.findOne({username: username}).then((user) => {
-            if (user.length == 0) {
+            if (!user) {
                 res.status(401).send(); //invalid user
             }
             else {
@@ -147,43 +166,66 @@ app.post('/login', (req, res) => {
     }
 });
 
+// A route to logout a user
+app.get('/logout', (req, res) => {
+	// Remove the session
+	req.session.destroy((error) => {
+		if (error) {
+			res.status(500).send(error)
+		} else {
+			res.redirect('/')
+		}
+	})
+});
+
 /** User resource routes **/
 // a POST route to *create* a user
 app.post('/user', (req, res) => {
-    if (req.body.password) {
-        bcrypt.genSalt(10, (err, salt) => {
-            // password is hashed with the salt
-            bcrypt.hash(req.body.password, salt, (err, hash) => {
-                /*
-                //to compare to another password
-                bcrypt.compare("password", hash, (error, res) => {
-                    console.log(error, res);
-                });*/
-
-                const user = new User({
-                    username: req.body.username,
-                    passwordHash: hash,
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    homeAddress: req.body.homeAddress,
-                    city: req.body.city,
-                    province: req.body.province,
-                    phoneNumber: req.body.phoneNumber,
-                    emailAddress: req.body.emailAddress,
-                    dateJoined: new Date(),
-                    userDogs: []
+    if (req.body.username && req.body.password) {
+        //check if username already taken
+        User.findOne({username: req.body.username}).then((user) => {
+            if (req.body.username === "admin") {
+                res.status(403).send("Cannot use username 'admin'");
+            }
+            else if (user) {
+                res.status(403).send("Username taken");
+            }
+            else {
+                bcrypt.genSalt(10, (err, salt) => {
+                    // password is hashed with the salt
+                    bcrypt.hash(req.body.password, salt, (err, hash) => {
+                        /*
+                        //to compare to another password
+                        bcrypt.compare("password", hash, (error, res) => {
+                            console.log(error, res);
+                        });*/
+        
+                        const user = new User({
+                            username: req.body.username,
+                            passwordHash: hash,
+                            firstName: req.body.firstName,
+                            lastName: req.body.lastName,
+                            homeAddress: req.body.homeAddress,
+                            city: req.body.city,
+                            province: req.body.province,
+                            phoneNumber: req.body.phoneNumber,
+                            emailAddress: req.body.emailAddress,
+                            dateJoined: new Date(),
+                            userDogs: []
+                        });
+                    
+                        user.save().then((result) => {
+                            res.send(result);
+                        }, (error) => {
+                            res.status(400).send(error);
+                        })
+                    });
                 });
-            
-                user.save().then((result) => {
-                    res.send(result);
-                }, (error) => {
-                    res.status(400).send(error);
-                })
-            });
+            }
         });
     }
     else {
-        res.status(400).send("No data sent");   
+        res.status(400).send("Bad request");   
     }
 });
 
@@ -192,8 +234,6 @@ app.post('/user', (req, res) => {
 app.get('/user/:id', (req, res) => {
 	// Add code here
 	const id = req.params.id;
-	
-	console.log(id);
 	
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
@@ -268,39 +308,53 @@ app.get('/dogs/:userid', (req, res) => {
 /** Walker resource routes **/
 // a POST route to *create* a walker
 app.post('/walker', (req, res) => {
-    if (req.body.password) {
-        bcrypt.genSalt(10, (err, salt) => {
-            // password is hashed with the salt
-            bcrypt.hash(req.body.password, salt, (err, hash) => {
-                /*
-                //to compare to another password
-                bcrypt.compare("password", hash, (error, res) => {
-                    console.log(error, res);
-                });*/
+    if (req.body.username && req.body.password) {
+        //check if username already taken
+        Walker.findOne({username: req.body.username}).then((walker) => {
+            if (req.body.username === "admin") {
+                res.status(403).send("Cannot use username 'admin'");
+            }
+            else if (walker) {
+                res.status(403).send("Username taken");
+            }
+            else {
+                bcrypt.genSalt(10, (err, salt) => {
+                    // password is hashed with the salt
+                    bcrypt.hash(req.body.password, salt, (err, hash) => {
+                        /*
+                        //to compare to another password
+                        bcrypt.compare("password", hash, (error, res) => {
+                            console.log(error, res);
+                        });*/
 
-                const walker = new Walker({
-                    username: req.body.username,
-                    passwordHash: hash,
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    homeAddress: req.body.homeAddress,
-                    city: req.body.city,
-                    province: req.body.province,
-                    phoneNumber: req.body.phoneNumber,
-                    emailAddress: req.body.emailAddress,
-                    dateJoined: new Date(),
-                    languages: req.body.languages,
-                    qualifications: req.body.qualifications,
-                    ratings: []
+                        const walker = new Walker({
+                            username: req.body.username,
+                            passwordHash: hash,
+                            firstName: req.body.firstName,
+                            lastName: req.body.lastName,
+                            homeAddress: req.body.homeAddress,
+                            city: req.body.city,
+                            province: req.body.province,
+                            phoneNumber: req.body.phoneNumber,
+                            emailAddress: req.body.emailAddress,
+                            dateJoined: new Date(),
+                            languages: [],
+                            qualifications: [],
+                            ratings: []
+                        });
+                    
+                        walker.save().then((result) => {
+                            res.send(result);
+                        }, (error) => {
+                            res.status(400).send(error);
+                        })
+                    });
                 });
-            
-                walker.save().then((result) => {
-                    res.send(result);
-                }, (error) => {
-                    res.status(400).send(error);
-                })
-            });
+            }
         });
+    }
+    else {
+        res.status(400).send("Bad request");   
     }
 });
 

@@ -5,24 +5,51 @@
 document.documentElement.addEventListener("keyup", checkSubmit, false);
 
 function checkSubmit(e) {
-   if(e && e.keyCode == 13) {
-      // user and pass = valid dog user
-      if (e.target.value == "user") { //Dog
-        window.location.replace("userProfile.html");
+  if(e && e.keyCode == 13) {  
+    const username = document.querySelector("#user").value;
+    const password = document.querySelector("#pass").value;
+    const userType = "user"; //TODO: get dynamically
+    console.log(username, password, userType);
+
+    //data to send in the request
+    let data = {
+      username: username,
+      password: password,
+      userType: userType
+    }
+
+    const url = '/login';
+
+    const request = new Request(url, {
+      method: 'post', 
+      body: JSON.stringify(data),
+      credentials: 'same-origin',
+      redirect: 'follow',
+      headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
       }
-      // user and pass = valid walker user
-      else if (e.target.value == "user2") { //Walker
-        window.location.replace("walkerProfile.html");
+    });
+
+    fetch(request).then((res) => {
+      if (res.status === 200) {
+        console.log("successfully logged in");
+        //window.location.replace(res.url);
+        //TODO: this doesn't register the session cookie in the browser..
       }
-      //user and pass = valid admin
-      else if (e.target.value == "admin") {
-        window.location.replace("adminpage.html");
+      else if (res.status === 401) {
+        console.log("invalid username or password");
       }
-      // not a valid user
+      else if (res.status === 400) {
+        console.log("request error");
+      }
       else {
-        alert("Password and username don't match");
+        console.log(res);
       }
-   }
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
 }
 
 
