@@ -13,6 +13,8 @@ const { mongoose } = require('./db/mongoose')
 const { User } = require('./models/user')
 const { Dog } = require('./models/dogs')
 const { Walker } = require('./models/walker')
+const { Walk } = require('./models/walk')
+const { Report } = require('./models/report')
 
 // to validate object IDs
 const { ObjectID } = require('mongodb')
@@ -60,7 +62,7 @@ app.use(session({
 // Our own express middleware to check for 
 // an active user on the session cookie (indicating a logged in user.)
 const sessionChecker = (req, res, next) => {
-    console.log("yes");
+
     if (req.session.user) {
         if (req.session.userType === "user") {
             res.redirect('/userProfile.html');
@@ -91,6 +93,23 @@ app.use(express.static(__dirname + '/public'))
 /*** API Routes below ************************************/
 
 /** Login routes **/
+/* example bodies
+{
+	"username": "doglover21",
+	"password": "password",
+	"userType": "user"
+} 
+{
+	"username": "john123",
+	"password": "password123",
+	"userType": "walker"
+}
+{
+	"username": "admin",
+	"password": "admin",
+	"userType": "walker" //this field doesn't matter - it's not checked
+}
+*/
 app.post('/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -180,6 +199,16 @@ app.get('/logout', (req, res) => {
 
 /** User resource routes **/
 // a POST route to *create* a user
+/* example body
+{
+	"username": "doglover21",
+	"password" : "password",
+	"firstName": "Jane",
+	"lastName": "Doe",
+	"homeAddress": "123 Baker St",
+	"emailAddress": "me@jane.com"
+}
+*/
 app.post('/user', (req, res) => {
     if (req.body.username && req.body.password) {
         //check if username already taken
@@ -254,6 +283,12 @@ app.get('/user/:id', (req, res) => {
 
 /// Route for adding dog to a user
 // POST /dogs/userid
+/* example body
+{
+	"dogName" : "Rufus",
+	"weight" : 10
+}
+*/
 app.post('/dogs/:userid', (req, res) => {
 	// Add code here
 	const id = req.params.userid;
@@ -307,7 +342,18 @@ app.get('/dogs/:userid', (req, res) => {
 
 /** Walker resource routes **/
 // a POST route to *create* a walker
+/* example body
+{
+	"username": "john123",
+	"password" : "password123",
+	"firstName": "John",
+	"lastName": "Smith",
+	"homeAddress": "125 Baker St",
+	"emailAddress": "john@smith.com"
+}
+*/
 app.post('/walker', (req, res) => {
+
     if (req.body.username && req.body.password) {
         //check if username already taken
         Walker.findOne({username: req.body.username}).then((walker) => {
@@ -378,6 +424,53 @@ app.get('/walker/:id', (req, res) => {
 		res.status(500).send(); //server error
 	});
 })
+
+/** Walk resource routes **/
+
+/// Route for adding a walk to a user
+// POST /dogs/userid
+/* example body
+{ 
+	"walkerId": "5ddf04dd765a2b0624face6c",
+	"dogId" : "5ddf258ceae46928e0e903ac",
+	"walkNeeds" : [ "hyper", "puppy" ],
+	"duration" : 10,
+	"price" : 20
+}
+*/
+app.post('/walk', (req, res) => {
+	// Add code here
+    const walkerId = req.body.walkerId;
+    const dogId = req.body.dogId;
+	
+	if (!ObjectID.isValid(walkerId) || !ObjectID.isValid(dogId)) {
+		res.status(404).send();
+	}
+	const walk = new Walk({
+        walkerId: walkerId,
+        dogId: dogId,
+        walkNeeds: req.body.walkNeeds,
+        price: req.body.price,
+        startTime: new Date(),
+        endTime: new Date() + parseInt(req.body.duration) * 60000, //assume duration in minutes
+        notes: [],
+        locations: []
+    });
+    
+    walk.save().then((result) => {
+        res.send(result);
+    }, (error) => {
+        res.status(400).send(error);
+    })
+})
+
+//TODO: PATCH walk
+//TODO: GET walk
+
+/** Report resource routes **/
+//TODO: POST report
+//TODO: PATCH report
+//TODO: GET report
 
 /** Other routes **/
 
