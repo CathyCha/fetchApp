@@ -144,43 +144,12 @@
  margin-top: 40px;
 }
 
-.regDog {
-  font: 14px Arial;
-  text-decoration: none;
-  background-color: white;
-  border-radius: 5px;
+#selectUser {
+  border: 2px solid seagreen;
+  width: 270px;
+  margin-left: 15px;
+  text-indent: 95px;
   color: seagreen;
-  padding-top: 13px;
-  padding-bottom: 13px;
-  padding-left: 81px;
-  padding-right: 81px;
-  border-top: 2px solid seagreen;
-  border-right: 2px solid seagreen;
-  border-bottom: 2px solid seagreen;
-  border-left: 2px solid seagreen;
-}
-
-.regWalker {
-  font: 14px Arial;
-  text-decoration: none;
-  background-color: white;
-  border-radius: 5px;
-  color: orange;
-  padding-top: 13px;
-  padding-bottom: 13px;
-  padding-left: 80px;
-  padding-right: 80px;
-  border-top: 2px solid orange;
-  border-right: 2px solid orange;
-  border-bottom: 2px solid orange;
-  border-left: 2px solid orange;
-}
-
-#dropdownMenuButton {
-  background-color: white;
-  color: seagreen;
-  border: none;
-  background: none;
 }
 
 .logoSignup {
@@ -191,10 +160,10 @@
 #signupSubmit {
   background-color: white;
   color: orange;
-  border-top: 2px solid orange;
-  border-right: 2px solid orange;
-  border-bottom: 2px solid orange;
-  border-left: 2px solid orange;
+  border: 2px solid orange;
+  height: 40px;
+  width: 70px;
+  border-radius: 5px;
 }
 
 #signupSubmit:hover {
@@ -202,38 +171,53 @@
   background-color: orange
 }
 
-.dropdown-menu {
-    width: 300px !important;
-}
-
-#regButtons {
-  margin-top: -15px;
-  margin-bottom: 15px;
-  width: 100%;
-}
-
-#regOwner {
-  width: 50%;
-  color: seagreen;
-  background-color: white;
-  border-color: seagreen
-}
-
-#regOwner:hover, #regOwner:focus {
-  background: seagreen;
+#submit {
+  font: 14px Arial;
+  text-decoration: none;
+  background-color: orange;
+  border-radius: 5px;
   color: white;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 112px;
+  padding-right: 112px;
+  border: 2px solid orange;
 }
 
-#regWalker {
-  width: 50%;
-  color: seagreen;
-  background-color: white;
-  border-color: seagreen
+.switch-field {
+    display: flex;
+    margin-bottom: 10px;
+    border-radius: 5px;
 }
 
-#regWalker:hover, #regWalker:focus {
-  background: seagreen;
-  color: white;
+.switch-field input {
+    position: absolute !important;
+    clip: rect(0, 0, 0, 0);
 }
+
+.switch-field label {
+    width: 50%;
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+    padding: 8px 16px;
+    margin-right: -1px;
+    transition: all 0.1s ease-in-out;
+}
+
+.switch-field label:hover {
+    cursor: pointer;
+    background-color: orange;
+    color: white;
+    border-radius: 5px;
+}
+
+.switch-field input:checked + label {
+    background-color: MediumSeaGreen;
+    color: white;
+    box-shadow: none;
+    border-radius: 5px;
+}
+
 
 </style>
