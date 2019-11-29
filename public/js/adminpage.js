@@ -4,16 +4,19 @@ function editButton() {
   window.location.href='profileEdit.html';
 }
 
+// DELETE route
 function deleteacc() {
   alert('Are you sure you want to delete this account? You can not restore the account once it is deleted');
   alert('Account deleted.');
   window.location.replace('index.html');
 }
 
+// Direct to index
 function signout() {
   alert('Successfully signed out');
   window.location.replace('index.html');
 }
+
 
 function profileupload() {
   alert('Upload Profile Picture from Location');
@@ -26,30 +29,55 @@ function profileupload() {
 // -------------------------------------------------------
 // -------------------------------------------------------
 
-function populateReportTable() {
+function populateReportTable(reports) {
   // populates the reports data table
-  // DOM manipulation
-  // updates with new report submissions
+  const table = $('#reportTable');
+  table.find("tbody tr").remove();
+  reports.forEach(function (reports) {
+        table.append("<tr><td>" + reports.id + "</td><td>" + reports.type + "</td></td>" +
+        reports.user + "</td><td>" + reports.status + "</td><td>" + reports.action + "</td></tr>");
+  });
 }
 
-function searchReports() {
+function searchReports(rid, reports) {
   // changes DOM to return the Report ID in search
+
+  // check if rid exists
+  if (!ObjectID.isValid(rid)) {
+		res.status(404).send()  // if invalid id, definitely can't find resource, 404.
+	}
+
+  const table = $('#reportTable');
+  table.find("tbody tr").remove();
+  reports.find
 }
 
-function populateDogTable() {
+function populateDogTable(owners) {
   // populates the all dog users table
-  // DOM manipulation
-  // updates with new user registration
+  const table = $('#ownerTable');
+  table.find("tbody tr").remove();
+  owners.forEach(function (owners) {
+        table.append("<tr><td>" + owners.id + "</td><td>" + owners.name + "</td></td>" +
+        owners.city + "</td><td>" + owners.email + "</td><td>" + owners.dogs +  "</td><td>" +
+        owners.dateJoined + "</td></tr>");
+  });
 }
 
-function searchUser() {
+function searchUser(uid) {
   // changes DOM to return the Dog User ID in search
+
 }
 
-function populateWalkerTable() {
+function populateWalkerTable(walkers) {
   // populates the all walker users table
-  // DOM manipulation
-  // updates with new user registration
+  const table = $('#walkerTable');
+  table.find("tbody tr").remove();
+  walkers.forEach(function (walkers) {
+        table.append("<tr><td>" + walkers.id + "</td><td>" + walkers.name + "</td></td>" +
+        walkers.city + "</td><td>" + walkers.email + "</td><td>" + walkers.dateJoined +  "</td><td>" +
+        owners.rating + "</td></tr>");
+  });
+
 }
 
 function searchWalker() {
@@ -58,4 +86,5 @@ function searchWalker() {
 
 function populateAllWalks() {
   // manipulates DOM to show all walks in data
+
 }

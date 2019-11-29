@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/userProfile.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
   <script type="text/javascript" src="js/adminpage.js"></script>
@@ -16,7 +17,7 @@
     <img class="logo" src="images/Logo_copy.png">
     <a id="curr" href="adminpage.html">Reports</a>
     <a href="walkers.html">Walkers</a>
-    <a href="dogs.html">Dogs</a>
+    <a href="dogs.html">Owners</a>
     <a href="allWalks.html">Walks</a>
   </div>
 
@@ -27,12 +28,15 @@
       <h1>Admin</h1>
     </div>
 
-
-    <div class="reports">
-      <h4>Reports</h4>
-      <input type="submit" value="Search"> <input id="search" type="text" placeholder="Report ID"><br>
-    </div>
-    <br />
+    <h4>Reports</h4>
+    <form>
+      <div class="form-group row">
+        <button type="submit" class="btn-primary" id="reportSearchButton">Search</button>
+        <div class="col-sm-2">
+          <input type="text" class="form-control" id="searchReport" name="rid" placeholder="Report ID">
+        </div>
+      </div>
+    </form>
 
     <table id="reportTable" class="table">
       <thead>
@@ -51,69 +55,6 @@
           <td><span class="link" onclick="javascript:showProfile();">Tim</span></td>
           <td>Closed</td>
           <td>Block</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">2</a></th>
-          <td>Rude walker</td>
-          <td><span class="link" onclick="javascript:showProfile();">John</span></td>
-          <td>Closed</td>
-          <td>Refund</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">3</a></th>
-          <td>Cancelled Walk</td>
-          <td><span class="link" onclick="javascript:showProfile();">Sarah</span></td>
-          <td>Open</td>
-          <td>Pending</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">4</a></th>
-          <td>Misbehaving Dog</td>
-          <td><span class="link" onclick="javascript:showProfile();">Julia</span></td>
-          <td>Pending</td>
-          <td>Pending</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">5</a></th>
-          <td>Misbehaving Dog</td>
-          <td><span class="link" onclick="javascript:showProfile();">Tim</span></td>
-          <td>Pending</td>
-          <td>Pending</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">6</a></th>
-          <td>Rude walker</td>
-          <td><span class="link" onclick="javascript:showProfile();">John</span></td>
-          <td>Pending</td>
-          <td>Pending</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">7</a></th>
-          <td>Cancelled Walk</td>
-          <td><span class="link" onclick="javascript:showProfile();">Sarah</span></td>
-          <td>Pending</td>
-          <td>Pending</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">8</a></th>
-          <td>Misbehaving Dog</td>
-          <td><span class="link" onclick="javascript:showProfile();">Julia</span></td>
-          <td>Pending</td>
-          <td>Pending</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">9</a></th>
-          <td>Misbehaving Dog</td>
-          <td><span class="link" onclick="javascript:showProfile();">John</span></td>
-          <td>Pending</td>
-          <td>Pending</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">10</a></th>
-          <td>Cancelled Walk</td>
-          <td><span class="link" onclick="javascript:showProfile();">Sarah</span></td>
-          <td>Pending</td>
-          <td>Pending</td>
         </tr>
       </tbody>
     </table>

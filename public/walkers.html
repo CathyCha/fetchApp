@@ -4,7 +4,7 @@
   <title>Admin</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/userProfile.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -25,36 +25,39 @@
 
   <div id="main">
     <div class="page-header">
-      <h1>Walkers</h1>
+      <h1>Admin</h1>
     </div>
 
+    <h4>Walkers</h4>
 
-    <div class="reports">
-      <input type="submit" value="Search"> <input id="search" type="text" placeholder="Walker ID"><br>
-    </div>
-    <br />
+    <form>
+      <div class="form-group row">
+        <button type="submit" class="btn-primary" id="reportSearchButton">Search</button>
+        <div class="col-sm-2">
+          <input type="text" class="form-control" id="searchReport" name="wid" placeholder="Walker ID">
+        </div>
+      </div>
+    </form>
 
-    <table id="reportTable" class="table">
+    <table id="walkerTable" class="table">
       <thead>
         <tr>
           <th scope="col">Walker ID</th>
-          <th scope="col">Number of Walks</th>
           <th scope="col">Name</th>
+          <th scope="col">City</th>
+          <th scope="col">Email</th>
+          <th scope="col">Date Joined</th>
           <th scope="col">Rating</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <th scope="row"><a href="#">1</a></th>
-          <td>10</td>
-          <td><span class="link" onclick="javascript:showProfile();">Tim</span></td>
+          <td>John</td>
+          <td>Toronto</td>
+          <td>abc@xyz.ca</td>
+          <td>June 1st 2020</td>
           <td>4.3</td>
-        </tr>
-        <tr>
-          <th scope="row"><a href="#">2</a></th>
-          <td>25</td>
-          <td><span class="link" onclick="javascript:showProfile();">John</span></td>
-          <td>4.9</td>
         </tr>
       </tbody>
     </table>

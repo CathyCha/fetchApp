@@ -13,6 +13,21 @@
 	cursor: default;
 }
 
+#reportSearchButton {
+	background-color: white;
+	border-radius: 5px;
+	border-color: seagreen;
+	margin-left: 15px;
+	color: seagreen;
+}
+
+#reportSearchButton:hover {
+	background-color: white;
+	color: orange;
+	border-color: orange;
+}
+
+
 /* The side navigation menu */
 .sidenav {
   height: 100%;
