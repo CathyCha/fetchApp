@@ -427,7 +427,7 @@ app.get('/walker/:id', (req, res) => {
 
 /** Walk resource routes **/
 
-/// Route for adding a walk to a user
+/// Route for adding a walk for a user's dog and a walker
 // POST /dogs/userid
 /* example body
 { 
@@ -451,8 +451,7 @@ app.post('/walk', (req, res) => {
         dogId: dogId,
         walkNeeds: req.body.walkNeeds,
         price: req.body.price,
-        startTime: new Date(),
-        endTime: new Date() + parseInt(req.body.duration) * 60000, //assume duration in minutes
+        duration: req.body.duration,
         notes: [],
         locations: []
     });
@@ -462,10 +461,108 @@ app.post('/walk', (req, res) => {
     }, (error) => {
         res.status(400).send(error);
     })
+
+    //TODO: update dog's walk needs to have these walk needs
+})
+
+// Route for getting information for a walk
+app.get('/walk/:id', (req, res) => {
+    const id = req.params.id;
+
+    if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+	}
+	
+	Walk.findById(id).then((walk) => {
+		if (!walk) {
+			res.status(404).send(); //could not find walk
+		} else {
+			res.send(walk);
+		}
+	}).catch((error) => {
+		res.status(500).send(); //server error
+	});
+
+})
+
+// Route for changing properties of a walk
+/* example bodies:
+{
+    startNow: true,
+    notes: ["Heading out"],
+    accepted: true,
+    location: { x: 20, y: 20 }
+}
+{
+    endNow: true,
+    dogRating: 5,
+    notes: ["We're back"],
+    completed: true,
+    location: { x: 10, y: 10 }
+}
+{
+    walkerRating: 5
+}
+*/
+app.patch('/walk/:id', (req, res) => {
+    const id = req.params.id;
+    
+    if (!ObjectID.isValid(id)) {
+		res.status(404).send()
+	}
+
+    /* TODO for this part
+        - only walkers should be able to update all fields except walkerRating
+        - only users should be able to update walkerRating
+        - price should be auto-updated based on duration and walk needs
+    */
+
+    //find the walk and update it
+	Walk.findById(id).then((walk) => {
+		if (!walk) {
+			res.status(404).send(); //could not find walk
+		} else {
+            if (req.body.price) {
+                walk.price = req.body.price;
+            }
+            if (req.body.accepted) {
+                if (walk.startTime) {
+                    //walk is already started
+                    res.status(422).send(); //invalid update
+                }
+                else {
+                    walk.startTime = new Date();
+                    walk.accepted = true;
+                }
+            }
+            if (req.body.completed) {
+                if (walk.endTime) {
+                    //walk is already ended
+                    res.status(422).send(); //invalid update
+                }
+                else {
+                    walk.endTime = new Date();
+                    walk.completed = true;
+                    walk.duration = Math.round((((walk.endTime - walk.StartTime) % 86400000) % 3600000) / 60000);
+                }
+            }
+            if (req.body.walkerRating && walk.completed) {
+                walk.walkerRating = req.body.walkerRating;
+            }
+            if (req.body.dogRating && walk.completed) {
+                walk.dogRating = req.body.dogRating;
+            }
+
+            
+		}
+	}).catch((error) => {
+		res.status(500).send(); //server error
+	});
+
+
 })
 
 //TODO: PATCH walk
-//TODO: GET walk
 
 /** Report resource routes **/
 //TODO: POST report
