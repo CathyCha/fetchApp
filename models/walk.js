@@ -20,7 +20,7 @@ const WalkSchema = new mongoose.Schema({
     dogRating: Number,
     notes: [String],
     accepted: { type: Boolean, default: false }, //set to true when walker accepts
-    completed: { type: Boolean, default: false },
+    completed: { type: Boolean, default: false }, //set to true when walk ends
     locations: [ CoordinateSchema ]
 });
 

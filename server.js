@@ -591,10 +591,54 @@ app.patch('/walk/:id', (req, res) => {
 	});
 })
 
+/// Route to create a report
 /** Report resource routes **/
-//TODO: POST report
+/* example body:
+{
+    "type" : "Unprofessional",
+    "walkerId" : "5ddf04dd765a2b0624face6c",
+    "userId" : "5ddf0314d7048e253836ec22",
+    "dogId" : "5ddf258ceae46928e0e903ac",
+    "walkId" : "5de1d2987ed1b8360477f21c"
+}
+*/
+app.post('/report', (req, res) => {
+    const walkerId = req.body.walkerId;
+    const userId = req.body.userId;
+    const dogId = req.body.userId;
+    const walkId = req.body.walkId;
+    
+    if (!ObjectID.isValid(walkerId) || !ObjectID.isValid(dogId) || !ObjectID.isValid(userId) || !ObjectID.isValid(walkId)) {
+		res.status(404).send();
+    }
+
+    const report = new Report({
+        type: req.body.type,
+        walkerId: walkerId,
+        userId: userId,
+        dogId: dogId,
+        walkId: walkId
+    })
+
+    report.save().then((result) => {
+        res.send(result);
+    }, (error) => {
+        res.status(400).send();
+    });
+})
+
+/// route to get all reports
+// security TODO: restrict to admin only
+app.get('/report', (req, res) => {
+    Report.find({}).then((reports) => {
+        res.send({reports}); //send all reports
+    }, (error) => {
+        res.status(500).send(error); //server error
+    })
+})
 //TODO: PATCH report
 //TODO: GET report
+
 
 /** Other routes **/
 
