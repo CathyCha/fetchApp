@@ -85,6 +85,11 @@ app.get('/', sessionChecker, (req, res) => {
 	res.sendFile(__dirname + '/public/index.html')
 })
 
+//redirect if user tries to login again while already logged in
+app.get('/login.html', sessionChecker, (req,res) => {
+    res.sendFile(__dirname + "/public/login.html");
+})
+
 // static directories
 app.use(express.static(__dirname + '/public'))
 
@@ -111,12 +116,13 @@ app.use(express.static(__dirname + '/public'))
 }
 */
 app.post('/login', (req, res) => {
+    console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
     const userType = req.body.userType;
 
     if (!username || !password || !userType) {
-        res.status(400).send("Username or password or userType field missing/incorrect");
+        res.redirect('/login.html');
         return;
     }
     if (username === "admin") {

@@ -15,17 +15,17 @@
     <div class="loginbox">
       <img class="logo" src="images/Logo_copy.png"></img>
 
-      <form>
+      <form action="/login" method="post">
       <div class="form-group">
-        <select class="form-control" id=selectUser name="usertype">
+        <select class="form-control" id="selectUser" name="userType">
           <option disabled="disabled" selected="selected">Login as:</option>
-          <option value="owner" id="dropdownMenuButton">Owner</option>
+          <option value="user" id="dropdownMenuButton">Owner</option>
           <option value="walker" id="dropdownMenuButton">Walker</option>
         </select>
 
-        <input class="form-control" id="user" type="text" placeholder="Enter Username" name="uname" required>
+        <input class="form-control" id="user" type="text" placeholder="Enter Username" name="username" required>
         <br>
-        <input class="form-control" id="pass" type="password" placeholder="Enter Password" name="psw" required>
+        <input class="form-control" id="pass" type="password" placeholder="Enter Password" name="password" required>
         <input type="submit" value="Submit" id="submit">
       </div>
       </form>
