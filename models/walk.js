@@ -9,6 +9,7 @@ const CoordinateSchema = new mongoose.Schema({
 //simplying assumption: walk starts immediately after walker accepts
 const WalkSchema = new mongoose.Schema({
     walkerId: { type: String, required: true },
+    userId: { type: String, required: true },
     dogId: { type: String, required: true },
     walkNeeds: [String],
     price: { type: Number, required: true },

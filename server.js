@@ -431,26 +431,47 @@ app.get('/walker/:id', (req, res) => {
 // POST /dogs/userid
 /* example body
 { 
-	"walkerId": "5ddf04dd765a2b0624face6c",
+    "walkerId": "5ddf04dd765a2b0624face6c",
+    "userId" : "5ddf0314d7048e253836ec22",
 	"dogId" : "5ddf258ceae46928e0e903ac",
 	"walkNeeds" : [ "hyper", "puppy" ],
-	"duration" : 10,
-	"price" : 20
+	"duration" : 10
 }
 */
 app.post('/walk', (req, res) => {
 	// Add code here
     const walkerId = req.body.walkerId;
+    const userId = req.body.userId;
     const dogId = req.body.dogId;
-	
+
 	if (!ObjectID.isValid(walkerId) || !ObjectID.isValid(dogId)) {
 		res.status(404).send();
-	}
+    }
+
+    User.findById(userId).then((user) => {
+        if (!user) {
+            res.status(400).send("Could not find user");
+            return;
+        }
+        else {
+            user.userDogs.id(dogId).needs = req.body.walkNeeds;
+            user.save().then((result) => {
+                ; //dog saved
+            }, (error) => {
+                res.status(500).send(); //server error
+                return;
+            });
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
+
 	const walk = new Walk({
         walkerId: walkerId,
+        userId: userId,
         dogId: dogId,
         walkNeeds: req.body.walkNeeds,
-        price: req.body.price,
+        price: 8 + 2*parseInt(req.body.duration)/5 + 5*req.body.walkNeeds.length,
         duration: req.body.duration,
         notes: [],
         locations: []
@@ -462,7 +483,7 @@ app.post('/walk', (req, res) => {
         res.status(400).send(error);
     })
 
-    //TODO: update dog's walk needs to have these walk needs
+    
 })
 
 // Route for getting information for a walk
@@ -488,20 +509,18 @@ app.get('/walk/:id', (req, res) => {
 // Route for changing properties of a walk
 /* example bodies:
 {
-    startNow: true,
-    notes: ["Heading out"],
-    accepted: true,
-    location: { x: 20, y: 20 }
+    "note": "Heading out",
+    "accepted": true,
+    "location": { "x": 20, "y": 20 }
 }
 {
-    endNow: true,
-    dogRating: 5,
-    notes: ["We're back"],
-    completed: true,
-    location: { x: 10, y: 10 }
+    "dogRating": 5,
+    "note": "We're back",
+    "completed": true,
+    "location": { "x": 10, "y": 10 }
 }
 {
-    walkerRating: 5
+    "walkerRating": 5
 }
 */
 app.patch('/walk/:id', (req, res) => {
@@ -511,7 +530,7 @@ app.patch('/walk/:id', (req, res) => {
 		res.status(404).send()
 	}
 
-    /* TODO for this part
+    /* security TODO for this part
         - only walkers should be able to update all fields except walkerRating
         - only users should be able to update walkerRating
         - price should be auto-updated based on duration and walk needs
@@ -522,6 +541,7 @@ app.patch('/walk/:id', (req, res) => {
 		if (!walk) {
 			res.status(404).send(); //could not find walk
 		} else {
+            console.log(req.body);
             if (req.body.price) {
                 walk.price = req.body.price;
             }
@@ -543,7 +563,8 @@ app.patch('/walk/:id', (req, res) => {
                 else {
                     walk.endTime = new Date();
                     walk.completed = true;
-                    walk.duration = Math.round((((walk.endTime - walk.StartTime) % 86400000) % 3600000) / 60000);
+                    walk.duration = Math.round((((walk.endTime - walk.startTime) % 86400000) % 3600000) / 60000);
+                    walk.price = 8 * 2*walk.duration/5 + 5*walk.walkNeeds.length;
                 }
             }
             if (req.body.walkerRating && walk.completed) {
@@ -552,17 +573,23 @@ app.patch('/walk/:id', (req, res) => {
             if (req.body.dogRating && walk.completed) {
                 walk.dogRating = req.body.dogRating;
             }
+            if (req.body.note) {
+                walk.notes.push(req.body.note);
+            }
+            if (req.body.location) {
+                walk.locations.push(req.body.location);
+            }
 
-            
+            walk.save().then((result) => {
+                res.send(result);
+            }, (error) => {
+                res.status(400).send(error);
+            });
 		}
 	}).catch((error) => {
 		res.status(500).send(); //server error
 	});
-
-
 })
-
-//TODO: PATCH walk
 
 /** Report resource routes **/
 //TODO: POST report
