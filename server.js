@@ -28,11 +28,11 @@ const path = require("path");
 const fs = require("fs");
 const multer = require('multer');
 const upload = multer({
-    dest: "/public/images/uploaded"
+    dest: "./public/images/uploaded"
 });
 
 // body-parser: middleware for parsing HTTP JSON body into a usable object
-const bodyParser = require('body-parser') 
+const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
 // express-session for managing user sessions
@@ -59,7 +59,7 @@ app.use(session({
     }
 }));
 
-// Our own express middleware to check for 
+// Our own express middleware to check for
 // an active user on the session cookie (indicating a logged in user.)
 const sessionChecker = (req, res, next) => {
 
@@ -75,7 +75,7 @@ const sessionChecker = (req, res, next) => {
         }
     } else {
         next(); // next() moves on to the route.
-    }    
+    }
 };
 
 /*** Webpage routes below **********************************/
@@ -103,7 +103,7 @@ app.use(express.static(__dirname + '/public'))
 	"username": "doglover21",
 	"password": "password",
 	"userType": "user"
-} 
+}
 {
 	"username": "john123",
 	"password": "password123",
@@ -136,7 +136,7 @@ app.post('/login', (req, res) => {
         res.redirect('/login.html');
         return;
     }
-    
+
     else if (userType === "user") {
         User.findOne({username: username}).then((user) => {
             if (!user) {
@@ -235,7 +235,7 @@ app.post('/user', (req, res) => {
                         bcrypt.compare("password", hash, (error, res) => {
                             console.log(error, res);
                         });*/
-        
+
                         const user = new User({
                             username: req.body.username,
                             passwordHash: hash,
@@ -249,7 +249,7 @@ app.post('/user', (req, res) => {
                             dateJoined: new Date(),
                             userDogs: []
                         });
-                    
+
                         user.save().then((result) => {
                             res.send(result);
                         }, (error) => {
@@ -261,7 +261,7 @@ app.post('/user', (req, res) => {
         });
     }
     else {
-        res.status(400).send("Bad request");   
+        res.status(400).send("Bad request");
     }
 });
 
@@ -269,11 +269,11 @@ app.post('/user', (req, res) => {
 // GET /user/id
 app.get('/user/:id', (req, res) => {
 	const id = req.params.id;
-	
+
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
 	}
-	
+
 	User.findById(id).then((user) => {
 		if (!user) {
 			res.status(404).send(); //could not find user
@@ -289,11 +289,11 @@ app.get('/user/:id', (req, res) => {
 // GET /user/id
 app.get('/user', (req, res) => {
 	const id = req.session.user;
-	
+
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
 	}
-	
+
 	User.findById(id).then((user) => {
 		if (!user) {
 			res.status(404).send(); //could not find user
@@ -309,15 +309,15 @@ app.get('/user', (req, res) => {
 // Changes the data for the user logged in
 app.patch('/user', (req, res) => {
     const id = req.session.user;
-	
+
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
     }
-    
+
     User.findById(id).then((user) => {
         if (!user) {
             res.status(404).send(); //could not find user
-        } 
+        }
         else {
             //update user
             if (req.body.fname) {
@@ -342,7 +342,7 @@ app.patch('/user', (req, res) => {
                 bcrypt.genSalt(10, (err, salt) => {
                     bcrypt.hash(req.body.pwd, salt, (err, hash) => {
                         user.passwordHash = hash;
-                        
+
                         //asynchronous call waits on bcrypt result
                         //save the user here if the password changed
                         user.save().then((result) => {
@@ -352,7 +352,7 @@ app.patch('/user', (req, res) => {
                         })
                     });
                 });
-            } 
+            }
             else {
                 //save the user if their password didn't change
                 user.save().then((result) => {
@@ -360,7 +360,7 @@ app.patch('/user', (req, res) => {
                 }, (error) => {
                     res.status(400).send(error);
                 })
-            }        
+            }
         }
     }).catch((error) => {
         res.status(500).send(); //server error
@@ -434,7 +434,7 @@ app.delete('/user', (req, res) => {
 app.post('/dogs/:userid', (req, res) => {
 	// Add code here
 	const id = req.params.userid;
-	
+
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
 	}
@@ -444,7 +444,7 @@ app.post('/dogs/:userid', (req, res) => {
         weight: req.body.weight,
         ratings: []
 	};
-	
+
 	User.findById(id).then((user) => {
 		if (!user) {
 			res.status(404).send(); //could not find user
@@ -464,13 +464,13 @@ app.post('/dogs/:userid', (req, res) => {
 app.get('/dogs/:userid', (req, res) => {
 	// Add code here
 	const id = req.params.userid;
-	
+
 	console.log(id);
-	
+
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
 	}
-	
+
 	User.findById(id).then((user) => {
 		if (!user) {
 			res.status(404).send(); //could not find user
@@ -530,7 +530,7 @@ app.post('/walker', (req, res) => {
                             qualifications: [],
                             ratings: []
                         });
-                    
+
                         walker.save().then((result) => {
                             res.send(result);
                         }, (error) => {
@@ -542,7 +542,7 @@ app.post('/walker', (req, res) => {
         });
     }
     else {
-        res.status(400).send("Bad request");   
+        res.status(400).send("Bad request");
     }
 });
 
@@ -551,11 +551,11 @@ app.post('/walker', (req, res) => {
 app.get('/walker/:id', (req, res) => {
 	// Add code here
 	const id = req.params.id;
-	
+
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
 	}
-	
+
 	Walker.findById(id).then((walker) => {
 		if (!walker) {
 			res.status(404).send(); //could not find user
@@ -572,11 +572,11 @@ app.get('/walker/:id', (req, res) => {
 app.get('/walker', (req, res) => {
 	// Add code here
     const id = req.session.user;
-	
+
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
 	}
-	
+
 	Walker.findById(id).then((walker) => {
 		if (!walker) {
 			res.status(404).send(); //could not find user
@@ -593,7 +593,7 @@ app.get('/walker', (req, res) => {
 /// Route for adding a walk for a user's dog and a walker
 // POST /dogs/userid
 /* example body
-{ 
+{
     "walkerId": "5ddf04dd765a2b0624face6c",
     "userId" : "5ddf0314d7048e253836ec22",
 	"dogId" : "5ddf258ceae46928e0e903ac",
@@ -639,14 +639,14 @@ app.post('/walk', (req, res) => {
         notes: [],
         locations: []
     });
-    
+
     walk.save().then((result) => {
         res.send(result);
     }, (error) => {
         res.status(400).send(error);
     })
 
-    
+
 })
 
 // Route for getting information for a walk
@@ -656,7 +656,7 @@ app.get('/walk/:id', (req, res) => {
     if (!ObjectID.isValid(id)) {
 		res.status(404).send();
 	}
-	
+
 	Walk.findById(id).then((walk) => {
 		if (!walk) {
 			res.status(404).send(); //could not find walk
@@ -688,7 +688,7 @@ app.get('/walk/:id', (req, res) => {
 */
 app.patch('/walk/:id', (req, res) => {
     const id = req.params.id;
-    
+
     if (!ObjectID.isValid(id)) {
 		res.status(404).send()
 	}
@@ -770,7 +770,7 @@ app.post('/report', (req, res) => {
     const userId = req.body.userId;
     const dogId = req.body.userId;
     const walkId = req.body.walkId;
-    
+
     if (!ObjectID.isValid(walkerId) || !ObjectID.isValid(dogId) || !ObjectID.isValid(userId) || !ObjectID.isValid(walkId)) {
 		res.status(404).send();
     }
@@ -806,9 +806,9 @@ app.get('/report', (req, res) => {
 /** Other routes **/
 
 /// Route for uploading an image for a user profile picture
-/// Image will be stored as /public/images/uploaded/id.{jpg.png} 
+/// Image will be stored as /public/images/uploaded/id.{jpg.png}
 // POST /upload/{userid/dogid/walkerid}
-app.post('/upload/:id', upload.single("file" /* name of file element in form */), 
+app.post('/upload/:id', upload.single("file" /* name of file element in form */),
 (req, res) => {
     const id = req.params.id;
     if (!ObjectID.isValid(id)) {
