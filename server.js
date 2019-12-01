@@ -803,9 +803,9 @@ app.patch('/walk/:id', (req, res) => {
     //find the walk and update it
 	Walk.findById(id).then((walk) => {
 		if (!walk) {
-			res.status(404).send(); //could not find walk
+            res.status(404).send(); //could not find walk
+            return;
 		} else {
-            console.log(req.body);
             if (req.body.price) {
                 walk.price = req.body.price;
             }
@@ -813,6 +813,7 @@ app.patch('/walk/:id', (req, res) => {
                 if (walk.startTime) {
                     //walk is already started
                     res.status(422).send(); //invalid update
+                    return;
                 }
                 else {
                     walk.startTime = new Date();
@@ -823,6 +824,7 @@ app.patch('/walk/:id', (req, res) => {
                 if (walk.endTime) {
                     //walk is already ended
                     res.status(422).send(); //invalid update
+                    return;
                 }
                 else {
                     walk.endTime = new Date();
@@ -833,11 +835,37 @@ app.patch('/walk/:id', (req, res) => {
             }
             if (req.body.walkerRating && walk.completed) {
                 walk.walkerRating = req.body.walkerRating;
-                //TODO: add to walker object
+                Walker.updateOne( 
+                    { _id: walk.walkerId }, 
+                    { $push: { ratings: parseInt(req.body.walkerRating, 10)} },
+                    (err, success) => {
+                        if (err) {
+                            console.log(error);
+                        }
+                        else {
+                            ; //success
+                        }
+                    }
+                );
             }
             if (req.body.dogRating && walk.completed) {
                 walk.dogRating = req.body.dogRating;
-                //TODO: add to dog object
+                User.updateOne(
+                    { "_id": walk.userId, "userDogs._id": walk.dogId },
+                    { 
+                        "$push": { 
+                            "userDogs.$.ratings": parseInt(req.body.dogRating, 10)
+                        }
+                    },
+                    (err, success) => {
+                        if (err) {
+                            console.log(error);
+                        }
+                        else {
+                            ; //success
+                        }
+                    }
+                );
             }
             if (req.body.note) {
                 walk.notes.push(req.body.note);

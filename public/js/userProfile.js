@@ -131,7 +131,7 @@ function average(array) {
     }
     let sum = 0;
     for (let i = 0; i < array.length; i++) {
-        sum += array[i];
+        sum += parseInt(array[i], 10);
     }
     return (sum/array.length).toFixed(2);
 }
