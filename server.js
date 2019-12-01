@@ -409,7 +409,16 @@ app.delete('/user', (req, res) => {
         }
     }).catch((error) => {
         res.status(500).send(); //server error, could not delete
-    })
+    });
+
+    // Remove the session; log out the user
+	req.session.destroy((error) => {
+		if (error) {
+			; //hope that nothing goes wrong
+		} else {
+			res.redirect('/')
+		}
+	})
 })
 
 /** Dog resource routes **/
