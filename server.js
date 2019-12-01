@@ -82,7 +82,7 @@ const sessionChecker = (req, res, next) => {
 
 // route for root
 app.get('/', sessionChecker, (req, res) => {
-	res.sendFile(__dirname + './public/index.html')
+	res.sendFile(__dirname + '/public/index.html')
 })
 
 //redirect if user tries to login again while already logged in
@@ -91,7 +91,7 @@ app.get('/login.html', sessionChecker, (req,res) => {
 })
 
 // static directories
-app.use(express.static(__dirname + './public'))
+app.use(express.static(__dirname + '/public'))
 
 /*********************************************************/
 
