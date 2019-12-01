@@ -567,6 +567,90 @@ app.get('/walker/:id', (req, res) => {
 	});
 })
 
+app.patch('walker/:id', (req, res) => {
+    const id = req.params.id;
+
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()
+    }
+
+    Walker.findById(id).then((walker) => {
+        if(!walker){
+            res.status(404).send()
+        } else {
+
+            if (req.body.fname) {
+                walker.firstName = req.body.fname;
+            }
+            if (req.body.lname) {
+                walker.lastName = req.body.lname;
+            }
+            if (req.body.email) {
+                walker.emailAddress = req.body.email;
+            }
+            if (req.body.adrs) {
+                walker.homeAddress = req.body.adrs;
+            }
+            if (req.body.city) {
+                walker.city = req.body.city;
+            }
+            if (req.body.prov) {
+                walker.province = req.body.prov;
+            }
+            if (req.body.phone) {
+                walker.phoneNumber = req.body.phone
+            }
+            if (req.body.languages) {
+                walker.languages = req.body.languages
+            }
+            if (req.body.qual) {
+                walker.qualifications = req.body.qual
+            }
+            if (req.body.ratings){
+                walker.ratings = req.body.ratings
+            }
+
+            if (req.body.pwd) {
+                bcrypt.genSalt(10, (err, salt) => {
+                    // password is hashed with the salt
+                    
+                    bcrypt.hash(req.body.password, salt, (err, hash) => {
+
+                        // Change password
+                        walker.passwordHash = hash
+                    });
+                });
+            }
+
+            walker.save().then((result) => {
+                res.send(result);
+            }, (error) => {
+                res.status(400).send(error);
+            })
+        }
+    })
+})
+
+app.delete('/walker/:id', (req, res) => {
+    const id = req.params.id
+
+    //Validate Id
+    if(!ObjectID.isValid(id)){
+        res.status(404).send()
+    }
+
+    //Delete a walker by ID
+    Walker.findByIdAndRemove(id).then((walker) => {
+        if(!walker){
+            res.status(404).send()
+        } else [
+            res.send(walker)
+        ]
+    }).catch((error) => {
+        res.status(500).send() // Server error
+    })
+})
+
 /// Route for getting information for the walker logged in.
 // GET /walker/id
 app.get('/walker', (req, res) => {
@@ -803,8 +887,79 @@ app.get('/report', (req, res) => {
     })
 })
 
-//TODO: PATCH report
+// Get report by id
+app.get('/report/:id', (req, res) => {
+    const id = req.params.id 
+    if(!ObjectID.isValid(id)){
+        res.status(404).send()
+    }
 
+    Report.findById(id).then((report) => {
+        if(!report){
+            res.status(404).send()
+        } else {
+            res.send(report)
+        }
+    }).catch((error) => {
+        res.status(500).send()
+    })
+})
+//TODO: PATCH report
+app.patch('/report/:id', (req, res) => {
+    const id = req.params.id
+    if(!ObjectID.isValid(id)){
+        res.status(404).send()
+    }
+
+    Report.findById(id).then((report) => {
+        if(req.body.type){
+            report.type = req.body.type
+        }
+        if(req.body.walkerId){
+            report.walkerId = req.body.walkerId
+        }
+        if(req.body.userId){
+            report.userId = req.body.userId
+        }
+        if(req.body.dogId){
+            report.dogId = req.body.dogId
+        }
+        if(req.body.walkId){
+            report.walkId = req.body.walkId
+        }
+        if(req.body.status){
+            report.status = req.body.status
+        }
+        if(req.body.action){
+            report.action = req.body.action
+        }
+
+        report.save().then((result) => {
+            res.send(result);
+        }, (error) => {
+            res.status(400).send(error);
+        });
+    }).catch((error) => {
+		res.status(500).send(); //server error
+	});
+})
+
+app.delete('/report/:id', (req, res) => {
+    const id = req.params.id
+    if(!ObjectID.isValid(id)){
+        res.status(404).send()
+    }
+
+    Report.findByIdAndRemove(id).then((report) => {
+        if(!report){
+            res.status(404).send()
+        } else {
+            res.send(report);
+        }
+    }).catch((error) => {
+        res.status(500).send()
+    })
+})
 
 /** Other routes **/
 
