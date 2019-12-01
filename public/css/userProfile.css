@@ -239,3 +239,8 @@
   margin-left: 250px; /* Same as the width of the sidebar */
   padding: 0px 10px;
 }
+
+.dog-info {
+	overflow: auto;
+	margin-bottom: 20px;
+}

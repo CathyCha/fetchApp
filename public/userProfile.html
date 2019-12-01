@@ -32,11 +32,12 @@
       <img class="align-self-start mr-3" src="images/defaultprofile.jpg" id="media-object">
       <div class="media-body">
         <div id="profInfo">
-          <p class="fname"> <span class="grey">First Name:</span> Jane </p>
-          <p class="lname"> <span class="grey">Last Name:</span> Doe </p>
-          <p class="number"> <span class="grey">Phone Number:</span> 111 111 1111 </p>
-          <p class="e-mail"> <span class="grey">E-mail:</span> jane.doe@gmail.com </p>
-          <p class="lang"> <span class="grey">Languages:</span> English, French </p>
+          <p class="fname"> <span class="grey">First Name:</span> <span id="fname"></span> </p>
+          <p class="lname"> <span class="grey">Last Name:</span> <span id="lname"></span> </p>
+          <p class="e-mail"> <span class="grey">E-mail:</span> <span id="emailAddress"></span> </p>
+          <p class="address"> <span class="grey">Address:</span> <span id="address"></span> </p>
+          <p class="joinDate"> <span class="grey">Member Since:</span> <span id="joinDate"></span> </p>
+          
         </div>
         <a class="btn btn-primary" href="userProfileEdit.html" role="button" id="editInfo">Edit</a>
       </div>
@@ -44,7 +45,7 @@
 
     <hr />
     <div class="user">
-        <div id="dog-info">
+        <!-- <div class="dog-info">
           <img src="images/rufus.jpg" class="user-pic">
           <div class="user-bio">
             <span class="user-name">Rufus</span>
@@ -53,10 +54,10 @@
               <span class="rating-number">4.42</span>
             </div>
             Energetic and playful, quite the handul!
-            <!-- Edit for dog info Extras -->
-            <!-- <a class="btn btn-primary" href="profileEdit.html" role="button" id="editDogInfo">Edit</a> -->
+            Edit for dog info Extras 
+            <a class="btn btn-primary" href="profileEdit.html" role="button" id="editDogInfo">Edit</a> 
           </div>
-        </div>
+        </div> -->
     </div>
 
     <button class="btn btn-danger" id="deleteacc" onclick="deleteacc(); return false;">
@@ -70,5 +71,6 @@
 <br>
 <br>
 
+<script type="text/javascript" src="js/userProfile.js"></script>
 </body>
 </html>

@@ -833,9 +833,11 @@ app.patch('/walk/:id', (req, res) => {
             }
             if (req.body.walkerRating && walk.completed) {
                 walk.walkerRating = req.body.walkerRating;
+                //TODO: add to walker object
             }
             if (req.body.dogRating && walk.completed) {
                 walk.dogRating = req.body.dogRating;
+                //TODO: add to dog object
             }
             if (req.body.note) {
                 walk.notes.push(req.body.note);

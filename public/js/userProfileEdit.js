@@ -39,9 +39,6 @@ function initializePage(e) {
             console.log("????");
         }
     })
-
-    
-
 }
 
 //post a file (profile picture) to the server for uploading
@@ -144,3 +141,4 @@ function submitChanges(e) {
 
 document.querySelector("#saveButton").addEventListener("click", submitChanges);
 document.querySelector("#uploadPicButton").addEventListener("click", uploadPicture);
+document.querySelector("#resetButton").addEventListener("click", (e) => {window.location.href = "userProfile.html"});
