@@ -121,11 +121,12 @@ app.post('/login', (req, res) => {
     const password = req.body.password;
     const userType = req.body.userType;
 
-    if (!username || !password || !userType) {
+    if (!username || !password ) {
         res.redirect('/login.html');
         return;
     }
-    if (username === "admin") {
+
+    else if (username === "admin") {
         //hardcoded credentials, hurrah!
         if (password === "admin") {
             req.session.user = "admin";
@@ -136,6 +137,12 @@ app.post('/login', (req, res) => {
             res.status(401).send(); //invalid password
         }
     }
+
+    else if (!userType) {
+        res.redirect('/login.html');
+        return;
+    }
+    
     else if (userType === "user") {
         User.findOne({username: username}).then((user) => {
             if (!user) {
