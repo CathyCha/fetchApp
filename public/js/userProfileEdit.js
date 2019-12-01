@@ -10,7 +10,7 @@ function initializePage(e) {
             return res.json();
         }
         else {
-            console.log("Error " + res.status + ": Could not get students");
+            console.log("Error " + res.status + ": Could not get user data");
             return Promise.reject(res.status);
         }
     }).then((json) => {
@@ -49,9 +49,52 @@ function uploadFile(file) {
 
 //event handler for submitting
 function submitChanges(e) {
-    const requestBody = {
-        fname: document.querySelector("#fname"),
-        lname: document.querySelector("#lname"),
+    if (!document.querySelector("#currpwd").value) {
+        alert("Please enter your current password to make changes");
+        return;
     }
+    if (document.querySelector("#newpwd1").value !== document.querySelector("#newpwd2").value) {
+        alert("New password fields do not match!");
+        return;
+    }
+
+    const url = "/user";
+
+    const requestBody = {
+        fname: document.querySelector("#fname").value,
+        lname: document.querySelector("#lname").value,
+        email: document.querySelector("#emailAddress").value,
+        adrs: document.querySelector("#adrs").value,
+        city: document.querySelector("#inputCity").value,
+        prov: document.querySelector("#inputProv").value,
+    }
+    console.log(requestBody);
+    const request = new Request(url, {
+        method: 'PATCH',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    console.log(request);
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            console.log("Successfully posted");
+            //put a message on the page to tell the user
+            const statusMessage = document.querySelector("#status");
+            statusMessage.innerText = "Successfully updated";
+            statusMessage.style.color = "green";
+        }
+        else {
+            console.log("Update failed", res.status);
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
 }
+
+document.querySelector("#saveButton").addEventListener("click", submitChanges);
 
