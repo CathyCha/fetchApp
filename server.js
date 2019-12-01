@@ -500,6 +500,7 @@ app.get('/dogs/:userid', (req, res) => {
 })
 
 /** Walker resource routes **/
+
 // a POST route to *create* a walker
 /* example body
 {
@@ -563,7 +564,7 @@ app.post('/walker', (req, res) => {
     }
 });
 
-/// Route for getting information for one walker.
+/// Route for getting information for one walker by id.
 // GET /walker/id
 app.get('/walker/:id', (req, res) => {
 	// Add code here
@@ -584,6 +585,7 @@ app.get('/walker/:id', (req, res) => {
 	});
 })
 
+// route for editing a walker's information
 app.patch('walker/:id', (req, res) => {
     const id = req.params.id;
 
@@ -668,25 +670,39 @@ app.delete('/walker/:id', (req, res) => {
     })
 })
 
-/// Route for getting information for the walker logged in.
+/// Route for getting information walker information
+
+// Has two modes - if a query is given in the body, will execute the search and return results
+//      otherwise, will return the currently logged in user if they are a walker
 // GET /walker/id
 app.get('/walker', (req, res) => {
-	// Add code here
-    const id = req.session.user;
+    if (req.body.query) {
+        const query = req.body.query;
 
-	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
-	}
+        Walker.find(query).then((walkers) => {
+            res.send(walkers);
+        }).catch((error) => {
+            res.status(500).send(); //server error
+        });
+    }
+    else {
+        const id = req.session.user;
 
-	Walker.findById(id).then((walker) => {
-		if (!walker) {
-			res.status(404).send(); //could not find user
-		} else {
-			res.send(walker);
-		}
-	}).catch((error) => {
-		res.status(500).send(); //server error
-	});
+        if (!ObjectID.isValid(id)) {
+            res.status(404).send();
+        }
+    
+        Walker.findById(id).then((walker) => {
+            if (!walker) {
+                res.status(404).send(); //could not find walker
+            } else {
+                res.send(walker);
+            }
+        }).catch((error) => {
+            res.status(500).send(); //server error
+        });
+    }
+    
 })
 
 /** Walk resource routes **/
@@ -768,6 +784,51 @@ app.get('/walk/:id', (req, res) => {
 		res.status(500).send(); //server error
 	});
 
+})
+
+/// Context-sensitive route for getting information for walk
+// If query is supplied, will return results of query
+// Else, will return (active) walks for which the user is involved in
+app.get('/walk', (req, res) => {
+    if (req.body.query) {
+        const query = req.body.query;
+
+        Walk.find(query).then((walk) => {
+            res.send(walk);
+        }).catch((error) => {
+            res.status(500).send(); //server error
+        });
+    }
+    else {
+        const id = req.session.user;
+
+        if (!ObjectID.isValid(id)) {
+            res.status(404).send();
+        }
+        
+        if (req.session.userType === "walker" ) {
+            Walk.find({walkerId: id, completed: false}).then((walk) => {
+                res.send(walk);
+            }).catch((error) => {
+                res.status(500).send(); //server error
+            });
+        }
+        else { //user is owner
+            const id = req.session.user;
+
+            if (!ObjectID.isValid(id)) {
+                res.status(404).send();
+            }
+            
+            if (req.session.userType === "user" ) {
+                Walk.find({userId: id, completed: false}).then((walk) => {
+                    res.send(walk);
+                }).catch((error) => {
+                    res.status(500).send(); //server error
+                });
+            }
+        }
+    }
 })
 
 // Route for changing properties of a walk

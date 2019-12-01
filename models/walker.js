@@ -14,7 +14,8 @@ const WalkerSchema = new mongoose.Schema({
 	dateJoined: Date,
 	languages: [String],
 	qualifications: [String],
-	ratings: [Number]
+	ratings: [Number],
+	active: { type: Boolean, default: false }
 });
 
 const Walker = mongoose.model('Walker', WalkerSchema);
