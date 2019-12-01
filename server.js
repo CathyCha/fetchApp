@@ -269,7 +269,6 @@ app.post('/user', (req, res) => {
 /// Route for getting information for one user.
 // GET /user/id
 app.get('/user/:id', (req, res) => {
-	// Add code here
 	const id = req.params.id;
 	
 	if (!ObjectID.isValid(id)) {
@@ -285,6 +284,67 @@ app.get('/user/:id', (req, res) => {
 	}).catch((error) => {
 		res.status(500).send(); //server error
 	});
+})
+
+// Route to change a user's data
+app.patch('/user/:id', (req, res) => {
+    const id = req.params.id;
+	
+	if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+    }
+    
+    User.findById(id).then((user) => {
+        if (!user) {
+            res.status(404).send(); //could not find user
+        } 
+        else {
+            //update user
+            if (req.body.fname) {
+                user.firstName = req.body.fname;
+            }
+            if (req.body.lname) {
+                user.lastName = req.body.lname;
+            }
+            if (req.body.email) {
+                user.emailAddress = req.body.email;
+            }
+            if (req.body.adrs) {
+                user.homeAddress = req.body.adrs;
+            }
+            if (req.body.city) {
+                user.city = req.body.city;
+            }
+            if (req.body.prov) {
+                user.province = req.body.prov;
+            }
+            if (req.body.pwd) {
+                bcrypt.genSalt(10, (err, salt) => {
+                    bcrypt.hash(req.body.pwd, salt, (err, hash) => {
+                        user.passwordHash = hash;
+                        
+                        //asynchronous call waits on bcrypt result
+                        //save the user here if the password changed
+                        user.save().then((result) => {
+                            res.send(result);
+                        }, (error) => {
+                            res.status(400).send(error);
+                        })
+                    });
+                });
+            } 
+            else {
+                //save the user if their password didn't change
+                user.save().then((result) => {
+                    res.send(result);
+                }, (error) => {
+                    res.status(400).send(error);
+                })
+            }        
+        }
+    }).catch((error) => {
+        res.status(500).send(); //server error
+    })
 })
 
 /** Dog resource routes **/
