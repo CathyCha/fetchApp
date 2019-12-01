@@ -4,11 +4,12 @@
   <title>Walk History</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/myWalk.css">
   <link rel="stylesheet" type="text/css" href="css/userProfile.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -26,70 +27,31 @@
     <div class="page-header">
       <h1>Walk History</h1>
     </div>
+    </br>
 
-    <div class="container">
-      <div class="topbar">
-        <h4 class="dateinfo">10/20/19, 10:05 AM</h4>
-        <h5 class="walkerName">John Smith</h5>
-      </div>
+    <div class="container-fluid">
+      <div class="col-md-12" id="walkHistory">
+        <p id="walkerName">John Smith <span id="walkDate">07:30 AM, February 19 2019</span></p>
+        <p class="from"><span class="fromcircle"></span> From Location</p>
+        <p class="to"><span class="tocircle"></span> To Location</p>
 
-      <div class="walkMap">
-        <img src="images/route.jpg" class="mapimg">
-      </div>
-
-      <div class="sidebar">
-        <h1 class="walkPrice">$10.06</h1>
-        <h2 class="rating">	★★★★★ </h2>
-        <h3 class="walkDur">Duration: 30min</h3>
-        <br/>
-        <br/>
-        <p class="activity">Interacted with other dogs for 10min</p>
-        <p class="activity">Ate 1 treat</p>
-      </div>
-    </div>
-
-    <div class="container">
-      <div class="topbar">
-        <h4 class="dateinfo">10/20/19, 10:05 AM</h4>
-        <h5 class="walkerName">John Smith</h5>
-      </div>
-
-      <div class="walkMap">
-        <img src="route.jpg" class="mapimg">
-      </div>
-
-      <div class="sidebar">
-        <h1 class="walkPrice">$10.06</h1>
-        <h2 class="rating">	★★★★★ </h2>
-        <h3 class="walkDur">Duration: 30min</h3>
-        <br/>
-        <br/>
-        <p class="activity">Interacted with other dogs for 10min</p>
-        <p class="activity">Ate 1 treat</p>
+        <div class="row justify-content-md-center">
+            <div class="col-3">
+              <p id="dist">Dist. Travelled</p>
+              <p>--km</p>
+            </div>
+            <div class="col-3">
+              <p id="dur">Duration</p>
+              <p>--min</p>
+            </div>
+            <div class="col-3">
+              <p id="price">Walk Price</p>
+              <p>$--</p>
+            </div>
+        </div>
       </div>
     </div>
-
-    <div class="container">
-      <div class="topbar">
-        <h4 class="dateinfo">10/20/19, 10:05 AM</h4>
-        <h5 class="walkerName">John Smith</h5>
-      </div>
-
-      <div class="walkMap">
-        <img src="route.jpg" class="mapimg">
-      </div>
-
-      <div class="sidebar">
-        <h1 class="walkPrice">$10.06</h1>
-        <h2 class="rating">	★★★★★ </h2>
-        <h3 class="walkDur">Duration: 30min</h3>
-        <br/>
-        <br/>
-        <p class="activity">Interacted with other dogs for 10min</p>
-        <p class="activity">Ate 1 treat</p>
-      </div>
-    </div>
-
+  </div>
 
 </body>
 </html>
