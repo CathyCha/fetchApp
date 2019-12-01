@@ -287,8 +287,10 @@ app.get('/user/:id', (req, res) => {
 })
 
 // Route to change a user's data
-app.patch('/user/:id', (req, res) => {
-    const id = req.params.id;
+// Changes the data for the user logged in
+app.patch('/user', (req, res) => {
+    const id = req.session.user;
+    console.log(id);
 	
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
