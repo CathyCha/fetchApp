@@ -367,6 +367,51 @@ app.patch('/user', (req, res) => {
     })
 })
 
+/// route to delete a user by ID
+// restricted to admins
+app.delete('/user/:id', (req, res) => {
+    const id = req.params.id;
+
+    if (req.session.user !== "admin") {
+        res.status(403).send(); //unauthorized
+        return;
+    }
+    // Validate id
+	else if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+    }
+    User.findOneAndDelete({_id: id}).then((user) => {
+        if (!user) {
+            res.status(404).send();
+        }
+        else {
+            res.send(user);
+        }
+    }).catch((error) => {
+        res.status(500).send(); //server error, could not delete
+    })
+})
+
+/// route to delete the currently logged in user
+app.delete('/user', (req, res) => {
+    const id = req.session.user;
+
+    // Validate id
+	if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+    }
+    User.findOneAndDelete({_id: id}).then((user) => {
+        if (!user) {
+            res.status(404).send();
+        }
+        else {
+            res.send(user);
+        }
+    }).catch((error) => {
+        res.status(500).send(); //server error, could not delete
+    })
+})
+
 /** Dog resource routes **/
 
 /// Route for adding dog to a user
