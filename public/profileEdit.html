@@ -4,14 +4,13 @@
   <title>User Profile</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/userProfile.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
 </head>
-<body>
-
+<body class="container-fluid">
   <div class="sidenav">
     <img class="logo" src="images/Logo_copy.png">
     <a href="requestWalk.html">Request Walker</a>
@@ -21,62 +20,176 @@
 
   <div class="topPanelBox"></div>
 
-  <div id="main">
-    <div class="page-header">
-      <h1>Walker Profile</h1>
+  <div class="container">
+  <h1 class="Editheader">Edit Owner Profile</h1>
+  <hr>
+
+	<div class="row">
+      <!-- left column -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <img src="images/defaultprofile.jpg" class="avatar img-circle" id="defaultpp" alt="avatar">
+          <h6>Upload a different photo...</h6>
+          <div class="fileInputDiv">
+            <input type="file" id="fileInput" class="form-control-file">
+          </div>
+        </div>
+      </div>
+
+      <!-- edit form column -->
+      <div class="col-md-9 personal-info">
+      <h3 class="persInfo">Personal info</h3>
+      <form class="form-horizontal" role="form">
+
+        <div class="form-group">
+          <div class="form-row">
+            <div class="col-md-4">
+              <label class="col-lg-6 control-label">First name:</label>
+              <div class="col-md-12">
+                <input class="form-control" type="text" name="fname" value="Jane">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="col-lg-6 control-label">Last name:</label>
+              <div class="col-md-12">
+                <input class="form-control" type="text" name="lname" value="Bishop">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-3 control-label">Email:</label>
+          <div class="col-lg-8">
+            <input class="form-control" type="text" name="email" value="janesemail@gmail.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-md-3 control-label">Address</label>
+          <div class="col-md-8">
+            <input type="text" class="form-control" name="adrs" id="inputAddress" value="1234 Main St">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-row">
+            <div class="col-md-3">
+              <label class="col-md-3 control-label">City</label>
+              <div class="col-md-12">
+                <input type="text" class="form-control" name="city" id="inputCity">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="col-md-3 control-label" for="inputProv">Province</label>
+              <div class="col-md-12">
+                <input type="text" class="form-control" name="prov" id="inputProv">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="col-md-3 control-label" for="inputZip">Zip</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" name="zip" id="inputZip">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-3 control-label">Username:</label>
+          <div class="col-md-8">
+            <input class="form-control" type="text" name="user" value="janeuser">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-row">
+            <div class="col-md-4">
+              <label class="col-lg-6 control-label">Password:</label>
+              <div class="col-md-12">
+                <input class="form-control" type="password" name="pwd" value="11111122333">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="col-lg-12 control-label">Confirm Password:</label>
+              <div class="col-md-12">
+                <input class="form-control" type="password" value="11111122333">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-3 control-label"></label>
+          <div class="col-md-8">
+            <input type="button" id="saveButton" class="btn btn-primary" value="Save Changes">
+            <span></span>
+            <input type="reset" class="btn btn-default" id="resetButton" value="Cancel">
+          </div>
+        </div>
+      </form>
+      </div>
     </div>
-
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="email">First Name:</label>
-        <div class="col-sm-8">
-          <input type="text" class="form-control" id="fname" placeholder="Enter first name">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="email">Last Name:</label>
-        <div class="col-sm-8">
-          <input type="text" class="form-control" id="lname" placeholder="Enter last name">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="email">Phone Number:</label>
-        <div class="col-sm-8">
-          <input type="text" class="form-control" id="phoneNum" placeholder="Enter phone number">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="email">Email:</label>
-        <div class="col-sm-8">
-          <input type="email" class="form-control" id="email" placeholder="Enter email">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="pwd">Password:</label>
-        <div class="col-sm-8">
-          <input type="password" class="form-control" id="pwd" placeholder="Enter password">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="pwd">Qualifications:</label>
-        <div class="col-sm-8">
-          <input type="text" class="form-control" id="qual" placeholder="Enter qualifications">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="pwd">Languages:</label>
-        <div class="col-sm-8">
-          <input type="text" class="form-control" id="lang" placeholder="Enter languages">
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-default">Submit</button>
-        </div>
-      </div>
-    </form>
-
   </div>
+  <hr>
 
-</body>
+    <!-- <div id="main">
+      <div class="page-header">
+        <h1>Edit Walker Profile</h1>
+      </div>
+    </br>
+
+      <form>
+        <div class="form-group row">
+          <label for="fname" class="col-form-label col-auto">First Name:</label>
+          <div class="col-auto">
+            <input type="text" class="form-control" name="fname" placeholder="Enter first name">
+          </div>
+          <label class="control-form-label col-auto" for="lname">Last Name:</label>
+          <div class="col-auto">
+            <input type="text" class="form-control" name="lname" placeholder="Enter last name">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="fname" class="col-form-label col-auto">Phone Number:</label>
+          <div class="col-auto">
+            <input type="tel" class="form-control" name="telnum" placeholder="Enter phone number">
+          </div>
+          <label class="control-form-label col-auto" for="lname">Email:</label>
+          <div class="col-auto">
+            <input type="email" class="form-control" name="email" placeholder="Enter email">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="control-label col-auto" for="pwd">Password:</label>
+          <div class="col-auto">
+            <input type="password" class="form-control" name="pwd" placeholder="Enter password">
+          </div>
+          <label class="control-label col-auto" for="pwd">Confirm Password</label>
+          <div class="col-auto">
+            <input type="password" class="form-control" placeholder="Confirm password">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="control-label col-sm-2" for="qual">Qualifications:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" name="qual" placeholder="Enter qualifications">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="control-label col-sm-2" for="lang">Languages:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" name="lang" placeholder="Enter languages">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+
+    </div> -->
+
+  </body>
 </html>

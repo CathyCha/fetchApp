@@ -127,9 +127,30 @@
 
 #editInfo {
 	float: right;
+	margin-right: 10px;
+	background-color: orange;
+	color: white;
+	border: none;
 }
 
-.media-object {
+#editInfo:hover {
+	background-color: darkorange;
+}
+
+#editDogInfo {
+	float: right;
+	margin-right: -5px;
+	background-color: orange;
+	color: white;
+	border: none;
+}
+
+#editDogInfo:hover {
+	background-color: seagreen;
+}
+
+
+#media-object {
 	width:200px;
 }
 
@@ -138,13 +159,63 @@
 }
 
 #deleteacc {
-	float: right;
-	color: red;
+	position: absolute;
+	right: 10px;
+	bottom: 20px;
 }
 
 #signout {
-	float: left;
-	color: red;
+	position: absolute;
+	left: 260px;
+	bottom: 20px;
+}
+
+.container {
+	margin-left: 250px; /* Same as the width of the sidebar */
+}
+
+#defaultpp {
+	width: 150px;
+}
+
+.Editheader {
+	color: orange;
+}
+
+#saveButton {
+	color: white;
+	background-color: seagreen;
+	border: none;
+}
+
+#saveButton:hover {
+	background-color: #126537;
+}
+
+#resetButton {
+	color: white;
+	background-color: orange;
+}
+
+#resetButton:hover {
+	background-color: darkorange;
+}
+
+#fileInput {
+	margin-bottom: 10px;
+}
+
+.fileInputDiv {
+	border: solid Gainsboro 1px;
+	padding-top: 10px;
+	padding-right: 10px;
+	padding-left: 10px;
+	padding-bottom: 1px;
+	border-radius: 5px;
+}
+
+.persInfo {
+	margin-left: 12px;
 }
 
 /* Style page content */

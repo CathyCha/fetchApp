@@ -4,7 +4,7 @@
   <title>User Profile</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/userProfile.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -26,26 +26,22 @@
     <div class="page-header">
       <h1>User Profile</h1>
     </div>
+  </br>
 
     <div class="media">
-      <input id="editInfo" type="button" value="Edit" onclick="editButton(); return false;">
-
-      <div class="media-left">
-        <img src="images/defaultprofile.jpg" class="media-object">
-        <input id="uploadPic" type="button" value="Upload Profile Picture" onclick="profileupload(); return false;">
-      </div>
+      <img class="align-self-start mr-3" src="images/defaultprofile.jpg" id="media-object">
       <div class="media-body">
-        <div id="profInfo" class="container">
-          <div class="row">
-            <p class="fname"> <span class="grey">First Name:</span> Jane </p>
-            <p class="lname"> <span class="grey">Last Name:</span> Doe </p>
-            <p class="number"> <span class="grey">Phone Number:</span> 111 111 1111 </p>
-            <p class="e-mail"> <span class="grey">E-mail:</span> jane.doe@gmail.com </p>
-            <p class="lang"> <span class="grey">Languages:</span> English, French </p>
-          </div>
+        <div id="profInfo">
+          <p class="fname"> <span class="grey">First Name:</span> Jane </p>
+          <p class="lname"> <span class="grey">Last Name:</span> Doe </p>
+          <p class="number"> <span class="grey">Phone Number:</span> 111 111 1111 </p>
+          <p class="e-mail"> <span class="grey">E-mail:</span> jane.doe@gmail.com </p>
+          <p class="lang"> <span class="grey">Languages:</span> English, French </p>
         </div>
+        <a class="btn btn-primary" href="profileEdit.html" role="button" id="editInfo">Edit</a>
       </div>
     </div>
+
     <hr />
     <div class="user">
         <div id="dog-info">
@@ -57,21 +53,16 @@
               <span class="rating-number">4.42</span>
             </div>
             Energetic and playful, quite the handul!
-
-            <input id="editInfo" type="button" value="Edit">
+            <!-- Edit for dog info Extras -->
+            <!-- <a class="btn btn-primary" href="profileEdit.html" role="button" id="editDogInfo">Edit</a> -->
           </div>
         </div>
     </div>
 
-    <hr />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <input id="deleteacc" type="button" value="Delete your account" onclick="deleteacc(); return false;">
-    <input id="signout" type="button" value="Sign out" onclick="signout(); return false;">
+    <button class="btn btn-danger" id="deleteacc" onclick="deleteacc(); return false;">
+      Delete your account</button>
+    <button class="btn btn-danger" id="signout" onclick="signout(); return false;">
+      Signout </button>
   </div>
 
 <br>
