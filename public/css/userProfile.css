@@ -218,6 +218,22 @@
 	margin-left: 12px;
 }
 
+
+
+#uploadPicButton {
+	color: white;
+	background-color: orange;
+	margin-top: 10px;
+	border: none;
+}
+
+#uploadPicButton:hover {
+	color: white;
+	background-color: darkorange;
+	margin-top: 10px;
+	border: none;
+}
+
 /* Style page content */
 #main {
   margin-left: 250px; /* Same as the width of the sidebar */
