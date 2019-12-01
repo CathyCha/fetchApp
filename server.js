@@ -791,16 +791,19 @@ app.post('/report', (req, res) => {
 })
 
 /// route to get all reports
-// security TODO: restrict to admin only
 app.get('/report', (req, res) => {
+    if (req.session.user !== "admin") {
+        res.status(403).send();
+        return;
+    }
     Report.find({}).then((reports) => {
         res.send({reports}); //send all reports
     }, (error) => {
         res.status(500).send(error); //server error
     })
 })
+
 //TODO: PATCH report
-//TODO: GET report
 
 
 /** Other routes **/
