@@ -126,16 +126,11 @@ app.post('/login', (req, res) => {
         return;
     }
 
-    else if (username === "admin") {
+    else if (username === "admin" && password === "admin") {
         //hardcoded credentials, hurrah!
-        if (password === "admin") {
-            req.session.user = "admin";
-            req.session.userType = "admin";
-            res.redirect('/adminpage.html')
-        }
-        else {
-            res.status(401).send(); //invalid password
-        }
+        req.session.user = "admin";
+        req.session.userType = "admin";
+        res.redirect('/adminpage.html')
     }
 
     else if (!userType) {
