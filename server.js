@@ -944,6 +944,23 @@ app.patch('/report/:id', (req, res) => {
 	});
 })
 
+app.delete('/report/:id', (req, res) => {
+    const id = req.params.id
+    if(!ObjectID.isValid(id)){
+        res.status(404).send()
+    }
+
+    Report.findByIdAndRemove(id).then((report) => {
+        if(!report){
+            res.status(404).send()
+        } else {
+            res.send(report);
+        }
+    }).catch((error) => {
+        res.status(500).send()
+    })
+})
+
 /** Other routes **/
 
 /// Route for uploading an image for a profile picture
