@@ -116,7 +116,6 @@ app.use(express.static(__dirname + '/public'))
 }
 */
 app.post('/login', (req, res) => {
-    console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
     const userType = req.body.userType;
@@ -286,11 +285,30 @@ app.get('/user/:id', (req, res) => {
 	});
 })
 
+/// Route for getting information for the user logged in
+// GET /user/id
+app.get('/user', (req, res) => {
+	const id = req.session.user;
+	
+	if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+	}
+	
+	User.findById(id).then((user) => {
+		if (!user) {
+			res.status(404).send(); //could not find user
+		} else {
+			res.send(user);
+		}
+	}).catch((error) => {
+		res.status(500).send(); //server error
+	});
+})
+
 // Route to change a user's data
 // Changes the data for the user logged in
 app.patch('/user', (req, res) => {
     const id = req.session.user;
-    console.log(id);
 	
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
@@ -484,7 +502,28 @@ app.get('/walker/:id', (req, res) => {
 		res.status(404).send();
 	}
 	
-	User.findById(id).then((walker) => {
+	Walker.findById(id).then((walker) => {
+		if (!walker) {
+			res.status(404).send(); //could not find user
+		} else {
+			res.send(walker);
+		}
+	}).catch((error) => {
+		res.status(500).send(); //server error
+	});
+})
+
+/// Route for getting information for the walker logged in.
+// GET /walker/id
+app.get('/walker', (req, res) => {
+	// Add code here
+    const id = req.session.user;
+	
+	if (!ObjectID.isValid(id)) {
+		res.status(404).send();
+	}
+	
+	Walker.findById(id).then((walker) => {
 		if (!walker) {
 			res.status(404).send(); //could not find user
 		} else {
