@@ -54,7 +54,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        expires: 60000,
+        expires: 600000, //60000 = 1 minute
         httpOnly: true
     }
 }));
@@ -286,7 +286,7 @@ app.get('/user/:id', (req, res) => {
 })
 
 /// Route for getting information for the user logged in
-// GET /user/id
+// GET /user
 app.get('/user', (req, res) => {
 	const id = req.session.user;
 
@@ -808,12 +808,33 @@ app.get('/report', (req, res) => {
 
 /** Other routes **/
 
-/// Route for uploading an image for a user profile picture
+/// Route for uploading an image for a profile picture
 /// Image will be stored as /public/images/uploaded/id.{jpg.png}
 // POST /upload/{userid/dogid/walkerid}
 app.post('/upload/:id', upload.single("file" /* name of file element in form */),
 (req, res) => {
     const id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+		res.status(404).send("Cannot find entity with that id");
+    }
+
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    const tempPath = req.file.path;
+    const targetPath = path.join(__dirname, "./public/images/uploaded/", id + ext);
+
+    fs.rename(tempPath, targetPath, err => {
+        if (err) res.status(500).send(err);
+
+        res.status(200).end("File uploaded!");
+    });
+})
+
+/// Route for uploading an image for a profile picture for the currently logged in user
+/// Image will be stored as /public/images/uploaded/id.{jpg.png}
+// POST /upload
+app.post('/upload', upload.single("file" /* name of file element in form */),
+(req, res) => {
+    const id = req.session.id;
     if (!ObjectID.isValid(id)) {
 		res.status(404).send("Cannot find entity with that id");
     }
