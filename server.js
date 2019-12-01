@@ -291,7 +291,8 @@ app.get('/user', (req, res) => {
 	const id = req.session.user;
 
 	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
+        res.status(404).send();
+        return;
 	}
 
 	User.findById(id).then((user) => {
@@ -311,7 +312,12 @@ app.patch('/user', (req, res) => {
     const id = req.session.user;
 
 	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
+        res.status(404).send();
+        return;
+    }
+    else if (!req.body.currpwd) {
+        res.status(401).send();
+        return;
     }
 
     User.findById(id).then((user) => {
@@ -319,48 +325,59 @@ app.patch('/user', (req, res) => {
             res.status(404).send(); //could not find user
         }
         else {
-            //update user
-            if (req.body.fname) {
-                user.firstName = req.body.fname;
-            }
-            if (req.body.lname) {
-                user.lastName = req.body.lname;
-            }
-            if (req.body.email) {
-                user.emailAddress = req.body.email;
-            }
-            if (req.body.adrs) {
-                user.homeAddress = req.body.adrs;
-            }
-            if (req.body.city) {
-                user.city = req.body.city;
-            }
-            if (req.body.prov) {
-                user.province = req.body.prov;
-            }
-            if (req.body.pwd) {
-                bcrypt.genSalt(10, (err, salt) => {
-                    bcrypt.hash(req.body.pwd, salt, (err, hash) => {
-                        user.passwordHash = hash;
+            //check user password before making changes
+            bcrypt.compare(req.body.currpwd, user.passwordHash, (error, result) => {
+                if (error) {
+                    res.status(400).send(error); //bcrypt error
+                }
+                else if (result) {
+                    //update user
+                    if (req.body.fname) {
+                        user.firstName = req.body.fname;
+                    }
+                    if (req.body.lname) {
+                        user.lastName = req.body.lname;
+                    }
+                    if (req.body.email) {
+                        user.emailAddress = req.body.email;
+                    }
+                    if (req.body.adrs) {
+                        user.homeAddress = req.body.adrs;
+                    }
+                    if (req.body.city) {
+                        user.city = req.body.city;
+                    }
+                    if (req.body.prov) {
+                        user.province = req.body.prov;
+                    }
+                    if (req.body.newpwd) {
+                        bcrypt.genSalt(10, (err, salt) => {
+                            bcrypt.hash(req.body.newpwd, salt, (err, hash) => {
+                                user.passwordHash = hash;
 
-                        //asynchronous call waits on bcrypt result
-                        //save the user here if the password changed
+                                //asynchronous call waits on bcrypt result
+                                //save the user here if the password changed
+                                user.save().then((result) => {
+                                    res.send(result);
+                                }, (error) => {
+                                    res.status(400).send(error);
+                                })
+                            });
+                        });
+                    }
+                    else {
+                        //save the user if their password didn't change
                         user.save().then((result) => {
                             res.send(result);
                         }, (error) => {
                             res.status(400).send(error);
                         })
-                    });
-                });
-            }
-            else {
-                //save the user if their password didn't change
-                user.save().then((result) => {
-                    res.send(result);
-                }, (error) => {
-                    res.status(400).send(error);
-                })
-            }
+                    }
+                }
+                else {
+                    res.status(401).send(); //invalid password
+                }
+            })
         }
     }).catch((error) => {
         res.status(500).send(); //server error
@@ -989,8 +1006,9 @@ app.post('/upload/:id', upload.single("file" /* name of file element in form */)
 // POST /upload
 app.post('/upload', upload.single("file" /* name of file element in form */),
 (req, res) => {
-    const id = req.session.id;
+    const id = req.session.user;
     if (!ObjectID.isValid(id)) {
+        console.log(id);
 		res.status(404).send("Cannot find entity with that id");
     }
 
@@ -1001,7 +1019,7 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
     fs.rename(tempPath, targetPath, err => {
         if (err) res.status(500).send(err);
 
-        res.status(200).end("File uploaded!");
+        res.redirect(userProfileEdit.html);
     });
 })
 

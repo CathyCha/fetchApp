@@ -14,13 +14,22 @@ function initializePage(e) {
             return Promise.reject(res.status);
         }
     }).then((json) => {
-        console.log(json);
         document.querySelector("#fname").value = json.firstName;
         document.querySelector("#lname").value = json.lastName;
         document.querySelector("#emailAddress").value = json.emailAddress;
         document.querySelector("#adrs").value = json.homeAddress;
         document.querySelector("#inputCity").value = json.city;
         document.querySelector("#inputProv").value = json.province;
+
+        //check if the user has uploaded a picture
+        const id = json._id;
+        fetch("/images/uploaded/"+id+".jpg").then((res) => {
+            if (res.status === 200) {
+                document.querySelector("#defaultpp").src = "images/uploaded/" + id + ".jpg";
+            }
+        }).catch((error) => {
+            //no image uploaded, but this is okay
+        })
     }).catch((error) => {
         if (error === 404) {
             alert("Session expired! Please log in again");
@@ -30,37 +39,67 @@ function initializePage(e) {
             console.log("????");
         }
     })
+
+    
+
 }
 
+//post a file (profile picture) to the server for uploading
 function uploadFile(file) {
     const url = "/upload";
     fetch(url, {
         method: 'POST',
-        headers: {
-            "Content-Type": "multipart/form-data"
-        },
         body: file
     }).then((res) => {
-        console.log("success?", res);
+        if (res.status === 200) {
+            window.location.href = "userProfileEdit.html";
+        }
+        else {
+            console.log("Error " + res.status + ": Could not upload file");
+        }
     }).catch((error) => {
-        console.log("error?", error);
+        console.log("error", error);
     });
+}
+
+//wrapper function to upload the user's selected photo
+function uploadPicture(e) {
+    e.preventDefault();
+    const fileInput = document.querySelector("#fileInput");
+    if (!fileInput.files.length) {
+        console.log("no file selected");
+    }
+    else {
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        uploadFile(formData);
+    }
+}
+
+//helper function to edit the status label above the submit button
+function updateStatus(message, colour) {
+    const statusMessage = document.querySelector("#status");
+    statusMessage.innerText = message;
+    statusMessage.style.color = colour;
 }
 
 //event handler for submitting
 function submitChanges(e) {
+    e.preventDefault();
+
     if (!document.querySelector("#currpwd").value) {
-        alert("Please enter your current password to make changes");
+        updateStatus("Please enter your current password to make changes", "red");
         return;
     }
     if (document.querySelector("#newpwd1").value !== document.querySelector("#newpwd2").value) {
-        alert("New password fields do not match!");
+        updateStatus("New password fields do not match", "red");
         return;
     }
 
     const url = "/user";
 
     const requestBody = {
+        currpwd: document.querySelector("#currpwd").value,
         fname: document.querySelector("#fname").value,
         lname: document.querySelector("#lname").value,
         email: document.querySelector("#emailAddress").value,
@@ -68,7 +107,12 @@ function submitChanges(e) {
         city: document.querySelector("#inputCity").value,
         prov: document.querySelector("#inputProv").value,
     }
-    console.log(requestBody);
+
+    //only add the new password onto the request if there is one
+    if (document.querySelector("#newpwd1").value) {
+        requestBody.newpwd = document.querySelector("#newpwd1").value;
+    }
+
     const request = new Request(url, {
         method: 'PATCH',
         body: JSON.stringify(requestBody),
@@ -78,18 +122,20 @@ function submitChanges(e) {
         }
     });
 
-    console.log(request);
-
     fetch(request).then((res) => {
         if (res.status === 200) {
-            console.log("Successfully posted");
             //put a message on the page to tell the user
-            const statusMessage = document.querySelector("#status");
-            statusMessage.innerText = "Successfully updated";
-            statusMessage.style.color = "green";
+            updateStatus("Successfully updated!", "green");
+            currpwd: document.querySelector("#currpwd").value = "";
+            document.querySelector("#newpwd1").value = "";
+            document.querySelector("#newpwd2").value = "";
+
+        }
+        else if (res.status === 401 || res.status === 403) {
+            updateStatus("Password incorrect", "red");
         }
         else {
-            console.log("Update failed", res.status);
+            updateStatus("Something went wrong :(", "red");
         }
     }).catch((error) => {
         console.log(error);
@@ -97,4 +143,4 @@ function submitChanges(e) {
 }
 
 document.querySelector("#saveButton").addEventListener("click", submitChanges);
-
+document.querySelector("#uploadPicButton").addEventListener("click", uploadPicture);
