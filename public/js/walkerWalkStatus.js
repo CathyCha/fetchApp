@@ -1,54 +1,329 @@
 "use strict";
 
-//TODO: add walker location and pickup location
-//TODO: add rating screen after time hits 0
-
 /*******************
  * class definitions
  *******************/
 
- class User {
-     constructor(name, picture, rating, description) {
-         this.name = name;
-         this.picture = picture;
-         this.rating = rating;
-         this.description = description;
+class User {
+    constructor(name, picture, rating, description) {
+        this.name = name;
+        this.picture = picture;
+        this.rating = rating;
+        this.description = description;
 
-     }
- }
+    }
+}
 
- class Request {
-   constructor(xCoord, yCoord, length, needs, price){
-     this.x = xCoord
-     this.y = yCoord
-     this.length = length
-     this.needs = needs
-     this.price = price
-   }
- }
+class WalkRequest {
+    constructor(xCoord, yCoord, length, needs, price){
+        this.x = xCoord
+        this.y = yCoord
+        this.length = length
+        this.needs = needs
+        this.price = price
+    }
+}
 
- const rufusDescription = "energetic and playful, quite the handul!"; // these fields get filled by server
- const rufusNeeds = new Array("Hyperactive", "Treats", "Puppy", "Water breaks")
+//default things for when the dog doesn't have these set
+const defaultDescription = "I'm a doggo! Walk me!!";
+const defaultPicture = "images/rufus.jpg";
 
- const rufus = new User("Rufus", "rufus.jpg", 4.42, rufusDescription);
- const req = new Request(680, 330, 30, rufusNeeds, 25)
+//storage for server call results
+let walkRequest = null; //active walk request
+let doggo = null; //doggo on active walk request
+let timeLeft = null; //time left on walk
+
+/*************************
+ * Page initialization
+ * - a chain of events to load all the walk info onto the page
+ *************************/
+window.addEventListener("load", initializePage);
+
+function initializePage(e) {
+  const url = '/walk';
+  fetch(url).then((res) => {
+    if (res.status === 200) {
+      return res.json();
+    }
+    else {
+      console.log("Error " + res.status + ": Could not get user data");
+      if (res.status === 404) {
+        alert("Session expired! Please log in again");
+        window.location.href = "login.html";
+      }
+      else {
+        return Promise.reject(res.status);
+      }
+    }
+  }).then((json) => {
+    if (json.length > 0 && json[0].accepted) {
+      walkRequest = json[0];
+      console.log(walkRequest);
+      timeLeft = walkRequest.duration + 1;
+
+      //add the walker's existing notes
+      walkRequest.notes.forEach((note, index) => {
+        const notesList = document.getElementById("notes-div");
+        const newNote = document.createElement("li");
+        newNote.innerText = note;
+        notesList.appendChild(newNote);
+      });
+
+      getDoggo();
+    }
+    else {
+      //no active walk, redirect user
+      window.location.href = "searchForWalk.html"
+    }
+  }).catch((error) => {
+    console.log(error);
+  });
+  
+}
+
+function getDoggo() {
+    const url = '/dogs/' + walkRequest.userId;
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            return Promise.reject(res.status);
+        }
+    }).then((json) => {
+        doggo = json.filter((dog) => dog._id == walkRequest.dogId)[0];
+        console.log(doggo);
+        initializeMap();
+    }).catch((error) => {
+        console.log(error);
+    })
+}
+
+function initializeMap() {
+    //get the pickup location from the server - here we use hardcoded values
+    placePickupMarker(walkRequest.locations[0].x, walkRequest.locations[0].y);
+    //get the walker's location from the server - here we use hardcoded values
+    placeWalkerMarker(walkRequest.locations[walkRequest.locations.length-1].x, 
+        walkRequest.locations[walkRequest.locations.length-1].y);
+    //start the blinking of the walker marker
+    setTimeout(blinkWalkerMarker, 500);
+    //display the doggo's info
+    displayDoggo(doggo, walkRequest);
+};
+
+/***************************************************************
+ * Show pickup location on the map and update the dog's location
+ ***************************************************************/
+
+let pickupMarker = null;
+let walkerMarker = null;
+let walkerBlink = false;
+const markerRadius = 10; //this is used for styling purposes
+
+function placePickupMarker(xCoordinate, yCoordinate) {
+    pickupMarker = document.createElement("div");
+    pickupMarker.classList.add("pickup-marker");
+    pickupMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
+    pickupMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
+    document.querySelector("#map").appendChild(pickupMarker);
+}
+
+function placeWalkerMarker(xCoordinate, yCoordinate) {
+    walkerMarker = document.createElement("div");
+    walkerMarker.classList.add("walker-marker");
+    walkerMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
+    walkerMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
+    document.querySelector("#map").appendChild(walkerMarker);
+}
+
+function updateWalkerMarkerLocation(xCoordinate, yCoordinate) {
+    walkerMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
+    walkerMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
+}
+
+function blinkWalkerMarker () {
+    if (walkerBlink) {
+        walkerMarker.style.borderColor = "orange";
+        walkerMarker.style.backgroundColor = "white";
+        walkerBlink = false;
+        setTimeout(blinkWalkerMarker, 750);
+    }
+    else {
+        walkerMarker.style.borderColor = "black";
+        walkerMarker.style.backgroundColor = "orange";
+        walkerBlink = true;
+        setTimeout(blinkWalkerMarker, 1500);
+    }
+}
+
+/******************************************************
+ * Show the doggo
+ * - Do this dynamically since it will be a server call
+ *****************************************************/
+
+function displayDoggo(dog, request) {
+
+    //box for the popup
+    const selectUserPopup = document.createElement("div");
+    selectUserPopup.classList.add("walkerDisplay");
+
+    //add walker's picture
+    const userImage = document.createElement("img");
+    userImage.classList.add("walker-popup-image");
+    userImage.src = dog.pictureURL || defaultPicture;
+    selectUserPopup.appendChild(userImage);
+
+    //add walker's name
+    const userNameSpan = document.createElement("span");
+    userNameSpan.classList.add("walker-popup-name");
+    userNameSpan.innerText = dog.dogName;
+    selectUserPopup.appendChild(userNameSpan);
+
+    //add walker's rating
+    const userRatingDisplay = document.createElement("div");
+
+    const userRatingStarsSpan = document.createElement("span");
+    userRatingStarsSpan.classList.add("walker-popup-stars");
+    userRatingStarsSpan.innerText = "\u2605";
+
+    const userRatingNumberSpan = document.createElement("span");
+    userRatingNumberSpan.classList.add("walker-popup-rating");
+    userRatingNumberSpan.innerText = average(dog.ratings);
+
+    userRatingDisplay.appendChild(userRatingStarsSpan);
+    userRatingDisplay.appendChild(userRatingNumberSpan);
+    selectUserPopup.appendChild(userRatingDisplay);
+
+    const walkNeedsContainer = document.createElement("ul")
+    walkNeedsContainer.id = "walk-needs-container"
+
+    var newNeed;
+    var newNeedTxt;
+    request.walkNeeds.forEach(function(item, index){
+      newNeed = document.createElement("li")
+      newNeed.className = "walk-need"
+      newNeedTxt = document.createTextNode(item)
+      newNeed.appendChild(newNeedTxt)
+      walkNeedsContainer.appendChild(newNeed)
+      });
+
+    selectUserPopup.appendChild(walkNeedsContainer)
+
+    const submitNoteLabel = document.createElement("span")
+    submitNoteLabel.className = "submitNoteLabel"
+    submitNoteLabel.innerText = "Add Note"
+    selectUserPopup.appendChild(submitNoteLabel)
+
+    const submitNoteForm = document.createElement("form")
+    const noteText = document.createElement("textarea")
+    const submitNote = document.createElement("input")
+    noteText.placeholder = "Write something.."
+    submitNote.type = "submit"
+    submitNote.onclick = function (e){
+      addWalkerNote(noteText.value)
+      noteText.value = "";
+      e.preventDefault()};
+    submitNoteForm.className = "submitNoteForm"
+    submitNoteForm.appendChild(noteText)
+    submitNoteForm.appendChild(submitNote)
+    selectUserPopup.appendChild(submitNoteForm)
+
+    //add box as child for area
+    const userArea = document.querySelector("#right-pane-body");
+    userArea.appendChild(selectUserPopup);
+}
 
 /***********************
  * Add a new walker note
  **********************/
 
 function addWalkerNote(message) {
-    const notesList = document.getElementById("notes-div");
-    const newNote = document.createElement("li");
-    newNote.innerText = message;
-    notesList.appendChild(newNote);
+
+    //send message to server before we update page
+    const url = '/walk/' + walkRequest._id;
+    const requestBody = {note: message};
+
+    const request = new Request(url, {
+        method: 'PATCH',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            const notesList = document.getElementById("notes-div");
+            const newNote = document.createElement("li");
+            newNote.innerText = message;
+            notesList.appendChild(newNote);
+            return res.json(); //we want to save this - so get the JSON
+        }
+        else {
+            return Promise.reject();
+        }
+    }).then((json) => {
+        walkRequest = json;
+        console.log(walkRequest);
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+/**************************************
+ * Map click to change walker location
+ *************************************/
+
+const map = document.querySelector("#map");
+map.addEventListener('click', mapClick);
+
+let xCoordinate = null;
+let yCoordinate = null;
+
+/* Function to handle the user clicking on the map */
+function mapClick(e) {
+    xCoordinate = e.layerX;
+    yCoordinate = e.layerY;
+
+    //send these coordinates to the server to update the walk
+    const url = '/walk/' + walkRequest._id;
+    const requestBody = {
+        location: {
+            x: xCoordinate,
+            y: yCoordinate
+        }
+    };
+
+    const request = new Request(url, {
+        method: 'PATCH',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            updateWalkerMarkerLocation(xCoordinate, yCoordinate);
+            return res.json(); //we want to save this - so get the JSON
+        }
+        else {
+            return Promise.reject();
+        }
+    }).then((json) => {
+        walkRequest = json;
+        console.log(walkRequest);
+    }).catch((error) => {
+        console.log(error);
+    });
 }
 
 /*********************
  * Update time left
  ***********************/
 
-let timeLeft = 31;
 let xCoordinates = [475, 520, 705, 632, 383, 346, 436];
 let yCoordinates = [215, 375, 400, 591, 563, 344, 235];
 let updateIndex = 0;
@@ -67,7 +342,7 @@ function updatePage() {
         updateTimeLeft(timeLeft);
         if (timeLeft % 5 == 0) {
             if (updateIndex < xCoordinates.length) {
-                updateWalkerMarkerLocation(xCoordinates[updateIndex], yCoordinates[updateIndex]);
+                //updateWalkerMarkerLocation(xCoordinates[updateIndex], yCoordinates[updateIndex]);
             }
             updateIndex++;
         }
@@ -275,143 +550,17 @@ function submit(e) {
     console.log("I'm done!");
 }
 
-/***************************************************************
- * Show pickup location on the map and update the dog's location
- ***************************************************************/
-
-let pickupMarker = null;
-let walkerMarker = null;
-let walkerBlink = false;
-const markerRadius = 10; //this is used for styling purposes
-
-function placePickupMarker(xCoordinate, yCoordinate) {
-    pickupMarker = document.createElement("div");
-    pickupMarker.classList.add("pickup-marker");
-    pickupMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
-    pickupMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
-    document.querySelector("#map").appendChild(pickupMarker);
-}
-
-function placeWalkerMarker(xCoordinate, yCoordinate) {
-    walkerMarker = document.createElement("div");
-    walkerMarker.classList.add("walker-marker");
-    walkerMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
-    walkerMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
-    document.querySelector("#map").appendChild(walkerMarker);
-}
-
-function updateWalkerMarkerLocation(xCoordinate, yCoordinate) {
-    walkerMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
-    walkerMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
-}
-
-function blinkWalkerMarker () {
-    if (walkerBlink) {
-        walkerMarker.style.borderColor = "orange";
-        walkerMarker.style.backgroundColor = "white";
-        walkerBlink = false;
-        setTimeout(blinkWalkerMarker, 750);
+/*******************
+ * Helper functions
+ ******************/
+//helper function to find the mean of an array of numbers
+function average(array) {
+    if (array.length == 0) {
+        return 0;
     }
-    else {
-        walkerMarker.style.borderColor = "black";
-        walkerMarker.style.backgroundColor = "orange";
-        walkerBlink = true;
-        setTimeout(blinkWalkerMarker, 1500);
+    let sum = 0;
+    for (let i = 0; i < array.length; i++) {
+        sum += parseInt(array[i], 10);
     }
-}
-
-/******************************************************
- * Show the walker
- * - Do this dynamically since it will be a server call
- *****************************************************/
-
-function displayUser(user, request) {
-
-    //box for the popup
-    const selectUserPopup = document.createElement("div");
-    selectUserPopup.classList.add("walkerDisplay");
-
-    //add walker's picture
-    const userImage = document.createElement("img");
-    userImage.classList.add("walker-popup-image");
-    userImage.src = user.picture;
-    selectUserPopup.appendChild(userImage);
-
-    //add walker's name
-    const userNameSpan = document.createElement("span");
-    userNameSpan.classList.add("walker-popup-name");
-    userNameSpan.innerText = user.name;
-    selectUserPopup.appendChild(userNameSpan);
-
-    //add walker's rating
-    const userRatingDisplay = document.createElement("div");
-
-    const userRatingStarsSpan = document.createElement("span");
-    userRatingStarsSpan.classList.add("walker-popup-stars");
-    userRatingStarsSpan.innerText = "\u2605";
-
-    const userRatingNumberSpan = document.createElement("span");
-    userRatingNumberSpan.classList.add("walker-popup-rating");
-    userRatingNumberSpan.innerText = user.rating;
-
-    userRatingDisplay.appendChild(userRatingStarsSpan);
-    userRatingDisplay.appendChild(userRatingNumberSpan);
-    selectUserPopup.appendChild(userRatingDisplay);
-
-    const walkNeedsContainer = document.createElement("ul")
-    walkNeedsContainer.id = "walk-needs-container"
-
-    var newNeed;
-    var newNeedTxt;
-    request.needs.forEach(function(item, index){
-      newNeed = document.createElement("li")
-      newNeed.className = "walk-need"
-      newNeedTxt = document.createTextNode(item)
-      newNeed.appendChild(newNeedTxt)
-      walkNeedsContainer.appendChild(newNeed)
-      });
-
-    selectUserPopup.appendChild(walkNeedsContainer)
-
-    const submitNoteLabel = document.createElement("span")
-    submitNoteLabel.className = "submitNoteLabel"
-    submitNoteLabel.innerText = "Add Note"
-    selectUserPopup.appendChild(submitNoteLabel)
-
-    const submitNoteForm = document.createElement("form")
-    const noteText = document.createElement("textarea")
-    const submitNote = document.createElement("input")
-    noteText.placeholder = "Write something.."
-    submitNote.type = "submit"
-    submitNote.onclick = function (e){
-      addWalkerNote(noteText.value)
-      noteText.value = "";
-      e.preventDefault()};
-    submitNoteForm.className = "submitNoteForm"
-    submitNoteForm.appendChild(noteText)
-    submitNoteForm.appendChild(submitNote)
-    selectUserPopup.appendChild(submitNoteForm)
-
-    //add box as child for area
-    const userArea = document.querySelector("#right-pane-body");
-    userArea.appendChild(selectUserPopup);
-
-
-
-}
-
-/************************
- * Initialize the page
- ***********************/
-
-(function initialize() {
-    //get the pickup location from the server - here we use hardcoded values
-    placePickupMarker(450, 220);
-    //get the walker's location from the server - here we use hardcoded values
-    placeWalkerMarker(475, 215);
-    //start the blinking of the walker marker
-    setTimeout(blinkWalkerMarker, 500);
-    //get the walker's data from the server - here we just use john
-    displayUser(rufus, req);
-
-})();
+    return (sum/array.length).toFixed(2);
+  }

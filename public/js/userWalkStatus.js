@@ -1,8 +1,5 @@
 "use strict";
 
-//TODO: add walker location and pickup location
-//TODO: add rating screen after time hits 0
-
 /*******************
  * class definitions
  *******************/
@@ -15,10 +12,6 @@ class Walker {
         this.description = description;
     }
 }
-
-/* Test walker */
-const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
-const john = new Walker("John Smith", "images/profilepic.png", 4.42, johnDescription);
 
 /***********************
  * Add a new walker note

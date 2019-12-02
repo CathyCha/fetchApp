@@ -13,21 +13,22 @@ class User {
 }
 
 class walkRequest {
- constructor(xCoord, yCoord, length, needs, price){
-   this.x = xCoord
-   this.y = yCoord
-   this.length = length
-   this.needs = needs
-   this.price = price
- }
+    constructor(xCoord, yCoord, length, needs, price){
+    this.x = xCoord
+    this.y = yCoord
+    this.length = length
+    this.needs = needs
+    this.price = price
+    }
 }
+
+//storage for server call results
+let userData; //the owner's data
+let walkRequested = false; //whether or not there is an active walk - disables page changes if there is
 
 /*****************************
  * Page initialization
  *****************************/
-
-let userData;
-let walkRequested = false;
 
 window.addEventListener("load", initializePage);
 function initializePage(e) {

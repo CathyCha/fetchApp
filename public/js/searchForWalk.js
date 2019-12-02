@@ -18,22 +18,19 @@ class WalkRequest {
     this.price = price
   }
 }
-const rufusDescription = "energetic and playful, quite the handul!"; // These fields would normally be filled by the server
-const rufusNeeds = new Array("Hyperactive", "Treats", "Puppy", "Water breaks")
 
+//default things for when the dog doesn't have these set
 const defaultDescription = "I'm a doggo! Walk me!!";
 const defaultPicture = "images/rufus.jpg";
-
-const rufus = new User("Rufus", "images/rufus.jpg", 4.42, rufusDescription);
-const req = new WalkRequest(680, 330, 30, rufusNeeds, 25)
 
 const searchButton = document.querySelector("#searchForWalkButton");
 let acceptButton = null;
 
-const map = document.getElementById("map")
+const map = document.getElementById("map");
 
-let walkRequest;
-let doggo;
+//storage for server call results
+let walkRequest; //incoming walk request
+let doggo; //the doggo with an incoming walk request
 
 /*************************
  * Page initialization
@@ -70,7 +67,7 @@ function initializePage(e) {
   }).catch((error) => {
     console.log(error);
   });
-  
+
   checkForRequests();
 }
 
@@ -145,6 +142,10 @@ function checkForRequests() {
   }).then((json) => {
     if (json.length > 0) {
       walkRequest = json[0];
+      if (walkRequest.accepted) {
+        //walker already accepted this request - go to the status page
+        window.location.href = "walkerWalkStatus.html";
+      }
       walkFound(walkRequest);
     }
     else {
