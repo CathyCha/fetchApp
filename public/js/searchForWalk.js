@@ -35,9 +35,9 @@ let doggo; //the doggo with an incoming walk request
 /*************************
  * Page initialization
  *************************/
-window.addEventListener("load", initializePage);
+window.addEventListener("load", getInfo);
 
-function initializePage(e) {
+function getInfo(e) {
   const url = '/walker';
   fetch(url).then((res) => {
     if (res.status === 200) {

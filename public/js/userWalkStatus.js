@@ -13,6 +13,88 @@ class Walker {
     }
 }
 
+//default things for when the walker doesn't have these set
+const defaultDescription = "Hi! I'm a dog walker.";
+const defaultPicture = "images/defaultprofile.jpg";
+
+//storage for server call results
+let walkRequest;
+let walker;
+let timeLeft; 
+
+/*************************
+ * Page initialization
+ * - a chain of events to load all the walk info onto the page
+ *************************/
+window.addEventListener("load", getInfo);
+
+function getInfo(e) {
+    const url = '/walk';
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            console.log("Error " + res.status + ": Could not get walk data");
+            if (res.status === 404) {
+                alert("Session expired! Please log in again");
+                window.location.href = "login.html";
+            }
+            else {
+                return Promise.reject(res.status);
+            }
+        }
+    }).then((json) => {
+        if (json.length > 0 && json[0].accepted) {
+            walkRequest = json[0];
+            console.log(walkRequest);
+            timeLeft = walkRequest.duration + 1;
+
+            //add the walker's existing notes
+            walkRequest.notes.forEach((note, index) => {
+                addWalkerNote(note);
+            });
+
+            getWalker();
+        }
+        else {
+            //no active walk, redirect user
+            window.location.href = "requestWalk.html"
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+function getWalker() {
+    const url = '/walker/' + walkRequest.walkerId;
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            return Promise.reject(res.status);
+        }
+    }).then((json) => {
+        walker = json;
+        initializeMap();
+    }).catch((error) => {
+        console.log(error);
+    })
+}
+
+function initializeMap() {
+    //place markers for dog and walker locations
+    placePickupMarker(walkRequest.locations[0].x, walkRequest.locations[0].y);
+    placeWalkerMarker(walkRequest.locations[walkRequest.locations.length-1].x, 
+        walkRequest.locations[walkRequest.locations.length-1].y);
+
+    //start the blinking of the walker marker
+    setTimeout(blinkWalkerMarker, 500);
+    //display the walker's info
+    displayWalker(walker);
+};
+
 /***********************
  * Add a new walker note
  **********************/
@@ -24,16 +106,97 @@ function addWalkerNote(message) {
     notesList.appendChild(newNote);
 }
 
+/***************************************************************
+ * Show pickup location on the map and update the dog's location
+ ***************************************************************/
+
+let pickupMarker = null;
+let walkerMarker = null;
+let walkerBlink = false;
+const markerRadius = 10; //this is used for styling purposes
+
+function placePickupMarker(xCoordinate, yCoordinate) {
+    pickupMarker = document.createElement("div");
+    pickupMarker.classList.add("pickup-marker");
+    pickupMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
+    pickupMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
+    document.querySelector("#map").appendChild(pickupMarker);
+}
+
+function placeWalkerMarker(xCoordinate, yCoordinate) {
+    walkerMarker = document.createElement("div");
+    walkerMarker.classList.add("walker-marker");
+    walkerMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
+    walkerMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
+    document.querySelector("#map").appendChild(walkerMarker);
+}
+
+function updateWalkerMarkerLocation(xCoordinate, yCoordinate) {
+    walkerMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
+    walkerMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
+}
+
+function blinkWalkerMarker () {
+    if (walkerBlink) {
+        walkerMarker.style.borderColor = "orange";
+        walkerMarker.style.backgroundColor = "white";
+        walkerBlink = false;
+        setTimeout(blinkWalkerMarker, 750);
+    }
+    else {
+        walkerMarker.style.borderColor = "black";
+        walkerMarker.style.backgroundColor = "orange";
+        walkerBlink = true;
+        setTimeout(blinkWalkerMarker, 1500);
+    }
+}
+
+/******************************************************
+ * Show the walker
+ *****************************************************/
+
+function displayWalker(walker) {
+
+    //box for the popup
+    const selectWalkerPopup = document.createElement("div");
+    selectWalkerPopup.classList.add("walkerDisplay");
+
+    //add walker's picture
+    const walkerImage = document.createElement("img");
+    walkerImage.classList.add("walker-popup-image");
+    walkerImage.src = walker.pictureURL || defaultPicture;
+    selectWalkerPopup.appendChild(walkerImage);
+
+    //add walker's name
+    const walkerNameSpan = document.createElement("span");
+    walkerNameSpan.classList.add("walker-popup-name");
+    walkerNameSpan.innerText = walker.firstName + " " + walker.lastName;
+    selectWalkerPopup.appendChild(walkerNameSpan);
+
+    //add walker's rating
+    const walkerRatingDisplay = document.createElement("div");
+
+    const walkerRatingStarsSpan = document.createElement("span");
+    walkerRatingStarsSpan.classList.add("walker-popup-stars");
+    walkerRatingStarsSpan.innerText = "\u2605";
+
+    const walkerRatingNumberSpan = document.createElement("span");
+    walkerRatingNumberSpan.classList.add("walker-popup-rating");
+    walkerRatingNumberSpan.innerText = average(walker.ratings);
+
+    walkerRatingDisplay.appendChild(walkerRatingStarsSpan);
+    walkerRatingDisplay.appendChild(walkerRatingNumberSpan);
+    selectWalkerPopup.appendChild(walkerRatingDisplay);
+
+    //add box as child for area
+    const walkerArea = document.querySelector("#right-pane-body");
+    walkerArea.appendChild(selectWalkerPopup);
+
+}
+
 /*********************
- * Update time left
+ * Update the page
  ***********************/
-
-let timeLeft = 31;
-let walkerNotes = ["Cute dog", "Stopped for water", "Fought with another dog", "Won the fight", "Heading back"];
-let xCoordinates = [475, 520, 705, 632, 383, 346, 436];
-let yCoordinates = [215, 375, 400, 591, 563, 344, 235];
-let updateIndex = 0;
-
 const updatePageInterval = setInterval(updatePage, 1000);
 
 function updateTimeLeft(minutes) {
@@ -43,24 +206,43 @@ function updateTimeLeft(minutes) {
 
 function updatePage() {
     //query server for walker's current status
-    //here we simulate a walk in progress
-    if (timeLeft > 0) {
-        timeLeft--;
-        updateTimeLeft(timeLeft);
-        if (timeLeft % 5 == 0) {
-            if (updateIndex < walkerNotes.length) {
-                addWalkerNote(walkerNotes[updateIndex]);
-            }
-            if (updateIndex < xCoordinates.length) {
-                updateWalkerMarkerLocation(xCoordinates[updateIndex], yCoordinates[updateIndex]);
-            }
-            updateIndex++;
+    const url = '/walk/' + walkRequest._id;
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
         }
-    }
-    else {
-        clearInterval(updatePageInterval);
-        finishWalk();
-    }
+        else {
+            console.log("Error " + res.status + ": Could not get walk data");
+            return Promise.reject(res.status);
+        }
+    }).then((json) => {
+        const walkRequestUpdated = json;
+        console.log(walkRequestUpdated);
+
+        //update notes
+        if (walkRequestUpdated.notes.length > walkRequest.notes.length) {
+            for (let i = walkRequest.notes.length; i < walkRequestUpdated.notes.length; i++) {
+                addWalkerNote(walkRequestUpdated.notes[i]);
+            }
+        }
+
+        //update location
+        if (walkRequestUpdated.locations.length > walkRequest.locations.length) {
+            updateWalkerMarkerLocation(walkRequestUpdated.locations[walkRequestUpdated.locations.length-1].x, 
+                walkRequestUpdated.locations[walkRequestUpdated.locations.length-1].y);
+        }
+
+        //save this updated data
+        walkRequest = walkRequestUpdated;
+
+        if (walkRequest.completed) {
+            //TODO: finish walk
+            clearInterval(updatePageInterval);
+            finishWalk();
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
 }
 
 /***************************************
@@ -254,107 +436,17 @@ function submit(e) {
     window.location.replace("mywalk.html");
 }
 
-/***************************************************************
- * Show pickup location on the map and update the dog's location
- ***************************************************************/
-
-let pickupMarker = null;
-let walkerMarker = null;
-let walkerBlink = false;
-const markerRadius = 10; //this is used for styling purposes
-
-function placePickupMarker(xCoordinate, yCoordinate) {
-    pickupMarker = document.createElement("div");
-    pickupMarker.classList.add("pickup-marker");
-    pickupMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
-    pickupMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
-    document.querySelector("#map").appendChild(pickupMarker);
-}
-
-function placeWalkerMarker(xCoordinate, yCoordinate) {
-    walkerMarker = document.createElement("div");
-    walkerMarker.classList.add("walker-marker");
-    walkerMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
-    walkerMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
-    document.querySelector("#map").appendChild(walkerMarker);
-}
-
-function updateWalkerMarkerLocation(xCoordinate, yCoordinate) {
-    walkerMarker.style.top = (yCoordinate - markerRadius).toString() + "px";
-    walkerMarker.style.left = (xCoordinate - markerRadius).toString() + "px";
-}
-
-function blinkWalkerMarker () {
-    if (walkerBlink) {
-        walkerMarker.style.borderColor = "orange";
-        walkerMarker.style.backgroundColor = "white";
-        walkerBlink = false;
-        setTimeout(blinkWalkerMarker, 750);
+/*******************
+ * Helper functions
+ ******************/
+//helper function to find the mean of an array of numbers
+function average(array) {
+    if (array.length == 0) {
+        return 0;
     }
-    else {
-        walkerMarker.style.borderColor = "black";
-        walkerMarker.style.backgroundColor = "orange";
-        walkerBlink = true;
-        setTimeout(blinkWalkerMarker, 1500);
+    let sum = 0;
+    for (let i = 0; i < array.length; i++) {
+        sum += parseInt(array[i], 10);
     }
-}
-
-/******************************************************
- * Show the walker
- * - Do this dynamically since it will be a server call
- *****************************************************/
-
-function displayWalker(walker) {
-
-    //box for the popup
-    const selectWalkerPopup = document.createElement("div");
-    selectWalkerPopup.classList.add("walkerDisplay");
-
-    //add walker's picture
-    const walkerImage = document.createElement("img");
-    walkerImage.classList.add("walker-popup-image");
-    walkerImage.src = walker.picture;
-    selectWalkerPopup.appendChild(walkerImage);
-
-    //add walker's name
-    const walkerNameSpan = document.createElement("span");
-    walkerNameSpan.classList.add("walker-popup-name");
-    walkerNameSpan.innerText = walker.name;
-    selectWalkerPopup.appendChild(walkerNameSpan);
-
-    //add walker's rating
-    const walkerRatingDisplay = document.createElement("div");
-
-    const walkerRatingStarsSpan = document.createElement("span");
-    walkerRatingStarsSpan.classList.add("walker-popup-stars");
-    walkerRatingStarsSpan.innerText = "\u2605";
-
-    const walkerRatingNumberSpan = document.createElement("span");
-    walkerRatingNumberSpan.classList.add("walker-popup-rating");
-    walkerRatingNumberSpan.innerText = walker.rating;
-
-    walkerRatingDisplay.appendChild(walkerRatingStarsSpan);
-    walkerRatingDisplay.appendChild(walkerRatingNumberSpan);
-    selectWalkerPopup.appendChild(walkerRatingDisplay);
-
-    //add box as child for area
-    const walkerArea = document.querySelector("#right-pane-body");
-    walkerArea.appendChild(selectWalkerPopup);
-
-}
-
-/************************
- * Initialize the page
- ***********************/
-
-(function initialize() {
-    //get the pickup location from the server - here we use hardcoded values
-    placePickupMarker(450, 220);
-    //get the walker's location from the server - here we use hardcoded values
-    placeWalkerMarker(475, 215);
-    //start the blinking of the walker marker
-    setTimeout(blinkWalkerMarker, 500);
-    //get the walker's data from the server - here we just use john
-    displayWalker(john);
-
-})();
+    return (sum/array.length).toFixed(2);
+  }

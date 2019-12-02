@@ -37,16 +37,16 @@ let timeLeft = null; //time left on walk
  * Page initialization
  * - a chain of events to load all the walk info onto the page
  *************************/
-window.addEventListener("load", initializePage);
+window.addEventListener("load", getInfo);
 
-function initializePage(e) {
+function getInfo(e) {
   const url = '/walk';
   fetch(url).then((res) => {
     if (res.status === 200) {
       return res.json();
     }
     else {
-      console.log("Error " + res.status + ": Could not get user data");
+      console.log("Error " + res.status + ": Could not get walk data");
       if (res.status === 404) {
         alert("Session expired! Please log in again");
         window.location.href = "login.html";
@@ -69,7 +69,7 @@ function initializePage(e) {
         notesList.appendChild(newNote);
       });
 
-      getDoggo();
+      getWalker();
     }
     else {
       //no active walk, redirect user
@@ -81,7 +81,7 @@ function initializePage(e) {
   
 }
 
-function getDoggo() {
+function getWalker() {
     const url = '/dogs/' + walkRequest.userId;
     fetch(url).then((res) => {
         if (res.status === 200) {
@@ -100,11 +100,11 @@ function getDoggo() {
 }
 
 function initializeMap() {
-    //get the pickup location from the server - here we use hardcoded values
+    //place markers for dog and walker locations
     placePickupMarker(walkRequest.locations[0].x, walkRequest.locations[0].y);
-    //get the walker's location from the server - here we use hardcoded values
     placeWalkerMarker(walkRequest.locations[walkRequest.locations.length-1].x, 
         walkRequest.locations[walkRequest.locations.length-1].y);
+
     //start the blinking of the walker marker
     setTimeout(blinkWalkerMarker, 500);
     //display the doggo's info
@@ -324,10 +324,6 @@ function mapClick(e) {
  * Update time left
  ***********************/
 
-let xCoordinates = [475, 520, 705, 632, 383, 346, 436];
-let yCoordinates = [215, 375, 400, 591, 563, 344, 235];
-let updateIndex = 0;
-
 const updatePageInterval = setInterval(updatePage, 1000);
 
 function updateTimeLeft(minutes) {
@@ -336,16 +332,9 @@ function updateTimeLeft(minutes) {
 }
 
 function updatePage() {
-    //query server for walker's current status
-    if (timeLeft > 0) {
-        timeLeft--;
-        updateTimeLeft(timeLeft);
-        if (timeLeft % 5 == 0) {
-            if (updateIndex < xCoordinates.length) {
-                //updateWalkerMarkerLocation(xCoordinates[updateIndex], yCoordinates[updateIndex]);
-            }
-            updateIndex++;
-        }
+    //TODO: query server for walker's current status
+    if (true) {
+        //update things
     }
     else {
         clearInterval(updatePageInterval);
