@@ -7,6 +7,7 @@ function editButton() {
 // DELETE route
 function deleteacc() {
   alert('Are you sure you want to delete this account? You can not restore the account once it is deleted');
+  
   alert('Account deleted.');
   window.location.replace('index.html');
 }

@@ -3,12 +3,12 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" type="text/css" href="css/index.css">
-<script src="bootstrap-switch.js"></script>
+<!-- <script src="bootstrap-switch.js"></script> -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="js/login.js"></script>
-
+<script src="js/signup.js"></script>
 </head>
 
 <body class="container-fluid">
@@ -18,11 +18,11 @@
 
 <div class="register-form">
   <div class="row">
-      <form>
+      <form id="signupForm">
         <div class="col-sm-12">
           <div class="switch-field">
             <input type="radio" id="radio-one" name="userswitch" value="owner" checked/>
-            <label for="radio-one">Owner</label>
+            <label for="radio-one">Dog Owner</label>
             <input type="radio" id="radio-two" name="userswitch" value="walker"/>
             <label for="radio-two">Walker</label>
           </div>
@@ -30,48 +30,52 @@
           <div class="row">
             <div class="col-sm-6 form-group">
               <label>First Name</label>
-              <input type="text" placeholder="Enter First Name Here.." class="form-control" name="fname" required>
+              <input type="text" name="firstName" placeholder="Enter First Name Here.." class="form-control" id="firstName" required>
             </div>
             <div class="col-sm-6 form-group">
               <label>Last Name</label>
-              <input type="text" placeholder="Enter Last Name Here.." class="form-control" name="lname" required>
+              <input type="text" placeholder="Enter Last Name Here.." class="form-control" id="lastName" required>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-6 form-group">
               <label>Username</label>
-              <input type="text" placeholder="Enter Username Here.." class="form-control" name="uid" required>
+              <input type="text" placeholder="Enter Username Here.." class="form-control" id="username" required>
             </div>
             <div class="col-sm-6 form-group">
               <label>Password</label>
-              <input type="password" placeholder="Enter Password Here.." class="form-control" name="pwd" required>
+              <input type="password" placeholder="Enter Password Here.." class="form-control" id="password" required>
             </div>
           </div>
           <div class="form-group">
             <label>Address</label>
-            <textarea placeholder="Enter Address Here.." rows="3" class="form-control" name="adrs" required></textarea>
+            <textarea placeholder="Enter Address Here.." rows="3" class="form-control" id="homeAddress" required></textarea>
           </div>
           <div class="row">
-            <div class="col-sm-6 form-group">
+            <div class="col-sm-4 form-group">
               <label>City</label>
-              <input type="text" placeholder="Enter City Name Here.." class="form-control" name="city" required>
+              <input type="text" placeholder="Enter City Name Here.." class="form-control" id="city" required>
             </div>
-            <div class="col-sm-6 form-group">
+            <div class="col-sm-4 form-group">
               <label>Province</label>
-              <input type="text" placeholder="Enter State Name Here.." class="form-control" name="state" required>
+              <input type="text" placeholder="Enter Province Name Here.." class="form-control" id="province" required>
+            </div>
+            <div class="col-sm-4 form-group">
+              <label>Zip</label>
+              <input type="text" placeholder="Enter Zip Code Here.." class="form-control" id="zip" required>
             </div>
           </div>
         <div class="form-group">
           <label>Phone Number</label>
-          <input type="text" placeholder="Enter Phone Number Here.." class="form-control" name="pnmb" required>
+          <input type="text" placeholder="Enter Phone Number Here.." class="form-control" id="phoneNumber" required>
         </div>
         <div class="form-group">
           <label>Email Address</label>
-          <input type="email" placeholder="Enter Email Address Here.." class="form-control" aria-describedby="emailHelp" name="email" required>
+          <input type="email" placeholder="Enter Email Address Here.." class="form-control" aria-describedby="emailHelp" id="emailAddress" required>
+        </form>
         </div>
-        <input type="submit" value="Submit" id="signupSubmit">
+        <input type="submit" onclick="addUser()" value="Submit" id="signupSubmit">
         </div>
-      </form>
   </div>
 </div>
 

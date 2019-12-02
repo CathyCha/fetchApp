@@ -47,6 +47,7 @@ let allowCrossDomain = function(req, res, next) {
 }
 app.use(allowCrossDomain);
 
+
 /*** Session handling **************************************/
 // Create a session cookie
 app.use(session({
@@ -54,7 +55,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        expires: 600000, //60000 = 1 minute
+        expires: 60000,
         httpOnly: true
     }
 }));
@@ -82,7 +83,7 @@ const sessionChecker = (req, res, next) => {
 
 // route for root
 app.get('/', sessionChecker, (req, res) => {
-	res.sendFile(__dirname + './public/index.html')
+	res.sendFile(__dirname + '/public/index.html')
 })
 
 //redirect if user tries to login again while already logged in
@@ -91,7 +92,7 @@ app.get('/login.html', sessionChecker, (req,res) => {
 })
 
 // static directories
-app.use(express.static(__dirname + './public'))
+app.use(express.static(__dirname + '/public'))
 
 /*********************************************************/
 
@@ -116,27 +117,26 @@ app.use(express.static(__dirname + './public'))
 }
 */
 app.post('/login', (req, res) => {
+    console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
     const userType = req.body.userType;
 
-    if (!username || !password ) {
+    if (!username || !password || !userType) {
         res.redirect('/login.html');
         return;
     }
-
-    else if (username === "admin" && password === "admin") {
+    if (username === "admin") {
         //hardcoded credentials, hurrah!
-        req.session.user = "admin";
-        req.session.userType = "admin";
-        res.redirect('/adminpage.html')
+        if (password === "admin") {
+            req.session.user = "admin";
+            req.session.userType = "admin";
+            res.redirect('/adminpage.html')
+        }
+        else {
+            res.status(401).send(); //invalid password
+        }
     }
-
-    else if (!userType) {
-        res.redirect('/login.html');
-        return;
-    }
-
     else if (userType === "user") {
         User.findOne({username: username}).then((user) => {
             if (!user) {
@@ -199,7 +199,7 @@ app.get('/logout', (req, res) => {
 		if (error) {
 			res.status(500).send(error)
 		} else {
-			res.redirect('/')
+			res.redirect('./')
 		}
 	})
 });
@@ -249,9 +249,9 @@ app.post('/user', (req, res) => {
                             dateJoined: new Date(),
                             userDogs: []
                         });
-
+                        console.log(user)
                         user.save().then((result) => {
-                            res.send(result);
+                            res.status(200).send(result);
                         }, (error) => {
                             res.status(400).send(error);
                         })
@@ -268,6 +268,7 @@ app.post('/user', (req, res) => {
 /// Route for getting information for one user.
 // GET /user/id
 app.get('/user/:id', (req, res) => {
+	// Add code here
 	const id = req.params.id;
 
 	if (!ObjectID.isValid(id)) {
@@ -283,142 +284,6 @@ app.get('/user/:id', (req, res) => {
 	}).catch((error) => {
 		res.status(500).send(); //server error
 	});
-})
-
-/// Route for getting information for the user logged in
-// GET /user
-app.get('/user', (req, res) => {
-	const id = req.session.user;
-
-	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
-	}
-
-	User.findById(id).then((user) => {
-		if (!user) {
-			res.status(404).send(); //could not find user
-		} else {
-			res.send(user);
-		}
-	}).catch((error) => {
-		res.status(500).send(); //server error
-	});
-})
-
-// Route to change a user's data
-// Changes the data for the user logged in
-app.patch('/user', (req, res) => {
-    const id = req.session.user;
-
-	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
-    }
-
-    User.findById(id).then((user) => {
-        if (!user) {
-            res.status(404).send(); //could not find user
-        }
-        else {
-            //update user
-            if (req.body.fname) {
-                user.firstName = req.body.fname;
-            }
-            if (req.body.lname) {
-                user.lastName = req.body.lname;
-            }
-            if (req.body.email) {
-                user.emailAddress = req.body.email;
-            }
-            if (req.body.adrs) {
-                user.homeAddress = req.body.adrs;
-            }
-            if (req.body.city) {
-                user.city = req.body.city;
-            }
-            if (req.body.prov) {
-                user.province = req.body.prov;
-            }
-            if (req.body.pwd) {
-                bcrypt.genSalt(10, (err, salt) => {
-                    bcrypt.hash(req.body.pwd, salt, (err, hash) => {
-                        user.passwordHash = hash;
-
-                        //asynchronous call waits on bcrypt result
-                        //save the user here if the password changed
-                        user.save().then((result) => {
-                            res.send(result);
-                        }, (error) => {
-                            res.status(400).send(error);
-                        })
-                    });
-                });
-            }
-            else {
-                //save the user if their password didn't change
-                user.save().then((result) => {
-                    res.send(result);
-                }, (error) => {
-                    res.status(400).send(error);
-                })
-            }
-        }
-    }).catch((error) => {
-        res.status(500).send(); //server error
-    })
-})
-
-/// route to delete a user by ID
-// restricted to admins
-app.delete('/user/:id', (req, res) => {
-    const id = req.params.id;
-
-    if (req.session.user !== "admin") {
-        res.status(403).send(); //unauthorized
-        return;
-    }
-    // Validate id
-	else if (!ObjectID.isValid(id)) {
-		res.status(404).send();
-    }
-    User.findOneAndDelete({_id: id}).then((user) => {
-        if (!user) {
-            res.status(404).send();
-        }
-        else {
-            res.send(user);
-        }
-    }).catch((error) => {
-        res.status(500).send(); //server error, could not delete
-    })
-})
-
-/// route to delete the currently logged in user
-app.delete('/user', (req, res) => {
-    const id = req.session.user;
-
-    // Validate id
-	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
-    }
-    User.findOneAndDelete({_id: id}).then((user) => {
-        if (!user) {
-            res.status(404).send();
-        }
-        else {
-            res.send(user);
-        }
-    }).catch((error) => {
-        res.status(500).send(); //server error, could not delete
-    });
-
-    // Remove the session; log out the user
-	req.session.destroy((error) => {
-		if (error) {
-			; //hope that nothing goes wrong
-		} else {
-			res.redirect('/')
-		}
-	})
 })
 
 /** Dog resource routes **/
@@ -495,7 +360,7 @@ app.get('/dogs/:userid', (req, res) => {
 }
 */
 app.post('/walker', (req, res) => {
-
+    log(req.body)
     if (req.body.username && req.body.password) {
         //check if username already taken
         Walker.findOne({username: req.body.username}).then((walker) => {
@@ -556,112 +421,7 @@ app.get('/walker/:id', (req, res) => {
 		res.status(404).send();
 	}
 
-	Walker.findById(id).then((walker) => {
-		if (!walker) {
-			res.status(404).send(); //could not find user
-		} else {
-			res.send(walker);
-		}
-	}).catch((error) => {
-		res.status(500).send(); //server error
-	});
-})
-
-app.patch('walker/:id', (req, res) => {
-    const id = req.params.id;
-
-    if (!ObjectID.isValid(id)) {
-        res.status(404).send()
-    }
-
-    Walker.findById(id).then((walker) => {
-        if(!walker){
-            res.status(404).send()
-        } else {
-
-            if (req.body.fname) {
-                walker.firstName = req.body.fname;
-            }
-            if (req.body.lname) {
-                walker.lastName = req.body.lname;
-            }
-            if (req.body.email) {
-                walker.emailAddress = req.body.email;
-            }
-            if (req.body.adrs) {
-                walker.homeAddress = req.body.adrs;
-            }
-            if (req.body.city) {
-                walker.city = req.body.city;
-            }
-            if (req.body.prov) {
-                walker.province = req.body.prov;
-            }
-            if (req.body.phone) {
-                walker.phoneNumber = req.body.phone
-            }
-            if (req.body.languages) {
-                walker.languages = req.body.languages
-            }
-            if (req.body.qual) {
-                walker.qualifications = req.body.qual
-            }
-            if (req.body.ratings){
-                walker.ratings = req.body.ratings
-            }
-
-            if (req.body.pwd) {
-                bcrypt.genSalt(10, (err, salt) => {
-                    // password is hashed with the salt
-                    
-                    bcrypt.hash(req.body.password, salt, (err, hash) => {
-
-                        // Change password
-                        walker.passwordHash = hash
-                    });
-                });
-            }
-
-            walker.save().then((result) => {
-                res.send(result);
-            }, (error) => {
-                res.status(400).send(error);
-            })
-        }
-    })
-})
-
-app.delete('/walker/:id', (req, res) => {
-    const id = req.params.id
-
-    //Validate Id
-    if(!ObjectID.isValid(id)){
-        res.status(404).send()
-    }
-
-    //Delete a walker by ID
-    Walker.findByIdAndRemove(id).then((walker) => {
-        if(!walker){
-            res.status(404).send()
-        } else [
-            res.send(walker)
-        ]
-    }).catch((error) => {
-        res.status(500).send() // Server error
-    })
-})
-
-/// Route for getting information for the walker logged in.
-// GET /walker/id
-app.get('/walker', (req, res) => {
-	// Add code here
-    const id = req.session.user;
-
-	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
-	}
-
-	Walker.findById(id).then((walker) => {
+	User.findById(id).then((walker) => {
 		if (!walker) {
 			res.status(404).send(); //could not find user
 		} else {
@@ -875,81 +635,24 @@ app.post('/report', (req, res) => {
 })
 
 /// route to get all reports
+// security TODO: restrict to admin only
 app.get('/report', (req, res) => {
-    if (req.session.user !== "admin") {
-        res.status(403).send();
-        return;
-    }
     Report.find({}).then((reports) => {
         res.send({reports}); //send all reports
     }, (error) => {
         res.status(500).send(error); //server error
     })
 })
-
-// Get report by id
-app.get('/report/:id', (req, res) => {
-    const id = req.params.id 
-    if(!ObjectID.isValid(id)){
-        res.status(404).send()
-    }
-
-    Report.findById(id).then((report) => {
-        if(!report){
-            res.status(404).send()
-        } else {
-            res.send(report)
-        }
-    }).catch((error) => {
-        res.status(500).send()
-    })
-})
 //TODO: PATCH report
-app.patch('/report/:id', (req, res) => {
-    const id = req.params.id
-    if(!ObjectID.isValid(id)){
-        res.status(404).send()
-    }
+//TODO: GET report
 
-    Report.findById(id).then((report) => {
-        if(req.body.type){
-            report.type = req.body.type
-        }
-        if(req.body.walkerId){
-            report.walkerId = req.body.walkerId
-        }
-        if(req.body.userId){
-            report.userId = req.body.userId
-        }
-        if(req.body.dogId){
-            report.dogId = req.body.dogId
-        }
-        if(req.body.walkId){
-            report.walkId = req.body.walkId
-        }
-        if(req.body.status){
-            report.status = req.body.status
-        }
-        if(req.body.action){
-            report.action = req.body.action
-        }
-
-        report.save().then((result) => {
-            res.send(result);
-        }, (error) => {
-            res.status(400).send(error);
-        });
-    }).catch((error) => {
-		res.status(500).send(); //server error
-	});
-})
 
 /** Other routes **/
 
-/// Route for uploading an image for a profile picture
+/// Route for uploading an image for a user profile picture
 /// Image will be stored as /public/images/uploaded/id.{jpg.png}
 // POST /upload/{userid/dogid/walkerid}
-app.post('/upload/:id', upload.single("file" /* name of file element in form */),
+app.post('/upload/:id', upload.single("file" /* name of file element in form */), 
 (req, res) => {
     const id = req.params.id;
     if (!ObjectID.isValid(id)) {
@@ -958,7 +661,7 @@ app.post('/upload/:id', upload.single("file" /* name of file element in form */)
 
     const ext = path.extname(req.file.originalname).toLowerCase();
     const tempPath = req.file.path;
-    const targetPath = path.join(__dirname, "./public/images/uploaded/", id + ext);
+    const targetPath = path.join(__dirname, "/public/images/uploaded/", id + ext);
 
     fs.rename(tempPath, targetPath, err => {
         if (err) res.status(500).send(err);
@@ -967,28 +670,9 @@ app.post('/upload/:id', upload.single("file" /* name of file element in form */)
     });
 })
 
-/// Route for uploading an image for a profile picture for the currently logged in user
-/// Image will be stored as /public/images/uploaded/id.{jpg.png}
-// POST /upload
-app.post('/upload', upload.single("file" /* name of file element in form */),
-(req, res) => {
-    const id = req.session.id;
-    if (!ObjectID.isValid(id)) {
-		res.status(404).send("Cannot find entity with that id");
-    }
-
-    const ext = path.extname(req.file.originalname).toLowerCase();
-    const tempPath = req.file.path;
-    const targetPath = path.join(__dirname, "./public/images/uploaded/", id + ext);
-
-    fs.rename(tempPath, targetPath, err => {
-        if (err) res.status(500).send(err);
-
-        res.status(200).end("File uploaded!");
-    });
-})
-
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3009
 app.listen(port, () => {
 	console.log(`Listening on port ${port}...`)
 });
+
+
