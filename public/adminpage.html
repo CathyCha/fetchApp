@@ -31,9 +31,9 @@
     <h4>Reports</h4>
     <form>
       <div class="form-group row">
-        <button type="submit" class="btn-primary" id="reportSearchButton">Search</button>
+        <!-- <button type="button" class="btn-primary" onclick="javascript:searchReports();" id="reportSearchButton">Search</button> -->
         <div class="col-sm-2">
-          <input type="text" class="form-control" id="searchReport" name="rid" placeholder="Report ID">
+          <input type="text" class="form-control" onkeyup="searchReports();" id="searchReport" name="rid" placeholder="Report ID">
         </div>
       </div>
     </form>
