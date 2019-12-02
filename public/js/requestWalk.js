@@ -12,75 +12,135 @@ class User {
    }
 }
 
-class Request {
- constructor(xCoord, yCoord, length, needs, price){
-   this.x = xCoord
-   this.y = yCoord
-   this.length = length
-   this.needs = needs
-   this.price = price
- }
-}
-
-class Walker {
-    constructor(name, picture, rating, description) {
-        this.name = name;
-        this.picture = picture;
-        this.rating = rating;
-        this.description = description;
+class walkRequest {
+    constructor(xCoord, yCoord, length, needs, price){
+    this.x = xCoord
+    this.y = yCoord
+    this.length = length
+    this.needs = needs
+    this.price = price
     }
 }
 
-let selDogs = new Array();
+//storage for server call results
+let userData; //the owner's data
+let walkRequested = false; //whether or not there is an active walk - disables page changes if there is
+
+/*****************************
+ * Page initialization
+ *****************************/
+
+window.addEventListener("load", initializePage);
+function initializePage(e) {
+    const url = '/user';
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            console.log("Error " + res.status + ": Could not get user data");
+            if (res.status === 404) {
+              alert("Session expired! Please log in again");
+              window.location.href = "login.html";
+            }
+            else {
+              return Promise.reject(res.status);
+            }
+        }
+    }).then((json) => {
+        //if needed, can save ID here - but probably don't need
+        userData = json;
+
+        json.userDogs.forEach((dog, index) => {
+            addDog(dog);
+        })
+    }).catch((error) => {
+        console.log(error);
+    });
+
+    //if the user has a walk pending, then display it instead of showing the select a walk page again
+    const walkurl = '/walk';
+    fetch(walkurl).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            console.log("Error " + res.status + ": Could not get user data");
+            return Promise.reject(res.status);
+
+        }
+    }).then((json) => {
+        if (json.length > 0) {
+            const walk = json[0];
+            if (walk.accepted) {
+                window.location.href = "userWalkStatus.html"
+            }
+            else {
+                //initialize page to reflect the walk in progress
+                walkRequested = true;
+                showPendingWalk(walk);
+            }
+        }
+    }).catch((error) => {
+        console.log(error);
+    })
+}
+
+/*****************************
+ * Dog selection functionality
+ *****************************/
+//add the dog to the list of dogs at the top of the page
+function addDog(dog) {
+    const dogSpan = document.createElement("span");
+    dogSpan.classList.add("dogListItem");
+    dogSpan.innerText = dog.dogName;
+    document.querySelector('#dog-container').appendChild(dogSpan);
+    dogSpan.addEventListener('click', toggleDog);
+}
+
+let selectedDog = null;
+let selectedDogIndex = null;
+
+function toggleDog(e){
+    //disable changes if a walk has been requested
+    if (walkRequested) return;
+    let dog = e.currentTarget
+
+    if (dog.className == "dogListItem") {
+        if (selectedDog) {
+            selectedDog.className = "dogListItem";
+        }
+        selectedDog = dog;
+        dog.className = "dogListSel";
+        //get the index of this dog so we can submit a request later
+        const parent = selectedDog.parentNode;
+        selectedDogIndex = Array.prototype.indexOf.call(parent.children, selectedDog);
+    }
+    else {
+        dog.className = "dogListItem"
+        selectedDog = null;
+        selectedDogIndex = null;
+    }
+}
 
 /******************************
  * Map click functionality
  ******************************/
 
-/* Test walker */
-const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
-const john = new Walker("John Smith", "images/profilepic.png", 4.42, johnDescription);
-
-/* debugging function, called from the console */
-function testAddWalker() {
-    const johnDescription = "Hi! My name is John and I'm a generic dog walker. Please hire me, I have tuition to pay. Also I love dogs.";
-    const john = new Walker("John Smith", "images/profilepic.png", 4.42, johnDescription);
-    addWalker(john);
-}
-
-//get a list of the user's dogs from the server and display them - here we use rufus
-let dogs = document.querySelectorAll(".dogListItem")
-let numDogs = dogs.length
-for (let i = 0; i<numDogs; i++){
-  dogs[i].addEventListener('click', toggleDog)
-}
-
-function toggleDog(e){
-  let dog = e.currentTarget
-  if(dog.className == "dogListItem"){
-    dog.className = "dogListSel"
-    // Get data from server getDog(dog)
-    // selDogs.push(dog)
-  }
-  else{
-    dog.className = "dogListItem"
-    //remove dog from selDogs
-  }
-}
-
 const map = document.querySelector("#map");
 let marker = null;
+let xCoordinate = null;
+let yCoordinate = null;
+let availableWalkers = null;
 
 /* Function to handle the user clicking on the map */
 function mapClick(e) {
-    // Handle no dogs being selected 
+    //disable changes if a walk has been requested
+    if (walkRequested) return;
+
     const markerRadius = 10;
-    const xCoordinate = e.layerX;
-    const yCoordinate = e.layerY;
-    console.log(xCoordinate, yCoordinate);
-    //send these coordinates to the server and query nearby walkers
-    //here we use john
-    addWalker(john);
+    xCoordinate = e.layerX;
+    yCoordinate = e.layerY;
 
     if (!marker) {
         marker = document.createElement("div");
@@ -92,13 +152,30 @@ function mapClick(e) {
     else {
         marker.style.top = (yCoordinate - markerRadius).toString() + "px";
         marker.style.left = (xCoordinate - markerRadius).toString() + "px";
-        console.log(xCoordinate, yCoordinate);
     }
+
+    //send these coordinates to the server and query nearby walkers
+    const url = '/walker/active';
+    
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            console.log(res.status);
+        }
+    }).then((json) => {
+        availableWalkers = json;
+        json.forEach((walker, index) => {
+            addWalker(walker);
+        })
+    }).catch((error) => {
+        console.log(error);
+    })
+
 }
 
-
 map.addEventListener('click', mapClick);
-
 
 /****************************
  * Setting walk cost estimate
@@ -138,6 +215,8 @@ walkNeeds.addEventListener('click', toggleNeed);
 
 function toggleNeed(e) {
     e.preventDefault();
+    //disable changes if a walk has been requested
+    if (walkRequested) return;
 
     if (e.target.classList.contains('walk-need')) {
         //select the styling for the need that was clicked on
@@ -178,7 +257,12 @@ function addWalker(walker) {
 
     const walkerPic = document.createElement("img");
     walkerPic.classList.add("walker-pic");
-    walkerPic.src = walker.picture;
+    if (walker.pictureURL) {
+        walkerPic.src = walker.pictureURL;
+    }
+    else {
+        walkerPic.src = "images/defaultprofile.jpg";
+    }
 
     const walkerBio = document.createElement("div");
     walkerBio.classList.add("walker-bio");
@@ -189,7 +273,7 @@ function addWalker(walker) {
 
     const walkerName = document.createElement("span");
     walkerName.classList.add("walker-name");
-    walkerName.innerText = walker.name;
+    walkerName.innerText = walker.firstName + " " + walker.lastName;
 
     //add bio elements to walker bio
     walkerBio.appendChild(walkerName);
@@ -211,14 +295,15 @@ function addWalker(walker) {
 
     const ratingNumber = document.createElement("span");
     ratingNumber.classList.add("rating-number");
-    ratingNumber.innerText = walker.rating.toString(10);
+    ratingNumber.innerText = average(walker.ratings).toString(10);
 
     //add the number to the rating
     rating.appendChild(ratingNumber);
 
     const desc = document.createElement("p");
     desc.classList.add("walker-description");
-    desc.innerText = walker.description;
+    desc.innerText = "Hi! I'm a dog walker."
+    //desc.innerText = walker.description;
 
     walkerBio.appendChild(desc);
 }
@@ -232,6 +317,7 @@ let selectWalkerPopup = null;
 let savedWalkers = null;
 let confirmationDiv = null;
 let statusMessage = null;
+let selectedWalkerIndex = null;
 
 function removePopup(e) {
     e.preventDefault();
@@ -265,6 +351,10 @@ function selectWalker(e) {
     if (!targetWalker) {
         return;
     }
+
+    //get the index of this walker so we can send them a request later
+    const parent = targetWalker.parentNode;
+    selectedWalkerIndex = Array.prototype.indexOf.call(parent.children, targetWalker);
 
     savedWalkers = document.querySelector("#walker-container");
     savedWalkers.remove();
@@ -383,11 +473,48 @@ function requestDetails(e) {
 function submitWalkRequest(e) {
     e.preventDefault();
 
+    //make sure a dog is selected
+    if (selectedDogIndex === null) {
+        alert("Please select a dog to be walked!");
+        return;
+    }
+
     const detailsBox = document.querySelector(".detailsBox");
-    const pickupInstructions = detailsBox.value;
-    console.log(pickupInstructions);
 
     //submit the walk request to the server here
+    const pickupInstructions = detailsBox.value;
+    const duration = walkLengthSlider.value;
+    const userId = userData._id;
+    const walkerId = availableWalkers[selectedWalkerIndex]._id;
+    const dogId = userData.userDogs[selectedDogIndex]._id;
+    const selectedWalkNeeds = [];
+    const location = { x: xCoordinate, y: yCoordinate };
+    Array.prototype.forEach.call(walkNeeds.children, (child, index) => {
+        if (child.style.backgroundColor === "green") {
+            selectedWalkNeeds.push(child.innerText);
+        }
+    });
+
+    //submit request to server
+    const url = '/walk';
+    const requestBody = {
+        userId,
+        dogId,
+        walkerId,
+        pickupInstructions,
+        duration,
+        walkNeeds : selectedWalkNeeds,
+        location
+    }
+
+    const request = new Request(url, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
 
     //replace the confirmation requests with a message telling user to wait
     const requestingDiv = document.createElement("div");
@@ -403,14 +530,49 @@ function submitWalkRequest(e) {
     confirmationDiv.remove();
     confirmationDiv = requestingDiv;
 
+    walkRequested = true;
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            
+            //TODO: add a cancel button
+            setTimeout(waitForResponse, 1000);
+            
+        }
+        else {
+            alert("something went wrong");
+            console.log(res.status);
+        }
+    }).catch((error) => {
+        console.log(error);
+    })
+
     //this string of calls simulates communicating with the server
-    setTimeout(waiting, 1000)
+    //setTimeout(waiting, 1000)
 }
 
 /* the below string of function calls simulates talking to the server */
-function waiting() {
-    statusMessage.innerText = "Waiting...";
-    setTimeout(walkAccepted, 1000);
+function waitForResponse() {
+    const url = '/walk';
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            return Promise.reject();
+        }
+    }).then((json) => {
+        if (json.length > 0 || json[0].accepted) {
+            walkAccepted();
+        }
+        else {
+            statusMessage.innerText = "Waiting...";
+            setTimeout(waitForResponse, 1000);
+        }
+    }).catch((error) => {
+        console.log(error);
+    })
+    
 }
 
 function walkAccepted() {
@@ -420,4 +582,121 @@ function walkAccepted() {
 
 function redirect() {
     window.location.href = 'walkStatus.html';
+}
+
+/*******************
+ * Helper functions
+ ******************/
+//helper function to find the mean of an array of numbers
+function average(array) {
+    if (array.length == 0) {
+        return 0;
+    }
+    let sum = 0;
+    for (let i = 0; i < array.length; i++) {
+        sum += parseInt(array[i], 10);
+    }
+    return (sum/array.length).toFixed(2);
+}
+
+function showPendingWalk(walk) {
+    const dogId = walk.dogId;
+    const selectedWalkNeeds = walk.walkNeeds;
+    const walkerId = walk.walkerId;
+
+    //toggle selected dog
+    const userDogs = userData.userDogs;
+    for (let i = 0; i < userDogs.length; i++) {
+        if (userDogs[i]._id == dogId) {
+            selectedDogIndex = i;
+            selectedDog = document.querySelector('#dog-container').children[i];
+            selectedDog.className = "dogListSel"
+            break;
+        }
+    }
+
+    //toggle selected needs
+    for (let i = 0; i < walkNeeds.children.length; i++) {
+        if (selectedWalkNeeds.includes(walkNeeds.children[i].innerText)) {
+            walkNeeds.children[i].style.backgroundColor = "green";
+            walkNeeds.children[i].style.color = "white";
+
+            //update number of needs for pricing
+            numWalkNeeds++;
+        }
+    }
+
+    updateCostEstimate();
+
+    //get the walker's data and display it
+    const url = '/walker/' + walkerId;
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            console.log("Error " + res.status + ": Could not get user data");
+            return Promise.reject(res.status);
+        }
+    }).then((json) => {
+        let walkerPic;
+        if (json.pictureURL) {
+            walkerPic = json.pictureURL;
+        }
+        else {
+            walkerPic = "images/defaultprofile.jpg";
+        }
+        const walkerName = json.firstName + " " + json.lastName;
+        const walkerRating = average(json.ratings).toString(10);
+        const walkerRatingStars = "\u2605";
+
+        //box for the popup
+        selectWalkerPopup = document.createElement("div");
+        selectWalkerPopup.classList.add("walkerPopup");
+        
+
+        const walkerArea = document.querySelector("#right-pane-body");
+        walkerArea.appendChild(selectWalkerPopup);
+
+        //add walker's picture
+        const walkerImage = document.createElement("img");
+        walkerImage.classList.add("walker-popup-image");
+        walkerImage.src = walkerPic;
+        selectWalkerPopup.appendChild(walkerImage);
+
+        //add walker's name
+        const walkerNameSpan = document.createElement("span");
+        walkerNameSpan.classList.add("walker-popup-name");
+        walkerNameSpan.innerText = walkerName;
+        selectWalkerPopup.appendChild(walkerNameSpan);
+
+        //add walker's rating
+        const walkerRatingDisplay = document.createElement("div");
+
+        const walkerRatingStarsSpan = document.createElement("span");
+        walkerRatingStarsSpan.classList.add("walker-popup-stars");
+        walkerRatingStarsSpan.innerText = walkerRatingStars;
+
+        const walkerRatingNumberSpan = document.createElement("span");
+        walkerRatingNumberSpan.classList.add("walker-popup-rating");
+        walkerRatingNumberSpan.innerText = walkerRating;
+
+        walkerRatingDisplay.appendChild(walkerRatingStarsSpan);
+        walkerRatingDisplay.appendChild(walkerRatingNumberSpan);
+        selectWalkerPopup.appendChild(walkerRatingDisplay);
+        
+        const requestingDiv = document.createElement("div");
+        requestingDiv.classList.add("confirmation-div");
+        selectWalkerPopup.appendChild(requestingDiv);
+
+        statusMessage = document.createElement("p");
+        statusMessage.innerText = "Requesting a walk...";
+
+        requestingDiv.appendChild(statusMessage);
+        
+        setTimeout(waitForResponse, 1000);
+
+    }).catch((error) => {
+        console.log(error);
+    });
 }

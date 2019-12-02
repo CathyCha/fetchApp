@@ -13,8 +13,18 @@ function deleteacc() {
 
 // Direct to index
 function signout() {
-  alert('Successfully signed out');
-  window.location.replace('index.html');
+//   const request = new Request(url, {
+//         method: 'get', 
+//         headers: {
+//             'Accept': 'application/json, text/plain, */*',
+//             'Content-Type': 'application/json'
+//         },
+//   });
+// fetch(request)
+// .then((res)=>{
+//     if(res.status==200)
+// })
+//   window.location.replace('users/logout');
 }
 
 

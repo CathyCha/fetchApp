@@ -192,18 +192,6 @@ app.post('/login', (req, res) => {
     }
 });
 
-// A route to logout a user
-app.get('/logout', (req, res) => {
-	// Remove the session
-	req.session.destroy((error) => {
-		if (error) {
-			res.status(500).send(error)
-		} else {
-			res.redirect('/')
-		}
-	})
-});
-
 /** User resource routes **/
 // a POST route to *create* a user
 /* example body
@@ -291,7 +279,8 @@ app.get('/user', (req, res) => {
 	const id = req.session.user;
 
 	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
+        res.status(404).send();
+        return;
 	}
 
 	User.findById(id).then((user) => {
@@ -310,8 +299,14 @@ app.get('/user', (req, res) => {
 app.patch('/user', (req, res) => {
     const id = req.session.user;
 
+    console.log(id, req.body);
 	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
+        res.status(404).send();
+        return;
+    }
+    else if (!req.body.currpwd) {
+        res.status(401).send();
+        return;
     }
 
     User.findById(id).then((user) => {
@@ -319,48 +314,59 @@ app.patch('/user', (req, res) => {
             res.status(404).send(); //could not find user
         }
         else {
-            //update user
-            if (req.body.fname) {
-                user.firstName = req.body.fname;
-            }
-            if (req.body.lname) {
-                user.lastName = req.body.lname;
-            }
-            if (req.body.email) {
-                user.emailAddress = req.body.email;
-            }
-            if (req.body.adrs) {
-                user.homeAddress = req.body.adrs;
-            }
-            if (req.body.city) {
-                user.city = req.body.city;
-            }
-            if (req.body.prov) {
-                user.province = req.body.prov;
-            }
-            if (req.body.pwd) {
-                bcrypt.genSalt(10, (err, salt) => {
-                    bcrypt.hash(req.body.pwd, salt, (err, hash) => {
-                        user.passwordHash = hash;
+            //check user password before making changes
+            bcrypt.compare(req.body.currpwd, user.passwordHash, (error, result) => {
+                if (error) {
+                    res.status(400).send(error); //bcrypt error
+                }
+                else if (result) {
+                    //update user
+                    if (req.body.fname) {
+                        user.firstName = req.body.fname;
+                    }
+                    if (req.body.lname) {
+                        user.lastName = req.body.lname;
+                    }
+                    if (req.body.email) {
+                        user.emailAddress = req.body.email;
+                    }
+                    if (req.body.adrs) {
+                        user.homeAddress = req.body.adrs;
+                    }
+                    if (req.body.city) {
+                        user.city = req.body.city;
+                    }
+                    if (req.body.prov) {
+                        user.province = req.body.prov;
+                    }
+                    if (req.body.newpwd) {
+                        bcrypt.genSalt(10, (err, salt) => {
+                            bcrypt.hash(req.body.newpwd, salt, (err, hash) => {
+                                user.passwordHash = hash;
 
-                        //asynchronous call waits on bcrypt result
-                        //save the user here if the password changed
+                                //asynchronous call waits on bcrypt result
+                                //save the user here if the password changed
+                                user.save().then((result) => {
+                                    res.send(result);
+                                }, (error) => {
+                                    res.status(400).send(error);
+                                })
+                            });
+                        });
+                    }
+                    else {
+                        //save the user if their password didn't change
                         user.save().then((result) => {
                             res.send(result);
                         }, (error) => {
                             res.status(400).send(error);
                         })
-                    });
-                });
-            }
-            else {
-                //save the user if their password didn't change
-                user.save().then((result) => {
-                    res.send(result);
-                }, (error) => {
-                    res.status(400).send(error);
-                })
-            }
+                    }
+                }
+                else {
+                    res.status(401).send(); //invalid password
+                }
+            })
         }
     }).catch((error) => {
         res.status(500).send(); //server error
@@ -483,6 +489,7 @@ app.get('/dogs/:userid', (req, res) => {
 })
 
 /** Walker resource routes **/
+
 // a POST route to *create* a walker
 /* example body
 {
@@ -546,7 +553,20 @@ app.post('/walker', (req, res) => {
     }
 });
 
-/// Route for getting information for one walker.
+// Route for getting all active walkers
+app.get('/walker/active', (req, res) => {
+    const query = { active: true };
+
+    Walker.find(query).then((walkers) => {
+        res.send(walkers);
+    }).catch((error) => {
+        res.status(500).send(); //server error
+        console.log(error);
+    });
+});
+
+
+/// Route for getting information for one walker by id.
 // GET /walker/id
 app.get('/walker/:id', (req, res) => {
 	// Add code here
@@ -567,6 +587,8 @@ app.get('/walker/:id', (req, res) => {
 	});
 })
 
+
+// route for editing a walker's information
 app.patch('walker/:id', (req, res) => {
     const id = req.params.id;
 
@@ -608,6 +630,77 @@ app.patch('walker/:id', (req, res) => {
             }
             if (req.body.ratings){
                 walker.ratings = req.body.ratings
+            }
+            if (req.body.active != undefined) {
+                walker.active = req.body.active
+            }
+
+            if (req.body.pwd) {
+                bcrypt.genSalt(10, (err, salt) => {
+                    // password is hashed with the salt
+                    
+                    bcrypt.hash(req.body.password, salt, (err, hash) => {
+
+                        // Change password
+                        walker.passwordHash = hash
+                    });
+                });
+            }
+
+            walker.save().then((result) => {
+                res.send(result);
+            }, (error) => {
+                res.status(400).send(error);
+            })
+        }
+    })
+})
+
+// route for editing a walker's information
+app.patch('/walker', (req, res) => {
+    const id = req.session.user;
+
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()
+    }
+
+    Walker.findById(id).then((walker) => {
+        if(!walker){
+            res.status(404).send()
+        } else {
+
+            if (req.body.fname) {
+                walker.firstName = req.body.fname;
+            }
+            if (req.body.lname) {
+                walker.lastName = req.body.lname;
+            }
+            if (req.body.email) {
+                walker.emailAddress = req.body.email;
+            }
+            if (req.body.adrs) {
+                walker.homeAddress = req.body.adrs;
+            }
+            if (req.body.city) {
+                walker.city = req.body.city;
+            }
+            if (req.body.prov) {
+                walker.province = req.body.prov;
+            }
+            if (req.body.phone) {
+                walker.phoneNumber = req.body.phone
+            }
+            if (req.body.languages) {
+                walker.languages = req.body.languages
+            }
+            if (req.body.qual) {
+                walker.qualifications = req.body.qual
+            }
+            if (req.body.ratings){
+                walker.ratings = req.body.ratings
+            }
+            if (req.body.active != undefined) {
+                walker.active = req.body.active
             }
 
             if (req.body.pwd) {
@@ -651,25 +744,39 @@ app.delete('/walker/:id', (req, res) => {
     })
 })
 
-/// Route for getting information for the walker logged in.
+/// Route for getting information walker information
+
+// Has two modes - if a query is given in the body, will execute the search and return results
+//      otherwise, will return the currently logged in user if they are a walker
 // GET /walker/id
 app.get('/walker', (req, res) => {
-	// Add code here
-    const id = req.session.user;
+    if (req.body.query) {
+        const query = req.body.query;
 
-	if (!ObjectID.isValid(id)) {
-		res.status(404).send();
-	}
+        Walker.find(query).then((walkers) => {
+            res.send(walkers);
+        }).catch((error) => {
+            res.status(500).send(); //server error
+        });
+    }
+    else {
+        const id = req.session.user;
 
-	Walker.findById(id).then((walker) => {
-		if (!walker) {
-			res.status(404).send(); //could not find user
-		} else {
-			res.send(walker);
-		}
-	}).catch((error) => {
-		res.status(500).send(); //server error
-	});
+        if (!ObjectID.isValid(id)) {
+            res.status(404).send();
+        }
+    
+        Walker.findById(id).then((walker) => {
+            if (!walker) {
+                res.status(404).send(); //could not find walker
+            } else {
+                res.send(walker);
+            }
+        }).catch((error) => {
+            res.status(500).send(); //server error
+        });
+    }
+    
 })
 
 /** Walk resource routes **/
@@ -680,9 +787,11 @@ app.get('/walker', (req, res) => {
 {
     "walkerId": "5ddf04dd765a2b0624face6c",
     "userId" : "5ddf0314d7048e253836ec22",
-	"dogId" : "5ddf258ceae46928e0e903ac",
+    "dogId" : "5ddf258ceae46928e0e903ac",
+    "pickupInstructions" : "The key is under the flowerpot",
 	"walkNeeds" : [ "hyper", "puppy" ],
-	"duration" : 10
+    "duration" : 10,
+    "location" : {"x" : 10, "y" : 20}
 }
 */
 app.post('/walk', (req, res) => {
@@ -718,10 +827,11 @@ app.post('/walk', (req, res) => {
         userId: userId,
         dogId: dogId,
         walkNeeds: req.body.walkNeeds,
+        pickupInstructions: req.body.pickupInstructions,
         price: 8 + 2*parseInt(req.body.duration)/5 + 5*req.body.walkNeeds.length,
         duration: req.body.duration,
         notes: [],
-        locations: []
+        locations: [{x: req.body.location.x, y: req.body.location.y }]
     });
 
     walk.save().then((result) => {
@@ -751,6 +861,51 @@ app.get('/walk/:id', (req, res) => {
 		res.status(500).send(); //server error
 	});
 
+})
+
+/// Context-sensitive route for getting information for walk
+// If query is supplied, will return results of query
+// Else, will return (active) walks for which the user is involved in
+app.get('/walk', (req, res) => {
+    if (req.body.query) {
+        const query = req.body.query;
+
+        Walk.find(query).then((walk) => {
+            res.send(walk);
+        }).catch((error) => {
+            res.status(500).send(); //server error
+        });
+    }
+    else {
+        const id = req.session.user;
+
+        if (!ObjectID.isValid(id)) {
+            res.status(404).send();
+        }
+        
+        if (req.session.userType === "walker" ) { //user is walker
+            Walk.find({walkerId: id, completed: false}).then((walk) => {
+                res.send(walk);
+            }).catch((error) => {
+                res.status(500).send(); //server error
+            });
+        }
+        else if (req.session.userType === "user" ) { //user is owner
+            Walk.find({userId: id, completed: false}).then((walk) => {
+                res.send(walk);
+            }).catch((error) => {
+                res.status(500).send(); //server error
+            });
+
+        }
+        else { //admin
+            Walk.find({}).then((walk) => {
+                res.send(walk);
+            }).catch((error) => {
+                res.status(500).send(); //server error
+            });
+        }
+    }
 })
 
 // Route for changing properties of a walk
@@ -786,9 +941,9 @@ app.patch('/walk/:id', (req, res) => {
     //find the walk and update it
 	Walk.findById(id).then((walk) => {
 		if (!walk) {
-			res.status(404).send(); //could not find walk
+            res.status(404).send(); //could not find walk
+            return;
 		} else {
-            console.log(req.body);
             if (req.body.price) {
                 walk.price = req.body.price;
             }
@@ -796,6 +951,7 @@ app.patch('/walk/:id', (req, res) => {
                 if (walk.startTime) {
                     //walk is already started
                     res.status(422).send(); //invalid update
+                    return;
                 }
                 else {
                     walk.startTime = new Date();
@@ -806,19 +962,60 @@ app.patch('/walk/:id', (req, res) => {
                 if (walk.endTime) {
                     //walk is already ended
                     res.status(422).send(); //invalid update
+                    return;
                 }
                 else {
                     walk.endTime = new Date();
                     walk.completed = true;
                     walk.duration = Math.round((((walk.endTime - walk.startTime) % 86400000) % 3600000) / 60000);
                     walk.price = 8 * 2*walk.duration/5 + 5*walk.walkNeeds.length;
+                    Walker.updateOne( 
+                        { _id: walk.walkerId },
+                        { $set: { active: false } },
+                        (err, success) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                ; //success
+                            }
+                        }      
+                    );
                 }
             }
             if (req.body.walkerRating && walk.completed) {
                 walk.walkerRating = req.body.walkerRating;
+                Walker.updateOne( 
+                    { _id: walk.walkerId }, 
+                    { $push: { ratings: parseInt(req.body.walkerRating, 10)} },
+                    (err, success) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            ; //success
+                        }
+                    }
+                );
             }
             if (req.body.dogRating && walk.completed) {
                 walk.dogRating = req.body.dogRating;
+                User.updateOne(
+                    { "_id": walk.userId, "userDogs._id": walk.dogId },
+                    { 
+                        "$push": { 
+                            "userDogs.$.ratings": parseInt(req.body.dogRating, 10)
+                        }
+                    },
+                    (err, success) => {
+                        if (err) {
+                            console.log(error);
+                        }
+                        else {
+                            ; //success
+                        }
+                    }
+                );
             }
             if (req.body.note) {
                 walk.notes.push(req.body.note);
@@ -979,8 +1176,9 @@ app.post('/upload/:id', upload.single("file" /* name of file element in form */)
 
     fs.rename(tempPath, targetPath, err => {
         if (err) res.status(500).send(err);
-
-        res.status(200).end("File uploaded!");
+        else {
+            res.status(200).end("File uploaded!");
+        }
     });
 })
 
@@ -989,8 +1187,9 @@ app.post('/upload/:id', upload.single("file" /* name of file element in form */)
 // POST /upload
 app.post('/upload', upload.single("file" /* name of file element in form */),
 (req, res) => {
-    const id = req.session.id;
+    const id = req.session.user;
     if (!ObjectID.isValid(id)) {
+        console.log(id);
 		res.status(404).send("Cannot find entity with that id");
     }
 
@@ -1000,9 +1199,56 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
 
     fs.rename(tempPath, targetPath, err => {
         if (err) res.status(500).send(err);
-
-        res.status(200).end("File uploaded!");
+        else {
+            if (req.session.userType === "user") {
+                User.updateOne( 
+                    { _id: id },
+                    { $set: { pictureURL: "images/uploaded/" + id + ".jpg"} },
+                    (err, success) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            //success
+                            res.redirect("userProfileEdit.html");
+                        }
+                    }      
+                );
+            }
+            else if (req.session.userType === "walker") {
+                Walker.updateOne( 
+                    { _id: id },
+                    { $set: { pictureURL: "images/uploaded/" + id + ".jpg"} },
+                    (err, success) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            //success
+                            res.redirect("walkerProfile.html"); 
+                        }
+                    }      
+                );
+            }
+            else {
+                //why's an admin uploading a picture?
+                res.status(200).end("File uploaded!");
+            }
+        }
+        
     });
+})
+
+// app.get("logout")
+app.get('/users/logout', (req, res) => {
+    // Remove the session
+    req.session.destroy((error) => {
+        if (error) {
+            res.status(500).send(error)
+        } else {
+            res.redirect('/')
+        }
+    })
 })
 
 const port = process.env.PORT || 3001

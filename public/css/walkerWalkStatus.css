@@ -104,7 +104,7 @@ left pane styling
 
 /* centered in the div */
 #map {
-	background-image: url("map.png");
+	background-image: url("../images/map.png");
 	width: 1159px;
 	height: 704px;
 	position: absolute;
