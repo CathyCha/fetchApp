@@ -49,6 +49,8 @@ function searchReports(rid, reports) {
 
   const table = $('#reportTable');
   table.find("tbody tr").remove();
+
+  const url = "/reports"
   reports.find
 }
 
@@ -65,7 +67,20 @@ function populateDogTable(owners) {
 
 function searchUser(uid) {
   // changes DOM to return the Dog User ID in search
+  const url = `/user/:${uid}`
 
+  // Fetch user from server
+  // Get request doesn't require an object.
+  fetch(url).then((res) => {
+    if (res.status === 200){
+      return res.json()
+    } else {
+      alert('Could not find user')
+    }
+  }).then((json) => {
+    //TODO: Do something
+    console.log(json)
+  })
 }
 
 function populateWalkerTable(walkers) {
