@@ -11,21 +11,6 @@ function deleteacc() {
   window.location.replace('index.html');
 }
 
-// Direct to index
-function signout() {
-//   const request = new Request(url, {
-//         method: 'get', 
-//         headers: {
-//             'Accept': 'application/json, text/plain, */*',
-//             'Content-Type': 'application/json'
-//         },
-//   });
-// fetch(request)
-// .then((res)=>{
-//     if(res.status==200)
-// })
-//   window.location.replace('users/logout');
-}
 
 
 function profileupload() {
@@ -49,17 +34,24 @@ function populateReportTable(reports) {
   });
 }
 
-function searchReports(rid, reports) {
+function searchReports() {
   // changes DOM to return the Report ID in search
 
-  // check if rid exists
-  if (!ObjectID.isValid(rid)) {
-		res.status(404).send()  // if invalid id, definitely can't find resource, 404.
-	}
-
-  const table = $('#reportTable');
-  table.find("tbody tr").remove();
-  reports.find
+  const table = document.getElementById('reportTable');
+  const rid = document.getElementById('searchReport').value
+  const tr = table.getElementsByTagName("tr")
+  let td;
+  for(let i = 1; i < tr.length; i++){
+    td = tr[i].getElementsByTagName("th")[0]
+    if (td) {
+      let val = td.textContent || td.innerText
+      if(val.indexOf(rid) > -1){
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
 }
 
 function populateDogTable(owners) {
@@ -73,9 +65,23 @@ function populateDogTable(owners) {
   });
 }
 
-function searchUser(uid) {
+function searchUser() {
   // changes DOM to return the Dog User ID in search
-
+  const table = document.getElementById('ownerTable');
+  const rid = document.getElementById('searchReport').value
+  const tr = table.getElementsByTagName("tr")
+  let td;
+  for(let i = 1; i < tr.length; i++){
+    td = tr[i].getElementsByTagName("th")[0]
+    if (td) {
+      let val = td.textContent || td.innerText
+      if(val.indexOf(rid) > -1){
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }  
 }
 
 function populateWalkerTable(walkers) {
@@ -92,6 +98,21 @@ function populateWalkerTable(walkers) {
 
 function searchWalker() {
   // changes DOM to return the Walker User ID in search
+  const table = document.getElementById('walkerTable');
+  const rid = document.getElementById('searchReport').value
+  const tr = table.getElementsByTagName("tr")
+  let td;
+  for(let i = 1; i < tr.length; i++){
+    td = tr[i].getElementsByTagName("th")[0]
+    if (td) {
+      let val = td.textContent || td.innerText
+      if(val.indexOf(rid) > -1){
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
 }
 
 function populateAllWalks() {
