@@ -34,26 +34,6 @@ function populateReportTable(reports) {
   });
 }
 
-function searchReports() {
-  // changes DOM to return the Report ID in search
-
-  const table = document.getElementById('reportTable');
-  const rid = document.getElementById('searchReport').value
-  const tr = table.getElementsByTagName("tr")
-  let td;
-  for(let i = 1; i < tr.length; i++){
-    td = tr[i].getElementsByTagName("th")[0]
-    if (td) {
-      let val = td.textContent || td.innerText
-      if(val.indexOf(rid) > -1){
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
-}
-
 function populateDogTable(owners) {
   // populates the all dog users table
   const table = $('#ownerTable');
@@ -63,25 +43,6 @@ function populateDogTable(owners) {
         owners.city + "</td><td>" + owners.email + "</td><td>" + owners.dogs +  "</td><td>" +
         owners.dateJoined + "</td></tr>");
   });
-}
-
-function searchUser() {
-  // changes DOM to return the Dog User ID in search
-  const table = document.getElementById('ownerTable');
-  const rid = document.getElementById('searchReport').value
-  const tr = table.getElementsByTagName("tr")
-  let td;
-  for(let i = 1; i < tr.length; i++){
-    td = tr[i].getElementsByTagName("th")[0]
-    if (td) {
-      let val = td.textContent || td.innerText
-      if(val.indexOf(rid) > -1){
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }  
 }
 
 function populateWalkerTable(walkers) {
@@ -96,9 +57,17 @@ function populateWalkerTable(walkers) {
 
 }
 
-function searchWalker() {
-  // changes DOM to return the Walker User ID in search
-  const table = document.getElementById('walkerTable');
+function populateAllWalks() {
+  // manipulates DOM to show all walks in data
+
+}
+
+
+function searchTable(tid) {
+  // changes DOM to return the ID in search
+  // @param tid: string object containing id of table
+  console.log(tid)
+  const table = document.getElementById(tid);
   const rid = document.getElementById('searchReport').value
   const tr = table.getElementsByTagName("tr")
   let td;
@@ -113,9 +82,4 @@ function searchWalker() {
       }
     }
   }
-}
-
-function populateAllWalks() {
-  // manipulates DOM to show all walks in data
-
 }
