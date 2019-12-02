@@ -3,35 +3,6 @@
 // Initialize the page
 window.addEventListener("load", initializePage);
 
-function helperforWalker(url) {
-  const name = [];
-  fetch(url).then((res) => {
-    if (res.status === 200) {
-        return res.json();
-    }
-    else {
-        console.log("Error " + res.status + ": Could not get user data");
-        return Promise.reject(res.status);
-    }
-  }).then((walker) => {
-    const fname = walker.firstName;
-    const lname = walker.lastName;
-    name.push(fname, lname);
-    console.log(name)
-    return name;
-
-    // walkerName.innerText = fname + " " lname;
-  }).catch((error) => {
-    if (error === 404) {
-        alert("Session expired! Please log in again");
-        window.location.href = "login.html";
-    }
-    else {
-        console.log("????");
-    }
-  });
-}
-
 function initializePage(e) {
   // first find the user
   const url = '/user';
