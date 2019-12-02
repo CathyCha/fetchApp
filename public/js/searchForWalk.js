@@ -9,7 +9,7 @@ class User {
     }
 }
 
-class walkRequest {
+class WalkRequest {
   constructor(xCoord, yCoord, length, needs, price){
     this.x = xCoord
     this.y = yCoord
@@ -22,7 +22,7 @@ const rufusDescription = "energetic and playful, quite the handul!"; // These fi
 const rufusNeeds = new Array("Hyperactive", "Treats", "Puppy", "Water breaks")
 
 const rufus = new User("Rufus", "rufus.jpg", 4.42, rufusDescription);
-const req = new walkRequest(680, 330, 30, rufusNeeds, 25)
+const req = new WalkRequest(680, 330, 30, rufusNeeds, 25)
 
 const search = document.querySelector("#searchForWalkButton");
 const searchButton = document.getElementById("searchForWalkButton");
@@ -64,9 +64,12 @@ function initializePage(e) {
     console.log(error);
   });
   
+  checkForRequests();
 }
 
-/* Functions to handle button clicking */
+/**********************
+* Walker status toggle
+*********************/
 function setActive(e) {
   e.preventDefault();
 
@@ -119,7 +122,34 @@ function setInactive(e) {
   })
 }
 
-/* Function to handle the user clicking on the map */
+/*******************************
+ * Poll server for walk requests
+ *******************************/
+
+let walkRequest = null;
+
+function checkForRequests() {
+  const url = '/walk';
+  fetch(url).then((res) => {
+    if (res.status === 200) {
+      return res.json();
+    }
+    else {
+      ; //above will catch this
+    }
+  }).then((json) => {
+    if (json.length > 0) {
+      walkRequest = json[0];
+      console.log(walkRequest);
+    }
+    else {
+      setTimeout(checkForRequests, 1000);
+    }
+  }).catch((error) => {
+    console.log(error);
+  });
+}
+
 function walkFound() {
     const markerRadius = 10;
     const xCoordinate = 680; // Fixed testing point for new walk

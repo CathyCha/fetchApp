@@ -487,7 +487,7 @@ function submitWalkRequest(e) {
     const walkerId = availableWalkers[selectedWalkerIndex]._id;
     const dogId = userData.userDogs[selectedDogIndex]._id;
     const selectedWalkNeeds = [];
-    const location = {x: xCoordinate, y: yCoordinate };
+    const location = { x: xCoordinate, y: yCoordinate };
     Array.prototype.forEach.call(walkNeeds.children, (child, index) => {
         if (child.style.backgroundColor === "green") {
             selectedWalkNeeds.push(child.innerText);

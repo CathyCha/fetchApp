@@ -895,27 +895,27 @@ app.get('/walk', (req, res) => {
             res.status(404).send();
         }
         
-        if (req.session.userType === "walker" ) {
+        if (req.session.userType === "walker" ) { //user is walker
             Walk.find({walkerId: id, completed: false}).then((walk) => {
                 res.send(walk);
             }).catch((error) => {
                 res.status(500).send(); //server error
             });
         }
-        else { //user is owner
-            const id = req.session.user;
+        else if (req.session.userType === "user" ) { //user is owner
+            Walk.find({userId: id, completed: false}).then((walk) => {
+                res.send(walk);
+            }).catch((error) => {
+                res.status(500).send(); //server error
+            });
 
-            if (!ObjectID.isValid(id)) {
-                res.status(404).send();
-            }
-            
-            if (req.session.userType === "user" ) {
-                Walk.find({userId: id, completed: false}).then((walk) => {
-                    res.send(walk);
-                }).catch((error) => {
-                    res.status(500).send(); //server error
-                });
-            }
+        }
+        else { //admin
+            Walk.find({}).then((walk) => {
+                res.send(walk);
+            }).catch((error) => {
+                res.status(500).send(); //server error
+            });
         }
     }
 })
