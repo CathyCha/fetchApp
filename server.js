@@ -299,7 +299,6 @@ app.get('/user', (req, res) => {
 app.patch('/user', (req, res) => {
     const id = req.session.user;
 
-    console.log(id, req.body);
 	if (!ObjectID.isValid(id)) {
         res.status(404).send();
         return;
@@ -470,8 +469,6 @@ app.post('/dogs/:userid', (req, res) => {
 app.get('/dogs/:userid', (req, res) => {
 	// Add code here
 	const id = req.params.userid;
-
-	console.log(id);
 
 	if (!ObjectID.isValid(id)) {
 		res.status(404).send();
@@ -801,7 +798,8 @@ app.post('/walk', (req, res) => {
     const dogId = req.body.dogId;
 
 	if (!ObjectID.isValid(walkerId) || !ObjectID.isValid(dogId)) {
-		res.status(404).send();
+        res.status(404).send();
+        return;
     }
 
     User.findById(userId).then((user) => {
@@ -884,14 +882,14 @@ app.get('/walk', (req, res) => {
         }
         
         if (req.session.userType === "walker" ) { //user is walker
-            Walk.find({walkerId: id, completed: false}).then((walk) => {
+            Walk.find({walkerId: id, dogRating: {$exists: false}}).then((walk) => {
                 res.send(walk);
             }).catch((error) => {
                 res.status(500).send(); //server error
             });
         }
         else if (req.session.userType === "user" ) { //user is owner
-            Walk.find({userId: id, completed: false}).then((walk) => {
+            Walk.find({userId: id, walkerRating: {$exists: false}}).then((walk) => {
                 res.send(walk);
             }).catch((error) => {
                 res.status(500).send(); //server error
@@ -944,32 +942,21 @@ app.patch('/walk/:id', (req, res) => {
             res.status(404).send(); //could not find walk
             return;
 		} else {
-            if (req.body.price) {
-                walk.price = req.body.price;
+            if (req.body.duration) {
+                walk.duration = req.body.duration;
+                walk.endTime = walk.startTime + walk.duration * 60000;
             }
             if (req.body.accepted) {
-                if (walk.startTime) {
+                if (walk.accepted) {
                     //walk is already started
                     res.status(422).send(); //invalid update
                     return;
                 }
                 else {
                     walk.startTime = new Date();
+                    console.log(walk.startTime.getHours(), walk.startTime.getMinutes(), walk.startTime.getSeconds());
                     walk.accepted = true;
-                }
-            }
-            if (req.body.completed) {
-                if (walk.endTime) {
-                    //walk is already ended
-                    res.status(422).send(); //invalid update
-                    return;
-                }
-                else {
-                    walk.endTime = new Date();
-                    walk.completed = true;
-                    walk.duration = Math.round((((walk.endTime - walk.startTime) % 86400000) % 3600000) / 60000);
-                    walk.price = 8 * 2*walk.duration/5 + 5*walk.walkNeeds.length;
-                    Walker.updateOne( 
+                    Walker.updateOne( //set walker as no longer active so they don't get a second walk request
                         { _id: walk.walkerId },
                         { $set: { active: false } },
                         (err, success) => {
@@ -981,6 +968,22 @@ app.patch('/walk/:id', (req, res) => {
                             }
                         }      
                     );
+                    walk.endTime = new Date() + (parseInt(walk.duration) * 60000);
+                    console.log(walk.endTime.getHours(), walk.endTime.getMinutes(), walk.endTime.getSeconds());
+
+                }
+            }
+            if (req.body.completed) {
+                if (walk.completed) {
+                    //walk is already ended
+                    res.status(422).send(); //invalid update
+                    return;
+                }
+                else {
+                    walk.endTime = new Date();
+                    walk.completed = true;
+                    walk.duration = Math.round((((walk.endTime - walk.startTime) % 86400000) % 3600000) / 60000);
+                    walk.price = 8 * 2*walk.duration/5 + 5*walk.walkNeeds.length;
                 }
             }
             if (req.body.walkerRating && walk.completed) {
@@ -1009,7 +1012,7 @@ app.patch('/walk/:id', (req, res) => {
                     },
                     (err, success) => {
                         if (err) {
-                            console.log(error);
+                            console.log(err);
                         }
                         else {
                             ; //success
@@ -1031,7 +1034,7 @@ app.patch('/walk/:id', (req, res) => {
             });
 		}
 	}).catch((error) => {
-		res.status(500).send(); //server error
+		res.status(500).send(error); //server error
 	});
 })
 
@@ -1189,7 +1192,6 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
 (req, res) => {
     const id = req.session.user;
     if (!ObjectID.isValid(id)) {
-        console.log(id);
 		res.status(404).send("Cannot find entity with that id");
     }
 

@@ -59,7 +59,8 @@ function getInfo(e) {
     if (json.length > 0 && json[0].accepted) {
       walkRequest = json[0];
       console.log(walkRequest);
-      timeLeft = walkRequest.duration + 1;
+      timeLeft = walkRequest.duration;
+      updateTimeLeft(timeLeft);
 
       //add the walker's existing notes
       walkRequest.notes.forEach((note, index) => {
@@ -323,6 +324,46 @@ function mapClick(e) {
 /*********************
  * Update time left
  ***********************/
+
+const lessTimeButton = document.querySelector("#less-time");
+const moreTimeButton = document.querySelector("#more-time");
+
+lessTimeButton.addEventListener("click", (e) => {e.preventDefault(); adjustTime(-1);});
+moreTimeButton.addEventListener("click", (e) => {e.preventDefault(); adjustTime(1);});
+
+//adjust the remaining time in the walk
+function adjustTime(change) {
+    
+    //update the server on this change
+    const url = '/walk/' + walkRequest._id;
+    const requestBody = {
+        duration: walkRequest.duration + change
+    }
+    const request = new Request(url, {
+        method: 'PATCH',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            return Promise.reject(res.status);
+        }
+    }).then((json) => {
+        walkRequest = json;
+        console.log(json);
+        timeLeft += change;
+        updateTimeLeft(timeLeft);
+    }).catch((error) => {
+        console.log(error);
+    });
+}
 
 const updatePageInterval = setInterval(updatePage, 1000);
 
