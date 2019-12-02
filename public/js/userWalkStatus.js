@@ -48,7 +48,8 @@ function getInfo(e) {
         if (json.length > 0 && json[0].accepted) {
             walkRequest = json[0];
             console.log(walkRequest);
-            timeLeft = walkRequest.duration + 1;
+            timeLeft = walkRequest.duration;
+            updateTimeLeft(timeLeft);
 
             //add the walker's existing notes
             walkRequest.notes.forEach((note, index) => {

@@ -47,6 +47,21 @@ top pane styling
 
 }
 
+.time-adjust {
+	font-size: 75%;
+	font-weight: bold;
+	color: green;
+	display: inline-block;
+	height: 21px;
+	width: 21px;
+	border: 1px;
+	border-style: solid;
+	border-color: green;
+	padding: 0px;
+	position: relative;
+	top: -4px;
+}
+
 #finish-time {
     font-size: 150%;
 }

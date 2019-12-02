@@ -11,7 +11,7 @@ const WalkSchema = new mongoose.Schema({
     walkerId: { type: String, required: true },
     userId: { type: String, required: true },
     dogId: { type: String, required: true },
-    walkNeeds: [String],
+    walkNeeds: { type: [String], default: []},
     pickupInstructions: String,
     price: { type: Number, required: true },
     duration: Number, //in minutes, is an estimate until completed
