@@ -72,7 +72,7 @@ function initializePage(e) {
         if (json.length > 0) {
             const walk = json[0];
             if (walk.accepted) {
-                window.location.href = "walkStatus.html"
+                window.location.href = "userWalkStatus.html"
             }
             else {
                 //initialize page to reflect the walk in progress

@@ -342,7 +342,7 @@ function acceptWalk(e) {
 }
 
 function redirect() {
-    window.location.href = 'walk.html';
+    window.location.href = 'walkerWalkStatus.html';
 }
 
 
