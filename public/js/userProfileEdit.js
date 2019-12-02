@@ -36,7 +36,7 @@ function initializePage(e) {
             window.location.href = "login.html";
         }
         else {
-            console.log("????");
+            console.log(error);
         }
     })
 }
@@ -123,7 +123,7 @@ function submitChanges(e) {
         if (res.status === 200) {
             //put a message on the page to tell the user
             updateStatus("Successfully updated!", "green");
-            currpwd: document.querySelector("#currpwd").value = "";
+            document.querySelector("#currpwd").value = "";
             document.querySelector("#newpwd1").value = "";
             document.querySelector("#newpwd2").value = "";
 

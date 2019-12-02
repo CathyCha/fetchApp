@@ -13,7 +13,8 @@ const UserSchema = new mongoose.Schema({
 	phoneNumber: { type: Number, minlength: 9},
 	emailAddress: { type: String, required: true },
 	dateJoined: Date,
-	userDogs: [ DogSchema ]
+	userDogs: [ DogSchema ],
+	pictureURL: String
 });
 
 const User = mongoose.model('User', UserSchema);

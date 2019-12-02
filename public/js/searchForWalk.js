@@ -9,7 +9,7 @@ class User {
     }
 }
 
-class Request {
+class walkRequest {
   constructor(xCoord, yCoord, length, needs, price){
     this.x = xCoord
     this.y = yCoord
@@ -22,13 +22,102 @@ const rufusDescription = "energetic and playful, quite the handul!"; // These fi
 const rufusNeeds = new Array("Hyperactive", "Treats", "Puppy", "Water breaks")
 
 const rufus = new User("Rufus", "rufus.jpg", 4.42, rufusDescription);
-const req = new Request(680, 330, 30, rufusNeeds, 25)
+const req = new walkRequest(680, 330, 30, rufusNeeds, 25)
 
 const search = document.querySelector("#searchForWalkButton");
 const searchButton = document.getElementById("searchForWalkButton");
 let accept = null;
 const map = document.getElementById("map")
 let marker = null;
+
+//initialize the page
+window.addEventListener("load", initializePage);
+
+function initializePage(e) {
+  const url = '/walker';
+  fetch(url).then((res) => {
+    if (res.status === 200) {
+      return res.json();
+    }
+    else {
+      console.log("Error " + res.status + ": Could not get user data");
+      if (res.status === 404) {
+        alert("Session expired! Please log in again");
+        window.location.href = "login.html";
+      }
+      else {
+        return Promise.reject(res.status);
+      }
+    }
+  }).then((json) => {
+    //if needed, can save ID here - but probably don't need
+
+    if (json.active) { //user is already active
+      search.addEventListener('click', setInactive);
+      search.innerText = "Searching... Click to cancel";
+    }
+    else { //user is not active
+      search.addEventListener('click', setActive);
+      searchButton.innerText = "Find Walk";
+    }
+  }).catch((error) => {
+    console.log(error);
+  });
+  
+}
+
+/* Functions to handle button clicking */
+function setActive(e) {
+  e.preventDefault();
+
+  const url = "/walker";
+  const requestBody = {
+    active: true
+  };
+
+  const request = new Request(url, {
+    method: 'PATCH',
+    body: JSON.stringify(requestBody),
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json'
+    }
+  });
+
+  fetch(request).then((res) => {
+    if (res.status === 200) {
+      search.innerText = "Searching... Click to cancel";
+      search.removeEventListener("click", setActive);
+      search.addEventListener("click", setInactive);
+    }
+  })
+}
+
+function setInactive(e) {
+  e.preventDefault();
+
+  const url = "/walker";
+  const requestBody = {
+    active: false
+  };
+
+  const request = new Request(url, {
+    method: 'PATCH',
+    body: JSON.stringify(requestBody),
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json'
+    }
+  });
+
+  fetch(request).then((res) => {
+    if (res.status === 200) {
+      search.innerText = "Find Walk";
+      search.removeEventListener("click", setInactive);
+      search.addEventListener("click", setActive);
+    }
+  })
+}
 
 /* Function to handle the user clicking on the map */
 function walkFound() {
@@ -52,7 +141,7 @@ function walkFound() {
 }
 
 
-search.addEventListener('click', waiting); // Simulates Server retrieval
+
 
 function fillWalkInfo(dog, request){
   const info = document.getElementById("dog-info");
@@ -170,11 +259,6 @@ function fillWalkInfo(dog, request){
     })
   }
 
-}
-/* the below string of function calls simulates talking to the server */
-function waiting() {
-    search.innerText = "Searching...";
-    setTimeout(walkFound, 3000);
 }
 
 function walkAccepted() {

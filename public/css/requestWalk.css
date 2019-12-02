@@ -91,17 +91,29 @@ top pane styling
 	display: inline-block;
 }
 
+#dog-container {
+	overflow-x: auto;
+	overflow-y: hidden;
+	height: 58px;
+}
+
 .dogListItem {
-	padding: 10px;
-	font-size: 50%;
+	padding: 8px;
+	display: inline-block;
+	margin: 10px;
+	font-size: 110%;
+	font-weight: bold;
 	background-color: white;
 	border: 2px solid green;
 	color: green;
 }
 
 .dogListSel {
-	padding: 10px;
-	font-size: 50%;
+	padding: 8px;
+	display: inline-block;
+	margin: 10px;
+	font-size: 110%;
+	font-weight: bold;
 	background-color: white;
 	border: 2px solid orange;
 	color: orange;
@@ -198,6 +210,7 @@ right pane styling
 	min-height: 105px;
 	display: block;
 	padding: 10px;
+	overflow: auto;
 }
 
 .walker:hover {

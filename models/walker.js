@@ -15,7 +15,8 @@ const WalkerSchema = new mongoose.Schema({
 	languages: [String],
 	qualifications: [String],
 	ratings: [Number],
-	active: { type: Boolean, default: false }
+	active: { type: Boolean, default: false },
+	pictureURL: String
 });
 
 const Walker = mongoose.model('Walker', WalkerSchema);

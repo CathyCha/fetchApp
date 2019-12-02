@@ -311,6 +311,7 @@ app.get('/user', (req, res) => {
 app.patch('/user', (req, res) => {
     const id = req.session.user;
 
+    console.log(id, req.body);
 	if (!ObjectID.isValid(id)) {
         res.status(404).send();
         return;
@@ -564,6 +565,19 @@ app.post('/walker', (req, res) => {
     }
 });
 
+// Route for getting all active walkers
+app.get('/walker/active', (req, res) => {
+    const query = { active: true };
+
+    Walker.find(query).then((walkers) => {
+        res.send(walkers);
+    }).catch((error) => {
+        res.status(500).send(); //server error
+        console.log(error);
+    });
+});
+
+
 /// Route for getting information for one walker by id.
 // GET /walker/id
 app.get('/walker/:id', (req, res) => {
@@ -584,6 +598,7 @@ app.get('/walker/:id', (req, res) => {
 		res.status(500).send(); //server error
 	});
 })
+
 
 // route for editing a walker's information
 app.patch('walker/:id', (req, res) => {
@@ -627,6 +642,77 @@ app.patch('walker/:id', (req, res) => {
             }
             if (req.body.ratings){
                 walker.ratings = req.body.ratings
+            }
+            if (req.body.active != undefined) {
+                walker.active = req.body.active
+            }
+
+            if (req.body.pwd) {
+                bcrypt.genSalt(10, (err, salt) => {
+                    // password is hashed with the salt
+                    
+                    bcrypt.hash(req.body.password, salt, (err, hash) => {
+
+                        // Change password
+                        walker.passwordHash = hash
+                    });
+                });
+            }
+
+            walker.save().then((result) => {
+                res.send(result);
+            }, (error) => {
+                res.status(400).send(error);
+            })
+        }
+    })
+})
+
+// route for editing a walker's information
+app.patch('/walker', (req, res) => {
+    const id = req.session.user;
+
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()
+    }
+
+    Walker.findById(id).then((walker) => {
+        if(!walker){
+            res.status(404).send()
+        } else {
+
+            if (req.body.fname) {
+                walker.firstName = req.body.fname;
+            }
+            if (req.body.lname) {
+                walker.lastName = req.body.lname;
+            }
+            if (req.body.email) {
+                walker.emailAddress = req.body.email;
+            }
+            if (req.body.adrs) {
+                walker.homeAddress = req.body.adrs;
+            }
+            if (req.body.city) {
+                walker.city = req.body.city;
+            }
+            if (req.body.prov) {
+                walker.province = req.body.prov;
+            }
+            if (req.body.phone) {
+                walker.phoneNumber = req.body.phone
+            }
+            if (req.body.languages) {
+                walker.languages = req.body.languages
+            }
+            if (req.body.qual) {
+                walker.qualifications = req.body.qual
+            }
+            if (req.body.ratings){
+                walker.ratings = req.body.ratings
+            }
+            if (req.body.active != undefined) {
+                walker.active = req.body.active
             }
 
             if (req.body.pwd) {
@@ -713,7 +799,8 @@ app.get('/walker', (req, res) => {
 {
     "walkerId": "5ddf04dd765a2b0624face6c",
     "userId" : "5ddf0314d7048e253836ec22",
-	"dogId" : "5ddf258ceae46928e0e903ac",
+    "dogId" : "5ddf258ceae46928e0e903ac",
+    "pickupInstructions" : "The key is under the flowerpot",
 	"walkNeeds" : [ "hyper", "puppy" ],
 	"duration" : 10
 }
@@ -751,6 +838,7 @@ app.post('/walk', (req, res) => {
         userId: userId,
         dogId: dogId,
         walkNeeds: req.body.walkNeeds,
+        pickupInstructions: req.body.pickupInstructions,
         price: 8 + 2*parseInt(req.body.duration)/5 + 5*req.body.walkNeeds.length,
         duration: req.body.duration,
         notes: [],
@@ -892,6 +980,18 @@ app.patch('/walk/:id', (req, res) => {
                     walk.completed = true;
                     walk.duration = Math.round((((walk.endTime - walk.startTime) % 86400000) % 3600000) / 60000);
                     walk.price = 8 * 2*walk.duration/5 + 5*walk.walkNeeds.length;
+                    Walker.updateOne( 
+                        { _id: walk.walkerId },
+                        { $set: { active: false } },
+                        (err, success) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                ; //success
+                            }
+                        }      
+                    );
                 }
             }
             if (req.body.walkerRating && walk.completed) {
@@ -901,7 +1001,7 @@ app.patch('/walk/:id', (req, res) => {
                     { $push: { ratings: parseInt(req.body.walkerRating, 10)} },
                     (err, success) => {
                         if (err) {
-                            console.log(error);
+                            console.log(err);
                         }
                         else {
                             ; //success
@@ -1087,8 +1187,9 @@ app.post('/upload/:id', upload.single("file" /* name of file element in form */)
 
     fs.rename(tempPath, targetPath, err => {
         if (err) res.status(500).send(err);
-
-        res.status(200).end("File uploaded!");
+        else {
+            res.status(200).end("File uploaded!");
+        }
     });
 })
 
@@ -1109,8 +1210,43 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
 
     fs.rename(tempPath, targetPath, err => {
         if (err) res.status(500).send(err);
-
-        res.redirect(userProfileEdit.html);
+        else {
+            if (req.session.userType === "user") {
+                User.updateOne( 
+                    { _id: id },
+                    { $set: { pictureURL: "images/uploaded/" + id + ".jpg"} },
+                    (err, success) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            //success
+                            res.redirect("userProfileEdit.html");
+                        }
+                    }      
+                );
+            }
+            else if (req.session.userType === "walker") {
+                Walker.updateOne( 
+                    { _id: id },
+                    { $set: { pictureURL: "images/uploaded/" + id + ".jpg"} },
+                    (err, success) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            //success
+                            res.redirect("walkerProfile.html"); 
+                        }
+                    }      
+                );
+            }
+            else {
+                //why's an admin uploading a picture?
+                res.status(200).end("File uploaded!");
+            }
+        }
+        
     });
 })
 
