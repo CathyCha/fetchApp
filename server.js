@@ -1240,7 +1240,7 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
 })
 
 // app.get("logout")
-app.get('/logout', (req, res) => {
+app.get('/users/logout', (req, res) => {
     // Remove the session
     req.session.destroy((error) => {
         if (error) {
