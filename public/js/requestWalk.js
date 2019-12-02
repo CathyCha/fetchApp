@@ -552,9 +552,26 @@ function submitWalkRequest(e) {
 
 /* the below string of function calls simulates talking to the server */
 function waitForResponse() {
-    //TODO: poll server for response
-    statusMessage.innerText = "Waiting...";
-    setTimeout(waitForResponse, 1000);
+    const url = '/walk';
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            return Promise.reject();
+        }
+    }).then((json) => {
+        if (json.length > 0 || json[0].accepted) {
+            walkAccepted();
+        }
+        else {
+            statusMessage.innerText = "Waiting...";
+            setTimeout(waitForResponse, 1000);
+        }
+    }).catch((error) => {
+        console.log(error);
+    })
+    
 }
 
 function walkAccepted() {
