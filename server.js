@@ -802,7 +802,8 @@ app.get('/walker', (req, res) => {
     "dogId" : "5ddf258ceae46928e0e903ac",
     "pickupInstructions" : "The key is under the flowerpot",
 	"walkNeeds" : [ "hyper", "puppy" ],
-	"duration" : 10
+    "duration" : 10,
+    "location" : {"x" : 10, "y" : 20}
 }
 */
 app.post('/walk', (req, res) => {
@@ -842,7 +843,7 @@ app.post('/walk', (req, res) => {
         price: 8 + 2*parseInt(req.body.duration)/5 + 5*req.body.walkNeeds.length,
         duration: req.body.duration,
         notes: [],
-        locations: []
+        locations: [{x: req.body.location.x, y: req.body.location.y }]
     });
 
     walk.save().then((result) => {

@@ -128,6 +128,8 @@ function toggleDog(e){
 
 const map = document.querySelector("#map");
 let marker = null;
+let xCoordinate = null;
+let yCoordinate = null;
 let availableWalkers = null;
 
 /* Function to handle the user clicking on the map */
@@ -136,8 +138,8 @@ function mapClick(e) {
     if (walkRequested) return;
 
     const markerRadius = 10;
-    const xCoordinate = e.layerX;
-    const yCoordinate = e.layerY;
+    xCoordinate = e.layerX;
+    yCoordinate = e.layerY;
 
     if (!marker) {
         marker = document.createElement("div");
@@ -485,6 +487,7 @@ function submitWalkRequest(e) {
     const walkerId = availableWalkers[selectedWalkerIndex]._id;
     const dogId = userData.userDogs[selectedDogIndex]._id;
     const selectedWalkNeeds = [];
+    const location = {x: xCoordinate, y: yCoordinate };
     Array.prototype.forEach.call(walkNeeds.children, (child, index) => {
         if (child.style.backgroundColor === "green") {
             selectedWalkNeeds.push(child.innerText);
@@ -499,7 +502,8 @@ function submitWalkRequest(e) {
         walkerId,
         pickupInstructions,
         duration,
-        walkNeeds : selectedWalkNeeds
+        walkNeeds : selectedWalkNeeds,
+        location
     }
 
     const request = new Request(url, {
