@@ -1,0 +1,151 @@
+"use strict";
+
+// Initialize the page
+window.addEventListener("load", initializePage);
+
+function initializePage(e) {
+  // first find the user
+  const url = '/user';
+
+  fetch(url).then((res) => {
+      if (res.status === 200) {
+          return res.json();
+      }
+      else {
+          console.log("Error " + res.status + ": Could not get user data");
+          return Promise.reject(res.status);
+      }
+  }).then((json) => {
+    const user = {"userId": json._id};
+    const userQuery = '?query=' + user
+    const walkUrl = '/walk/' + userQuery
+    fetch(walkUrl).then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      }
+      else {
+        console.log("Error " + res.status + ": Could not get walk data");
+        return Promise.reject(res.status);
+      }
+    }).then((walks) => {
+      // got all walks for user, update the dom here
+      // TODO need to get completed walks in data
+      console.log(walks)
+
+      $.each(walks, function (index, value) {
+        console.log(value);
+
+        const doc = document.getElementById("main");
+        const container = document.createElement("div");
+        container.className = "container-fluid";
+        doc.appendChild(container);
+
+        const walkHistory = document.createElement("div");
+        walkHistory.className = "col-md-12";
+        walkHistory.id = "walkHistory";
+        container.appendChild(walkHistory);
+
+        const walkerName = document.createElement("p");
+        // add the name later
+        walkerName.id = "walkerName";
+
+        const walkDate = document.createElement("span");
+        walkDate.id = "walkDate";
+        walkDate.innerText = value.startTime;
+        walkerName.appendChild(walkDate);
+        walkHistory.appendChild(walkerName);
+
+        const from = document.createElement("p");
+        from.className = "from";
+        const fromCircle = document.createElement("span");
+        fromCircle.className = "fromcircle";
+        from.innerText = value.locations;
+        from.appendChild(fromCircle);
+        walkHistory.appendChild(from);
+
+        const row = document.createElement("div");
+        row.className = "row justify-content-md-center";
+
+        const rating = document.createElement("div");
+        rating.className = "col-3";
+        const ratingtxt = document.createElement("p");
+        ratingtxt.id = "rating";
+        ratingtxt.innerText = "Walk Rating";
+        rating.appendChild(ratingtxt);
+        const ratingtxt2 = document.createElement("p");
+        // have rating update HERE
+        rating.appendChild(ratingtxt2);
+        row.appendChild(rating);
+
+        const duration = document.createElement("div");
+        duration.className = "col-3";
+        const durationtxt = document.createElement("p");
+        durationtxt.id = "dur"
+        durationtxt.innerText = "Duration"
+        duration.appendChild(durationtxt);
+        const durationtxt2 = document.createElement("p");
+        //add duration HERE
+        duration.appendChild(durationtxt2);
+        row.appendChild(duration);
+
+        const price = document.createElement("div");
+        price.className = "col-3";
+        const pricetxt = document.createElement("p");
+        pricetxt.id = "price"
+        pricetxt.innerText = "Walk Price"
+        price.appendChild(pricetxt);
+        const pricetxt2 = document.createElement("p");
+        //add price HERE
+        price.appendChild(pricetxt2);
+        row.appendChild(price);
+
+        walkHistory.appendChild(row);
+      });
+
+      // get walker name with id
+      const walkerID = json.walkerId
+      const walkerUrl = '/walker/walkerID'
+      fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            console.log("Error " + res.status + ": Could not get user data");
+            return Promise.reject(res.status);
+        }
+      }).then((walker) => {
+        const fname = walker.firstName;
+        const lname = walker.lastName;
+        //update dom
+        console.log(walker)
+
+
+      }).catch((error) => {
+        if (error === 404) {
+            alert("Session expired! Please log in again");
+            window.location.href = "login.html";
+        }
+        else {
+            console.log("????");
+        }
+      })
+      }).catch((error) => {
+        if (error === 404) {
+            alert("Session expired! Please log in again");
+            window.location.href = "login.html";
+        }
+        else {
+            console.log("????");
+        }
+      })
+    }).catch((error) => {
+      if (error === 404) {
+          alert("Session expired! Please log in again");
+          window.location.href = "login.html";
+      }
+      else {
+          console.log("????");
+      }
+    })
+
+}
