@@ -192,18 +192,6 @@ app.post('/login', (req, res) => {
     }
 });
 
-// A route to logout a user
-app.get('/logout', (req, res) => {
-	// Remove the session
-	req.session.destroy((error) => {
-		if (error) {
-			res.status(500).send(error)
-		} else {
-			res.redirect('/')
-		}
-	})
-});
-
 /** User resource routes **/
 // a POST route to *create* a user
 /* example body
@@ -1249,6 +1237,18 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
         }
         
     });
+})
+
+// app.get("logout")
+app.get('/logout', (req, res) => {
+    // Remove the session
+    req.session.destroy((error) => {
+        if (error) {
+            res.status(500).send(error)
+        } else {
+            res.redirect('/')
+        }
+    })
 })
 
 const port = process.env.PORT || 3001
