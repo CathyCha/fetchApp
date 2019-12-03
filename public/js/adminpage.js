@@ -27,20 +27,23 @@ function profileupload() {
 function populateReportTable() {
   // populates the reports data table
   const url = '/report';
-  fetch(url).then((reports) => {
-    console.log(reports)
+  fetch(url).then((res) => {
+    if (res.status === 200) {
+      return res.json();
+    }
+    else {
+      return Promise.reject();
+    }
+  }).then((json) => {
     const table = $('#reportTable');
     table.find("tbody tr").remove();
-
-    $.each(reports, function (index, value) {
-
-      // TODO
-
-      // Current reports routes not working
-
-        table.append("<tr><td>" + value.id + "</td><td>" + value.type + "</td></td>" +
-        value.user + "</td><td>" + value.status + "</td><td>" + value.action + "</td></tr>");
-    });
+    
+    json.reports.forEach((report, index) => {
+      table.append("<tr><td>" + report._id + "</td><td>" + report.type + "</td></td>" +
+      report.user + "</td><td>" + report.status + "</td><td>" + report.action + "</td></tr>");
+    })
+  }).catch((error) => {
+    console.log(error);
   })
 }
 
@@ -134,7 +137,7 @@ function populateWalkerTable() {
 
 function populateAllWalks() {
   // manipulates DOM to show all walks in data
-  const url = '/walk/{}'
+  const url = '/walk'
   fetch(url).then((res) => {
     if (res.status === 200) {
         return res.json();

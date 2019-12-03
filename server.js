@@ -900,6 +900,15 @@ app.get('/walk', (req, res) => {
             res.status(500).send(); //server error
         });
     }
+
+    else if (req.session.userType === "admin" ) { //user is admin
+        Walk.find({}).then((walk) => {
+            res.send(walk);
+        }).catch((error) => {
+            res.status(500).send(); //server error
+        });
+    }
+
     else {
         const id = req.session.user;
 
@@ -916,14 +925,6 @@ app.get('/walk', (req, res) => {
         }
         else if (req.session.userType === "user" ) { //user is owner
             Walk.find({userId: id, walkerRating: {$exists: false}}).then((walk) => {
-                res.send(walk);
-            }).catch((error) => {
-                res.status(500).send(); //server error
-            });
-
-        }
-        else { //admin
-            Walk.find({}).then((walk) => {
                 res.send(walk);
             }).catch((error) => {
                 res.status(500).send(); //server error
