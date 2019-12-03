@@ -83,7 +83,8 @@ function initializePage(e) {
         from.className = "from";
         const fromCircle = document.createElement("span");
         fromCircle.className = "fromcircle";
-        from.innerText = value.locations;
+        console.log(value.locations);
+        from.innerText = formatLocations(value.locations);
         from.appendChild(fromCircle);
         walkHistory.appendChild(from);
 
@@ -97,7 +98,7 @@ function initializePage(e) {
         ratingtxt.innerText = "Walk Rating";
         rating.appendChild(ratingtxt);
         const ratingtxt2 = document.createElement("p");
-        ratingtxt2.innerText = value.walkerRating;
+        ratingtxt2.innerText = value.walkerRating + "\u2605";
         rating.appendChild(ratingtxt2);
         row.appendChild(rating);
 
@@ -108,7 +109,7 @@ function initializePage(e) {
         durationtxt.innerText = "Duration"
         duration.appendChild(durationtxt);
         const durationtxt2 = document.createElement("p");
-        durationtxt2.innerText = value.duration;
+        durationtxt2.innerText = value.duration + " minutes";
         duration.appendChild(durationtxt2);
         row.appendChild(duration);
 
@@ -119,7 +120,7 @@ function initializePage(e) {
         pricetxt.innerText = "Walk Price"
         price.appendChild(pricetxt);
         const pricetxt2 = document.createElement("p");
-        pricetxt2.innerText = value.price;
+        pricetxt2.innerText = "$" + value.price.toFixed(2);
         price.appendChild(pricetxt2);
         row.appendChild(price);
 
@@ -180,4 +181,15 @@ function initHelper(){
       }
     })
   }
+}
+
+function formatLocations(locationArray) {
+  let string = "";
+  if (locationArray.length > 0) {
+    string = "(" + locationArray[0].x + ", " + locationArray[0].y + ")";
+  }
+  for (let i = 1; i < locationArray.length; i++) {
+    string += " -> (" + locationArray[i].x + ", " + locationArray[i].y + ")";
+  }
+  return string + " ";
 }

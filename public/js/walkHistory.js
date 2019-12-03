@@ -16,9 +16,7 @@ function initializePage(e) {
           return Promise.reject(res.status);
       }
   }).then((json) => {
-    const user = {"userId": json._id};
-    const userQuery = '?query=' + user
-    const walkUrl = '/walk/' + userQuery
+    const walkUrl = '/allwalks'
     fetch(walkUrl).then((res) => {
       if (res.status === 200) {
         return res.json();
@@ -54,7 +52,7 @@ function initializePage(e) {
 
         const from = document.createElement("p");
         from.className = "from";
-        const location = "x=" + String(value.locations[0].x) + " " + "y=" + String(value.locations[0].y);
+        const location = "(" + String(value.locations[0].x) + ", " + String(value.locations[0].y + ")");
         from.innerHTML = '<span class="fromcircle"></span>' + location;
         walkHistory.appendChild(from);
 
@@ -65,10 +63,10 @@ function initializePage(e) {
         rating.className = "col-3";
         const ratingtxt = document.createElement("p");
         ratingtxt.id = "rating";
-        ratingtxt.innerText = "Walk Rating";
+        ratingtxt.innerText = "Dog Rating";
         rating.appendChild(ratingtxt);
         const ratingtxt2 = document.createElement("p");
-        ratingtxt2.innerText = value.walkerRating;
+        ratingtxt2.innerText = value.dogRating + "\u2605";
         rating.appendChild(ratingtxt2);
         row.appendChild(rating);
 
@@ -90,7 +88,7 @@ function initializePage(e) {
         pricetxt.innerText = "Walk Price"
         price.appendChild(pricetxt);
         const pricetxt2 = document.createElement("p");
-        pricetxt2.innerText = value.price;
+        pricetxt2.innerText = "$" + value.price.toFixed(2);
         price.appendChild(pricetxt2);
         row.appendChild(price);
 
