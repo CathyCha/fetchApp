@@ -294,6 +294,18 @@ app.get('/user', (req, res) => {
 	});
 })
 
+/// Route for all users
+// GET /allusers
+app.get('/allusers', (req, res) => {
+	User.find().then((users) => {
+		res.send(users)
+	}, (error) => {
+		res.status(500).send(error) // server error
+	}).catch((error) => {
+		res.status(500).send()
+	})
+})
+
 // Route to change a user's data
 // Changes the data for the user logged in
 app.patch('/user', (req, res) => {
@@ -1294,7 +1306,7 @@ app.get('/users/logout', (req, res) => {
     })
 })
 
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3008
 app.listen(port, () => {
 	console.log(`Listening on port ${port}...`)
 });
