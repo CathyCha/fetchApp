@@ -932,6 +932,7 @@ app.get('/walk', (req, res) => {
     }
 })
 
+
 /// Route for all users
 // GET /allusers
 app.get('/allusers', (req, res) => {

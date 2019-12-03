@@ -81,6 +81,7 @@
 	min-height: 105px;
 	display: block;
 	padding: 10px;
+	margin-bottom: 30px;
 }
 
 .user-pic {
@@ -159,16 +160,15 @@
 }
 
 #deleteacc {
-	position: absolute;
-	right: 10px;
+	right: 50px;
 	bottom: 20px;
 }
 
 #signout {
-	position: absolute;
 	left: 260px;
 	bottom: 20px;
 }
+
 
 .container {
 	margin-left: 250px; /* Same as the width of the sidebar */

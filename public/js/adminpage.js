@@ -31,7 +31,7 @@ function populateReportTable() {
     console.log(reports)
     const table = $('#reportTable');
     table.find("tbody tr").remove();
-    // console.log(reports)
+
     $.each(reports, function (index, value) {
 
       // TODO
@@ -140,10 +140,11 @@ function populateAllWalks() {
         return res.json();
     }
     else {
-        console.log("Error " + res.status + ": Could not get walker data");
+        console.log("Error " + res.status + ": Could not get walk data");
         return Promise.reject(res.status);
     }
   }).then((walks) => {
+    console.log(walks)
         const table = $('#walkTable');
         $.each(walks, function(index, value) {
           console.log(value)
