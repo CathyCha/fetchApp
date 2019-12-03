@@ -584,6 +584,17 @@ app.get('/walker/:id', (req, res) => {
 	});
 })
 
+/// Route for getting all walkers
+// GET /walker
+app.get('/walker', (req, res) => {
+  Walker.find().then((walkers) => {
+		res.send(walkers)
+	}, (error) => {
+		res.status(500).send(error) // server error
+	}).catch((error) => {
+		res.status(500).send()
+	})
+})
 
 // route for editing a walker's information
 app.patch('walker/:id', (req, res) => {
@@ -635,7 +646,7 @@ app.patch('walker/:id', (req, res) => {
             if (req.body.pwd) {
                 bcrypt.genSalt(10, (err, salt) => {
                     // password is hashed with the salt
-                    
+
                     bcrypt.hash(req.body.password, salt, (err, hash) => {
 
                         // Change password
@@ -703,7 +714,7 @@ app.patch('/walker', (req, res) => {
             if (req.body.pwd) {
                 bcrypt.genSalt(10, (err, salt) => {
                     // password is hashed with the salt
-                    
+
                     bcrypt.hash(req.body.password, salt, (err, hash) => {
 
                         // Change password
@@ -762,7 +773,7 @@ app.get('/walker', (req, res) => {
         if (!ObjectID.isValid(id)) {
             res.status(404).send();
         }
-    
+
         Walker.findById(id).then((walker) => {
             if (!walker) {
                 res.status(404).send(); //could not find walker
@@ -773,7 +784,7 @@ app.get('/walker', (req, res) => {
             res.status(500).send(); //server error
         });
     }
-    
+
 })
 
 /** Walk resource routes **/
@@ -880,7 +891,7 @@ app.get('/walk', (req, res) => {
         if (!ObjectID.isValid(id)) {
             res.status(404).send();
         }
-        
+
         if (req.session.userType === "walker" ) { //user is walker
             Walk.find({walkerId: id, dogRating: {$exists: false}}).then((walk) => {
                 res.send(walk);
@@ -904,6 +915,18 @@ app.get('/walk', (req, res) => {
             });
         }
     }
+})
+
+/// Route for all users
+// GET /allusers
+app.get('/allusers', (req, res) => {
+	User.find().then((users) => {
+		res.send(users)
+	}, (error) => {
+		res.status(500).send(error) // server error
+	}).catch((error) => {
+		res.status(500).send()
+	})
 })
 
 // Route for changing properties of a walk
@@ -966,7 +989,7 @@ app.patch('/walk/:id', (req, res) => {
                             else {
                                 ; //success
                             }
-                        }      
+                        }
                     );
                     walk.endTime = new Date(walk.startTime.getTime() + (parseInt(walk.duration) * 60000));
                 }
@@ -991,8 +1014,8 @@ app.patch('/walk/:id', (req, res) => {
                     return;
                 }
                 walk.walkerRating = req.body.walkerRating;
-                Walker.updateOne( 
-                    { _id: walk.walkerId }, 
+                Walker.updateOne(
+                    { _id: walk.walkerId },
                     { $push: { ratings: parseInt(req.body.walkerRating, 10)} },
                     (err, success) => {
                         if (err) {
@@ -1013,8 +1036,8 @@ app.patch('/walk/:id', (req, res) => {
                 walk.dogRating = req.body.dogRating;
                 User.updateOne(
                     { "_id": walk.userId, "userDogs._id": walk.dogId },
-                    { 
-                        "$push": { 
+                    {
+                        "$push": {
                             "userDogs.$.ratings": parseInt(req.body.dogRating, 10)
                         }
                     },
@@ -1097,7 +1120,7 @@ app.get('/report', (req, res) => {
 
 // Get report by id
 app.get('/report/:id', (req, res) => {
-    const id = req.params.id 
+    const id = req.params.id
     if(!ObjectID.isValid(id)){
         res.status(404).send()
     }
@@ -1211,7 +1234,7 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
         if (err) res.status(500).send(err);
         else {
             if (req.session.userType === "user") {
-                User.updateOne( 
+                User.updateOne(
                     { _id: id },
                     { $set: { pictureURL: "images/uploaded/" + id + ".jpg"} },
                     (err, success) => {
@@ -1222,11 +1245,11 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
                             //success
                             res.redirect("userProfileEdit.html");
                         }
-                    }      
+                    }
                 );
             }
             else if (req.session.userType === "walker") {
-                Walker.updateOne( 
+                Walker.updateOne(
                     { _id: id },
                     { $set: { pictureURL: "images/uploaded/" + id + ".jpg"} },
                     (err, success) => {
@@ -1235,9 +1258,9 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
                         }
                         else {
                             //success
-                            res.redirect("walkerProfile.html"); 
+                            res.redirect("walkerProfile.html");
                         }
-                    }      
+                    }
                 );
             }
             else {
@@ -1245,7 +1268,7 @@ app.post('/upload', upload.single("file" /* name of file element in form */),
                 res.status(200).end("File uploaded!");
             }
         }
-        
+
     });
 })
 

@@ -24,42 +24,142 @@ function profileupload() {
 // -------------------------------------------------------
 // -------------------------------------------------------
 
-function populateReportTable(reports) {
+function populateReportTable() {
   // populates the reports data table
-  const table = $('#reportTable');
-  table.find("tbody tr").remove();
-  reports.forEach(function (reports) {
-        table.append("<tr><td>" + reports.id + "</td><td>" + reports.type + "</td></td>" +
-        reports.user + "</td><td>" + reports.status + "</td><td>" + reports.action + "</td></tr>");
-  });
+  const url = '/report';
+  fetch(url).then((reports) => {
+    console.log(reports)
+    const table = $('#reportTable');
+    table.find("tbody tr").remove();
+    // console.log(reports)
+    $.each(reports, function (index, value) {
+
+      // TODO
+
+      // Current reports routes not working
+
+        table.append("<tr><td>" + value.id + "</td><td>" + value.type + "</td></td>" +
+        value.user + "</td><td>" + value.status + "</td><td>" + value.action + "</td></tr>");
+    });
+  })
 }
 
-function populateDogTable(owners) {
+function populateOwnerTable() {
   // populates the all dog users table
-  const table = $('#ownerTable');
-  table.find("tbody tr").remove();
-  owners.forEach(function (owners) {
-        table.append("<tr><td>" + owners.id + "</td><td>" + owners.name + "</td></td>" +
-        owners.city + "</td><td>" + owners.email + "</td><td>" + owners.dogs +  "</td><td>" +
-        owners.dateJoined + "</td></tr>");
-  });
+  // get all users with dogs
+  const url = '/allusers';
+
+  fetch(url).then((res) => {
+    if (res.status === 200) {
+        return res.json();
+    }
+    else {
+        console.log("Error " + res.status + ": Could not get walker data");
+        return Promise.reject(res.status);
+    }
+    }).then((users) => {
+        const table = $('#ownerTable');
+        $.each(users, function(index, value) {
+          console.log(value)
+          table.append("<tr><td class=ownerID>" + value._id + "</td><td>" + value.firstName + " " + value.lastName + "</td><td>" +
+          value.city + "</td><td>" + value.emailAddress + "</td><td>" + "<select class='dogs'>" +
+          "</select>" + "</td><td>" + new Date(value.dateJoined).toLocaleDateString() + "</td></tr>");
+        })
+        ownerTableHelper();
+    }).catch((error) => {
+      if (error === 404) {
+          alert("Session expired! Please log in again");
+          window.location.href = "login.html";
+      }
+      else {
+          console.log("????");
+      }
+    })
 }
 
-function populateWalkerTable(walkers) {
-  // populates the all walker users table
-  const table = $('#walkerTable');
-  table.find("tbody tr").remove();
-  walkers.forEach(function (walkers) {
-        table.append("<tr><td>" + walkers.id + "</td><td>" + walkers.name + "</td></td>" +
-        walkers.city + "</td><td>" + walkers.email + "</td><td>" + walkers.dateJoined +  "</td><td>" +
-        owners.rating + "</td></tr>");
-  });
+function ownerTableHelper() {
+   const owners = document.getElementsByClassName("ownerID")
+   for(let i=0; i < owners.length; i++){
+     const url = '/user/' + owners[i].innerText;
+     fetch(url).then((res) => {
+     if (res.status === 200) {
+         return res.json();
+     }
+     else {
+         console.log("Error " + res.status + ": Could not get user data");
+         return Promise.reject(res.status);
+       }
+     }).then((user) => {
+       $.each(user.userDogs, function(index, value){
+         const dogSelect = document.getElementsByClassName("dogs")[i];
+         const dogoption = document.createElement("option");
+         const dogoptiontxt = document.createTextNode(value.dogName);
+         dogoption.appendChild(dogoptiontxt);
+         dogSelect.appendChild(dogoption);
+       })
+     })
+   }
+}
 
+function populateWalkerTable() {
+  // populates the all walker users table
+  const url = '/walker'
+
+  fetch(url).then((res) => {
+    if (res.status === 200) {
+        return res.json();
+    }
+    else {
+        console.log("Error " + res.status + ": Could not get walker data");
+        return Promise.reject(res.status);
+    }
+  }).then((walkers) => {
+        const table = $('#walkerTable');
+        $.each(walkers, function(index, value) {
+          console.log(value)
+          table.append("<tr><td>" + value._id + "</td><td>" + value.firstName + " " + value.lastName + "</td><td>" +
+          value.city + "</td><td>" + value.emailAddress + "</td><td>" + new Date(value.dateJoined).toLocaleDateString()
+          + "</td><td>" + value.ratings + "</td></tr>");
+        })
+    }).catch((error) => {
+      if (error === 404) {
+          alert("Session expired! Please log in again");
+          window.location.href = "login.html";
+      }
+      else {
+          console.log("????");
+      }
+    })
 }
 
 function populateAllWalks() {
   // manipulates DOM to show all walks in data
+  const url = '/walk/{}'
+  fetch(url).then((res) => {
+    if (res.status === 200) {
+        return res.json();
+    }
+    else {
+        console.log("Error " + res.status + ": Could not get walker data");
+        return Promise.reject(res.status);
+    }
+  }).then((walks) => {
+        const table = $('#walkTable');
+        $.each(walks, function(index, value) {
+          console.log(value)
+          // TODO
+          // current routes not working to get all walks
 
+        })
+    }).catch((error) => {
+      if (error === 404) {
+          alert("Session expired! Please log in again");
+          window.location.href = "login.html";
+      }
+      else {
+          console.log("????");
+      }
+    })
 }
 
 
