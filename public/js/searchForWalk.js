@@ -28,8 +28,8 @@ let acceptButton = null;
 const map = document.getElementById("map");
 
 //storage for server call results
-let walkRequest; //incoming walk request
-let doggo; //the doggo with an incoming walk request
+let walkRequest = null; //incoming walk request
+let doggo = null; //the doggo with an incoming walk request
 
 /*************************
  * Page initialization
@@ -76,6 +76,10 @@ function getInfo(e) {
 function setActive(e) {
   e.preventDefault();
 
+  if (walkRequest) {
+    return; //we do not allow the rejection of work here!!
+  }
+  
   const url = "/walker/active";
   const requestBody = {
     active: true
