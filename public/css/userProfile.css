@@ -240,6 +240,18 @@
   padding: 0px 10px;
 }
 
+.editDog {
+	float: right;
+	margin-right: 10px;
+	background-color: orange;
+	color: white;
+	border: none;
+}
+
+.editDog:hover {
+	background-color: darkorange;
+}
+
 .dog-info {
 	overflow: auto;
 	margin-bottom: 20px;
