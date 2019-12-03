@@ -1,6 +1,10 @@
 "use strict";
 
-const defaultPicture = "images/defaultprofile.jpg";
+const defaultPicture = "images/defaultdog.jpg";
+
+//storage for the server call results
+let user = null;
+let doggo = null;
 
 // Initialize the page
 window.addEventListener("load", initializePage);
@@ -17,15 +21,19 @@ function initializePage(e) {
             return Promise.reject(res.status);
         }
     }).then((json) => {
-        document.querySelector("#fname").value = json.firstName;
-        document.querySelector("#lname").value = json.lastName;
-        document.querySelector("#emailAddress").value = json.emailAddress;
-        document.querySelector("#adrs").value = json.homeAddress;
-        document.querySelector("#inputCity").value = json.city;
-        document.querySelector("#inputProv").value = json.province;
-        document.querySelector("#description").value = json.description;
+        user = json;
+        const doggoId = getDogId();
+        if (!doggoId) {
+            alert("Invalid dog!");
+            window.location.href = "userProfile.html"
+        }
+        doggo = user.userDogs.filter((dog) => dog._id == doggoId)[0];
 
-        document.querySelector("#defaultpp").src = json.pictureURL || defaultPicture;
+        //load dog's info onto the page
+        document.querySelector("#name").value = doggo.dogName;
+        document.querySelector("#weight").value = doggo.weight;
+        document.querySelector("#description").value = doggo.description || "";
+        document.querySelector("#defaultpp").src = doggo.pictureURL || defaultPicture;
     }).catch((error) => {
         if (error === 404) {
             alert("Session expired! Please log in again");
@@ -39,13 +47,13 @@ function initializePage(e) {
 
 //post a file (profile picture) to the server for uploading
 function uploadFile(file) {
-    const url = "/upload";
+    const url = "/upload/" + user._id + "/" + doggo._id;
     fetch(url, {
         method: 'POST',
         body: file
     }).then((res) => {
         if (res.status === 200) {
-            window.location.href = "userProfileEdit.html";
+            window.location.href = window.location.href;
         }
         else {
             console.log("Error " + res.status + ": Could not upload file");
@@ -80,31 +88,12 @@ function updateStatus(message, colour) {
 function submitChanges(e) {
     e.preventDefault();
 
-    if (!document.querySelector("#currpwd").value) {
-        updateStatus("Please enter your current password to make changes", "red");
-        return;
-    }
-    if (document.querySelector("#newpwd1").value !== document.querySelector("#newpwd2").value) {
-        updateStatus("New password fields do not match", "red");
-        return;
-    }
-
-    const url = "/user";
+    const url = "/dogs/" + user._id + "/" + doggo._id;
 
     const requestBody = {
-        currpwd: document.querySelector("#currpwd").value,
-        fname: document.querySelector("#fname").value,
-        lname: document.querySelector("#lname").value,
-        email: document.querySelector("#emailAddress").value,
-        adrs: document.querySelector("#adrs").value,
-        city: document.querySelector("#inputCity").value,
-        prov: document.querySelector("#inputProv").value,
-        description: document.querySelector("#description").value
-    }
-
-    //only add the new password onto the request if there is one
-    if (document.querySelector("#newpwd1").value) {
-        requestBody.newpwd = document.querySelector("#newpwd1").value;
+        dogName: document.querySelector("#name").value,
+        weight: document.querySelector("#weight").value,
+        description: document.querySelector("#description").value    
     }
 
     const request = new Request(url, {
@@ -120,13 +109,7 @@ function submitChanges(e) {
         if (res.status === 200) {
             //put a message on the page to tell the user
             updateStatus("Successfully updated!", "green");
-            document.querySelector("#currpwd").value = "";
-            document.querySelector("#newpwd1").value = "";
-            document.querySelector("#newpwd2").value = "";
 
-        }
-        else if (res.status === 401 || res.status === 403) {
-            updateStatus("Password incorrect", "red");
         }
         else {
             updateStatus("Something went wrong :(", "red");
@@ -139,3 +122,11 @@ function submitChanges(e) {
 document.querySelector("#saveButton").addEventListener("click", submitChanges);
 document.querySelector("#uploadPicButton").addEventListener("click", uploadPicture);
 document.querySelector("#resetButton").addEventListener("click", (e) => {window.location.href = "userProfile.html"});
+
+function getDogId() {
+    let vars = {};
+    const parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars["id"];
+}

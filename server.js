@@ -547,6 +547,46 @@ app.get('/dogs/:userid', (req, res) => {
 	});
 })
 
+/// Route to edit a user's dog
+// PATCH /dogs/userid
+/* example body
+{
+	"dogName" : "Joplin",
+    "weight" : 50
+}
+*/
+app.patch('/dogs/:userid/:dogid', (req, res) => {
+    const userId = req.params.userid;
+    const dogId = req.params.dogid;
+
+	if (!ObjectID.isValid(userId)) {
+		res.status(404).send();
+	}
+
+	User.findById(userId).then((user) => {
+		if (!user) {
+			res.status(404).send(); //could not find user
+        } 
+        else {
+            const dog = user.userDogs.id(dogId);
+            if (req.body.dogName) {
+                dog.dogName = req.body.dogName;
+            }
+            if (req.body.weight) {
+                dog.weight = req.body.weight;
+            }
+            if (req.body.description) {
+                dog.description = req.body.description;
+            }
+			return user.save();
+		}
+	}).then((result) => {
+		res.send(result);
+	}).catch((error) => {
+		res.status(500).send(); //server error
+	});
+})
+
 /** Walker resource routes **/
 
 // a POST route to *create* a walker
@@ -1271,24 +1311,41 @@ app.delete('/report/:id', (req, res) => {
 
 /** Other routes **/
 
-/// Route for uploading an image for a profile picture
+/// Route for uploading an image for a dog's profile picture
 /// Image will be stored as /public/images/uploaded/id.{jpg.png}
-// POST /upload/{userid/dogid/walkerid}
-app.post('/upload/:id', upload.single("file" /* name of file element in form */),
+// POST /upload/userid/dogid/
+app.post('/upload/:userid/:dogid', upload.single("file" /* name of file element in form */),
 (req, res) => {
-    const id = req.params.id;
-    if (!ObjectID.isValid(id)) {
+    const userId = req.params.userid;
+    const dogId = req.params.dogid;
+
+    if (!ObjectID.isValid(userId) || !ObjectID.isValid(dogId)) {
 		res.status(404).send("Cannot find entity with that id");
     }
 
     const ext = path.extname(req.file.originalname).toLowerCase();
     const tempPath = req.file.path;
-    const targetPath = path.join(__dirname, "./public/images/uploaded/", id + ext);
+    const targetPath = path.join(__dirname, "./public/images/uploaded/", dogId + ext);
 
     fs.rename(tempPath, targetPath, err => {
         if (err) res.status(500).send(err);
         else {
-            res.status(200).end("File uploaded!");
+
+            User.findById(userId).then((user) => {
+                if (!user) {
+                    res.status(404).send(); //could not find user
+                } 
+                else {
+                    const dog = user.userDogs.id(dogId);
+                    dog.pictureURL = "images/uploaded/" + dogId + ".jpg"
+                    return user.save();
+                }
+            }).then((result) => {
+                res.status(200).end("File uploaded!");
+            }).catch((error) => {
+                res.status(500).send(); //server error
+            });
+            
         }
     });
 })

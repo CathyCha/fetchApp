@@ -96,6 +96,7 @@
 
 .user-bio {
 	margin: 5px 5px 5px 115px;
+	overflow: auto;
 }
 
 .user-name {
@@ -266,5 +267,4 @@
 
 .dog-info {
 	overflow: auto;
-	margin-bottom: 20px;
 }

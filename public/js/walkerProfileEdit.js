@@ -1,5 +1,8 @@
 "use strict";
 
+const defaultPicture = "images/defaultprofile.jpg";
+
+//Page initialization
 window.addEventListener("load", initializePage);
 
 function initializePage(e) {
@@ -22,7 +25,7 @@ function initializePage(e) {
         document.querySelector("#inputCity").value = json.city;
         document.querySelector("#inputProv").value = json.province;
         document.querySelector("#description").value = json.description || "";
-        document.querySelector("#defaultpp").src = json.pictureURL || "images/defaultprofile.jpg";
+        document.querySelector("#defaultpp").src = json.pictureURL || defaultPicture;
         document.querySelector("#lang").value = displayArray(json.languages, ", ");
         document.querySelector("#qualifications").value = displayArray(json.qualifications, "\n");
         document.querySelector("#description").value = json.description || "";

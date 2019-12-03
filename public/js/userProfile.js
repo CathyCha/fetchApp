@@ -100,24 +100,29 @@ function displayDogs(dogs) {
         dogNameSpan.innerText = dog.dogName;
         dogBioDiv.appendChild(dogNameSpan);
 
-        const ratingDiv = document.createElement("div");
-        ratingDiv.classList.add("rating");
-        dogBioDiv.appendChild(ratingDiv);
+        const ratingSpan = document.createElement("span");
+        ratingSpan.classList.add("rating");
+        dogBioDiv.appendChild(ratingSpan);
 
         const starsSpan = document.createElement("span");
         starsSpan.classList.add("rating-stars");
         starsSpan.innerText = "★";
-        ratingDiv.appendChild(starsSpan);
+        ratingSpan.appendChild(starsSpan);
 
         const ratingNumberSpan = document.createElement("span");
         ratingNumberSpan.classList.add("rating-number");
         ratingNumberSpan.innerText = average(dog.ratings);
-        ratingDiv.appendChild(ratingNumberSpan);
+        ratingSpan.appendChild(ratingNumberSpan);
 
-        const weightSpan = document.createElement("span");
-        weightSpan.classList.add("grey");
-        weightSpan.innerText = dog.weight + "lbs";
-        dogBioDiv.appendChild(weightSpan);
+        const weightDiv = document.createElement("div");
+        weightDiv.classList.add("grey");
+        weightDiv.innerText = dog.weight + "lbs";
+        dogBioDiv.appendChild(weightDiv);
+
+        const description = document.createElement("p");
+        description.classList.add("user-description");
+        description.innerText = dog.description || "";
+        dogBioDiv.appendChild(description);
 
         const editButton = document.createElement("a");
         editButton.classList.add("btn");

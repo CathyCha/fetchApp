@@ -169,6 +169,8 @@ function mapClick(e) {
         }
     }).then((json) => {
         availableWalkers = json;
+        removeAllWalkers();
+
         json.forEach((walker, index) => {
             addWalker(walker);
         })
@@ -246,6 +248,14 @@ function toggleNeed(e) {
  * manipulating walkers on the page
  **********************************/
 
+//clear all walkers
+function removeAllWalkers() {
+    const walkerArea = document.querySelector('#walker-container');
+    while (walkerArea.firstChild) {
+        walkerArea.removeChild(walkerArea.firstChild);
+    }
+}
+
 //add walker to the "Available Walkers" panel
 function addWalker(walker) {
 
@@ -263,7 +273,6 @@ function addWalker(walker) {
     walkerPic.src = walker.pictureURL || defaultPicture;
 
     const walkerBio = document.createElement("div");
-    walkerBio.innerText = walker.description || defaultDescription;
     walkerBio.classList.add("walker-bio");
 
     //add pic and description to walker
@@ -301,7 +310,7 @@ function addWalker(walker) {
 
     const desc = document.createElement("p");
     desc.classList.add("walker-description");
-    desc.innerText = "Hi! I'm a dog walker."
+    desc.innerText = walker.description || defaultDescription;
     //desc.innerText = walker.description;
 
     walkerBio.appendChild(desc);
