@@ -145,11 +145,11 @@
 }
 
 #selectUser {
-  border: 2px solid seagreen;
   width: 270px;
   margin-left: 15px;
   text-indent: 95px;
-  color: seagreen;
+  color: white;
+  background-color: seagreen;
 }
 
 .logoSignup {
