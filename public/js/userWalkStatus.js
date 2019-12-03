@@ -22,6 +22,8 @@ let walkRequest;
 let walker;
 let timeLeft; 
 
+let walkDone = false; 
+
 /*************************
  * Page initialization
  * - a chain of events to load all the walk info onto the page
@@ -56,7 +58,18 @@ function getInfo(e) {
                 addWalkerNote(note);
             });
 
-            getWalker();
+            const finishTime = new Date(walkRequest.endTime);
+            const now = new Date();
+            timeLeft = timeDifference(finishTime, now);
+            if (timeLeft < 0) {
+                timeLeft = 0;
+                walkDone = true;
+            }
+            updateTimeLeft(timeLeft);
+
+            updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
+
+            getDoggo();
         }
         else {
             //no active walk, redirect user
@@ -67,7 +80,7 @@ function getInfo(e) {
     });
 }
 
-function getWalker() {
+function getDoggo() {
     const url = '/walker/' + walkRequest.walkerId;
     fetch(url).then((res) => {
         if (res.status === 200) {
@@ -236,14 +249,41 @@ function updatePage() {
         //save this updated data
         walkRequest = walkRequestUpdated;
 
-        if (walkRequest.completed) {
-            //TODO: finish walk
-            clearInterval(updatePageInterval);
+        const finishTime = new Date(walkRequest.endTime);
+        const now = new Date();
+        timeLeft = timeDifference(finishTime, now);
+        if (timeLeft < 0) {
+            timeLeft = 0;
+            walkDone = true;
+        }
+        if (timeLeft == 0 && now > finishTime) {
+            updateTimeLeft("<1"); //TODO: test this to make sure it works
+        }
+        else {
+            updateTimeLeft(timeLeft);
+        }
+
+        updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
+
+        if (walkDone) {
+            //we don't want to stop updating the page - walker might add notes or locations
+            //clearInterval(updatePageInterval); 
             finishWalk();
         }
     }).catch((error) => {
         console.log(error);
     });
+}
+
+/*************************************
+ * Price estimate update functionality
+ ************************************/
+
+function updatePrice(duration, numNeeds) {
+    console.log(duration, numNeeds);
+    const priceSpan = document.querySelector("#price");
+    const priceEstimate = 8 + 2*duration/5 + 5*numNeeds;
+    priceSpan.innerText = "$" + priceEstimate.toFixed(2).toString();
 }
 
 /***************************************
@@ -450,4 +490,9 @@ function average(array) {
         sum += parseInt(array[i], 10);
     }
     return (sum/array.length).toFixed(2);
-  }
+}
+
+//get the number of minutes' difference between two times
+function timeDifference(laterTime, earlierTime) {
+    return Math.round((((laterTime - earlierTime) % 86400000) % 3600000) / 60000);
+}

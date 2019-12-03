@@ -33,6 +33,12 @@ let walkRequest = null; //active walk request
 let doggo = null; //doggo on active walk request
 let timeLeft = null; //time left on walk
 
+//interval used to update the time left section
+const updatePageInterval = setInterval(updatePage, 1000);
+
+//use this to disable time changes once the walk is done
+let walkDone = false; 
+
 /*************************
  * Page initialization
  * - a chain of events to load all the walk info onto the page
@@ -40,49 +46,56 @@ let timeLeft = null; //time left on walk
 window.addEventListener("load", getInfo);
 
 function getInfo(e) {
-  const url = '/walk';
-  fetch(url).then((res) => {
-    if (res.status === 200) {
-      return res.json();
-    }
-    else {
-      console.log("Error " + res.status + ": Could not get walk data");
-      if (res.status === 404) {
-        alert("Session expired! Please log in again");
-        window.location.href = "login.html";
-      }
-      else {
-        return Promise.reject(res.status);
-      }
-    }
-  }).then((json) => {
-    if (json.length > 0 && json[0].accepted) {
-      walkRequest = json[0];
-      console.log(walkRequest);
-      timeLeft = walkRequest.duration;
-      updateTimeLeft(timeLeft);
+    const url = '/walk';
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            console.log("Error " + res.status + ": Could not get walk data");
+            if (res.status === 404) {
+                alert("Session expired! Please log in again");
+                window.location.href = "login.html";
+            }
+            else {
+                return Promise.reject(res.status);
+            }
+        }
+    }).then((json) => {
+        if (json.length > 0 && json[0].accepted) {
+            walkRequest = json[0];
 
-      //add the walker's existing notes
-      walkRequest.notes.forEach((note, index) => {
-        const notesList = document.getElementById("notes-div");
-        const newNote = document.createElement("li");
-        newNote.innerText = note;
-        notesList.appendChild(newNote);
-      });
+            //add the walker's existing notes
+            walkRequest.notes.forEach((note, index) => {
+                const notesList = document.getElementById("notes-div");
+                const newNote = document.createElement("li");
+                newNote.innerText = note;
+                notesList.appendChild(newNote);
+            });
 
-      getWalker();
-    }
-    else {
-      //no active walk, redirect user
-      window.location.href = "searchForWalk.html"
-    }
-  }).catch((error) => {
-    console.log(error);
-  });
-  
+            const finishTime = new Date(walkRequest.endTime);
+            const now = new Date();
+            timeLeft = timeDifference(finishTime, now);
+            if (timeLeft < 0) {
+                timeLeft = 0;
+                walkDone = true;
+            }
+            updateTimeLeft(timeLeft);
+
+            updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
+
+            getDoggo();
+        }
+        else {
+            //no active walk, redirect user
+            window.location.href = "searchForWalk.html"
+        }
+    }).catch((error) => {
+            console.log(error);
+    });
 }
 
-function getWalker() {
+function getDoggo() {
     const url = '/dogs/' + walkRequest.userId;
     fetch(url).then((res) => {
         if (res.status === 200) {
@@ -232,6 +245,11 @@ function displayDoggo(dog, request) {
     //add box as child for area
     const userArea = document.querySelector("#right-pane-body");
     userArea.appendChild(selectUserPopup);
+
+    //super hacky... but here we go
+    if (walkRequest.completed) {
+        requestRating();
+    }
 }
 
 /***********************
@@ -321,9 +339,9 @@ function mapClick(e) {
     });
 }
 
-/*********************
- * Update time left
- ***********************/
+/*********************************
+ * Time remaining functionality
+ *********************************/
 
 const lessTimeButton = document.querySelector("#less-time");
 const moreTimeButton = document.querySelector("#more-time");
@@ -331,9 +349,18 @@ const moreTimeButton = document.querySelector("#more-time");
 lessTimeButton.addEventListener("click", (e) => {e.preventDefault(); adjustTime(-1);});
 moreTimeButton.addEventListener("click", (e) => {e.preventDefault(); adjustTime(1);});
 
+function updateTimeLeft(minutes) {
+    const finishTime = document.querySelector("#finish-time");
+    finishTime.innerText = minutes.toString(10) + " min";
+}
+
 //adjust the remaining time in the walk
 function adjustTime(change) {
-    
+    //no editing the time after we're done!
+    if (walkDone) {
+        return;
+    }
+
     //update the server on this change
     const url = '/walk/' + walkRequest._id;
     const requestBody = {
@@ -360,27 +387,52 @@ function adjustTime(change) {
         console.log(json);
         timeLeft += change;
         updateTimeLeft(timeLeft);
+        updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
     }).catch((error) => {
         console.log(error);
     });
 }
 
-const updatePageInterval = setInterval(updatePage, 1000);
-
-function updateTimeLeft(minutes) {
-    const finishTime = document.querySelector("#finish-time");
-    finishTime.innerText = minutes.toString(10) + " min";
+function updatePage() {
+    const url = '/walk/' + walkRequest._id;
+    fetch(url).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else if (res.status === 404) {
+            alert("Session expired! Please log in again");
+            window.location.href = "login.html";
+        }
+        else {
+            return Promise.reject(res.status);
+        }
+    }).then((json) => {
+        walkRequest = json;
+        const finishTime = new Date(walkRequest.endTime);
+        const now = new Date();
+        timeLeft = timeDifference(finishTime, now);
+        if (timeLeft < 0) {
+            timeLeft = 0;
+            walkDone = true;
+        }
+        updateTimeLeft(timeLeft);
+        if (timeLeft == 0) { //walk finished
+            finishWalk();
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
 }
 
-function updatePage() {
-    //TODO: query server for walker's current status
-    if (true) {
-        //update things
-    }
-    else {
-        clearInterval(updatePageInterval);
-        finishWalk();
-    }
+/*************************************
+ * Price estimate update functionality
+ ************************************/
+
+function updatePrice(duration, numNeeds) {
+    console.log(duration, numNeeds);
+    const priceSpan = document.querySelector("#price");
+    const priceEstimate = 8 + 2*duration/5 + 5*numNeeds;
+    priceSpan.innerText = "$" + priceEstimate.toFixed(2).toString();
 }
 
 /***************************************
@@ -395,6 +447,39 @@ let feedbackDiv = null;
 let doneButton = null;
 
 function finishWalk() {
+    //stop the page updating if the walk is done
+    clearInterval(updatePageInterval);
+
+    //tell the server we're done
+    const url = '/walk/' + walkRequest._id;
+    const requestBody = {
+        completed: true
+    }
+    const request = new Request(url, {
+        method: 'PATCH',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        else {
+            return Promise.reject(res.status);
+        }
+    }).then((json) => {
+        walkRequest = json;
+        requestRating();
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+function requestRating() {
     const dogNeeds = document.getElementById("walk-needs-container")
     dogNeeds.parentNode.removeChild(dogNeeds)
     //resize the picture
@@ -593,4 +678,9 @@ function average(array) {
         sum += parseInt(array[i], 10);
     }
     return (sum/array.length).toFixed(2);
-  }
+}
+
+//get the number of minutes' difference between two times
+function timeDifference(laterTime, earlierTime) {
+    return Math.round((((laterTime - earlierTime) % 86400000) % 3600000) / 60000);
+}

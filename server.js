@@ -942,9 +942,10 @@ app.patch('/walk/:id', (req, res) => {
             res.status(404).send(); //could not find walk
             return;
 		} else {
-            if (req.body.duration) {
+            if (req.body.duration && !walk.completed) {  //disable duration changes of a done walk
                 walk.duration = req.body.duration;
-                walk.endTime = walk.startTime + walk.duration * 60000;
+                walk.price = 8 * 2*walk.duration/5 + 5*walk.walkNeeds.length;
+                walk.endTime = new Date(walk.startTime.getTime() + (parseInt(walk.duration) * 60000));
             }
             if (req.body.accepted) {
                 if (walk.accepted) {
@@ -954,7 +955,6 @@ app.patch('/walk/:id', (req, res) => {
                 }
                 else {
                     walk.startTime = new Date();
-                    console.log(walk.startTime.getHours(), walk.startTime.getMinutes(), walk.startTime.getSeconds());
                     walk.accepted = true;
                     Walker.updateOne( //set walker as no longer active so they don't get a second walk request
                         { _id: walk.walkerId },
@@ -968,9 +968,7 @@ app.patch('/walk/:id', (req, res) => {
                             }
                         }      
                     );
-                    walk.endTime = new Date() + (parseInt(walk.duration) * 60000);
-                    console.log(walk.endTime.getHours(), walk.endTime.getMinutes(), walk.endTime.getSeconds());
-
+                    walk.endTime = new Date(walk.startTime.getTime() + (parseInt(walk.duration) * 60000));
                 }
             }
             if (req.body.completed) {
@@ -987,6 +985,11 @@ app.patch('/walk/:id', (req, res) => {
                 }
             }
             if (req.body.walkerRating && walk.completed) {
+                //some security..
+                if (req.session.user !== walk.userId) {
+                    res.status(403).send();
+                    return;
+                }
                 walk.walkerRating = req.body.walkerRating;
                 Walker.updateOne( 
                     { _id: walk.walkerId }, 
@@ -1002,6 +1005,11 @@ app.patch('/walk/:id', (req, res) => {
                 );
             }
             if (req.body.dogRating && walk.completed) {
+                //some more security..
+                if (req.session.user !== walk.walkerId) {
+                    res.status(403).send();
+                    return;
+                }
                 walk.dogRating = req.body.dogRating;
                 User.updateOne(
                     { "_id": walk.userId, "userDogs._id": walk.dogId },

@@ -562,7 +562,7 @@ function waitForResponse() {
             return Promise.reject();
         }
     }).then((json) => {
-        if (json.length > 0 || json[0].accepted) {
+        if (json.length > 0 && json[0].accepted) {
             walkAccepted();
         }
         else {
@@ -581,7 +581,7 @@ function walkAccepted() {
 }
 
 function redirect() {
-    window.location.href = 'walkStatus.html';
+    window.location.href = 'userWalkStatus.html';
 }
 
 /*******************
