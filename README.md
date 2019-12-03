@@ -6,14 +6,13 @@ A dog walking application.
 
 ## Login 
 
-Open <code>index.html</code> and you have the option to sign in as a Dog, Walker, User or to register a new user. 
+Upon running the application, the login view will show
 
 ![](readme/index.png)
 
+<br>
 
-Registering a new user takes you to another page to select the type of user you are registering (Dog or Walker). 
-
-![](readme/register.png)
+Registering a new user takes you to the signup page with the option to select the type of user you are registering (Owner or Walker) and the regular signup forms. 
 
 ![](readme/signup.png)
 
@@ -25,25 +24,7 @@ To login as a user, from the <code>index.html</code> select the corresponding us
 
 ![](readme/login.png)
 
-
-
-Login credentials are case sensitive.
-
----
-
-<strong>To login as Dog user:</strong>
-
-Username: user
-
-Password: user
-
----
-
-<strong>To login as Walker user: </strong>
-
-Username: user2
-
-Password: user2
+![](readme/signup2.png)
 
 ---
 
@@ -55,6 +36,9 @@ Password: admin
 
 ---
 
+Otherwise have to signup as a walker or owner to login. 
+
+<br>
 
 ## User functionality
 
@@ -62,17 +46,21 @@ The user can do three things: view and edit their profile, request a walk, and v
 
 <br>
 
-### Dog User
+### Owner User
 
-Once you sign in as a Dog user, this takes the user to the User Profile page. 
+Once you sign in as a Owner user, you will be redirected to the user profile. 
 
-![](readme/dogprofile.png)
+![](readme/ownerprofile.png)
+
+<br>
+
+The user can edit their profile, view their dog's profile, delete their account, signout. 
+
+![](readme/ownerprofileedit.png)
 
 <br>
 
-The user can edit their profile, their dog's profile, delete their account, signout. 
-
-<br>
+------- did up to here
 
 <strong>Request Walker </strong>
 
