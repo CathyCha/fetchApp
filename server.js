@@ -1036,6 +1036,40 @@ app.get('/allusers', (req, res) => {
 	})
 })
 
+//route for getting all walks for a user
+app.get('/allwalks', (req, res) => {
+    if (req.session.userType === "admin" ) { //user is admin
+        Walk.find({}).then((walk) => {
+            res.send(walk);
+        }).catch((error) => {
+            res.status(500).send(); //server error
+        });
+    }
+
+    else {
+        const id = req.session.user;
+
+        if (!ObjectID.isValid(id)) {
+            res.status(404).send();
+        }
+
+        if (req.session.userType === "walker" ) { //user is walker
+            Walk.find({walkerId: id}).then((walk) => {
+                res.send(walk);
+            }).catch((error) => {
+                res.status(500).send(); //server error
+            });
+        }
+        else if (req.session.userType === "user" ) { //user is owner
+            Walk.find({userId: id}).then((walk) => {
+                res.send(walk);
+            }).catch((error) => {
+                res.status(500).send(); //server error
+            });
+        }
+    }
+})
+
 // Route for changing properties of a walk
 /* example bodies:
 {

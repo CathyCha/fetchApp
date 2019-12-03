@@ -44,9 +44,7 @@ function initializePage(e) {
           return Promise.reject(res.status);
       }
   }).then((json) => {
-    const user = {"walkerId": json._id};
-    const userQuery = '?query=' + user
-    const walkUrl = '/walk/' + userQuery
+    const walkUrl = '/allwalks';
 
     fetch(walkUrl).then((res) => {
       if (res.status === 200) {
