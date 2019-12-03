@@ -81,11 +81,8 @@ function initializePage(e) {
 
         const from = document.createElement("p");
         from.className = "from";
-        const fromCircle = document.createElement("span");
-        fromCircle.className = "fromcircle";
         console.log(value.locations);
-        from.innerText = formatLocations(value.locations);
-        from.appendChild(fromCircle);
+        from.innerHTML = "<span class='fromcircle'></span>" + formatLocations(value.locations);
         walkHistory.appendChild(from);
 
         const row = document.createElement("div");
