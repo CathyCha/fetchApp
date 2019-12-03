@@ -141,7 +141,7 @@ app.post('/login', (req, res) => {
     else if (userType === "user") {
         User.findOne({username: username}).then((user) => {
             if (!user) {
-                res.status(401).send(); //invalid user
+                res.status(200).redirect("/login.html"); //invalid user
             }
             else {
                 //compare password
@@ -155,7 +155,7 @@ app.post('/login', (req, res) => {
                         res.redirect('/userProfile.html');
                     }
                     else {
-                        res.status(401).send(); //invalid password
+                        res.status(200).redirect("/login.html"); //invalid password
                     }
                 })
             }
@@ -166,7 +166,7 @@ app.post('/login', (req, res) => {
     else if (userType === "walker") {
         Walker.findOne({username: username}).then((walker) => {
             if (!walker) {
-                res.status(401).send(); //invalid user
+                 res.status(200).redirect("/login.html"); //invalid user
             }
             else {
                 //compare password
@@ -180,7 +180,7 @@ app.post('/login', (req, res) => {
                         res.redirect('/walkerProfile.html');
                     }
                     else {
-                        res.status(401).send(); //invalid password
+                         res.status(200).redirect("/login.html"); //invalid password
                     }
                 })
             }
