@@ -48,16 +48,14 @@ function initializePage(e) {
 
         const walkDate = document.createElement("span");
         walkDate.id = "walkDate";
-        walkDate.innerText = value.startTime;
+        walkDate.innerText = new Date(value.startTime).toLocaleDateString();
         walkerName.appendChild(walkDate);
         walkHistory.appendChild(walkerName);
 
         const from = document.createElement("p");
         from.className = "from";
-        const fromCircle = document.createElement("span");
-        fromCircle.className = "fromcircle";
-        from.innerText = value.locations;
-        from.appendChild(fromCircle);
+        const location = "x=" + String(value.locations[0].x) + " " + "y=" + String(value.locations[0].y);
+        from.innerHTML = '<span class="fromcircle"></span>' + location;
         walkHistory.appendChild(from);
 
         const row = document.createElement("div");
