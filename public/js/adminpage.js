@@ -29,27 +29,130 @@ function populateReportTable() {
   const url = '/report';
   fetch(url).then((res) => {
     if (res.status === 200) {
-      return res.json();
+          return res.json();
+        }
+        else {
+          return Promise.reject();
+        }
+    }).then(reports => {
+      const table = $('#reportTable');
+      table.find("tbody tr").remove();
+      const eachreports = reports.reports;
+
+      $.each(eachreports, function (index, value) {
+
+          table.append("<tr><td>" + value._id + "</td><td>" + value.type + "</td><td class='walker'>" +
+          value.walkerId + "</td><td class='user'>" + value.userId + "</td><td class='dog'>" + value.dogId +
+          "</td><td class='status'>" + value.status + "</td><td class='action'>" + value.action + "</td></tr>");
+      });
+      reportwalker();
+      reportuser();
+      reportaction();
+  }).catch((error) => {
+    if (error === 404) {
+        alert("Session expired! Please log in again");
+        window.location.href = "login.html";
     }
     else {
-      return Promise.reject();
+        console.log("????");
     }
-  }).then((json) => {
-    const table = $('#reportTable');
-    table.find("tbody tr").remove();
-    
-    json.reports.forEach((report, index) => {
-      table.append("<tr><td>" + report._id + "</td><td>" + report.type + "</td></td>" +
-      report.user + "</td><td>" + report.status + "</td><td>" + report.action + "</td></tr>");
-    })
-  }).catch((error) => {
-    console.log(error);
   })
 }
 
+// helper function for populateReportTable
+// gets the names of the user
+function reportwalker() {
+  const walkerID = document.getElementsByClassName("walker")
+  for(let i=0; i < walkerID.length; i++){
+    const url = '/walker/' + walkerID[i].innerText;
+    fetch(url).then((res) => {
+    if (res.status === 200) {
+        return res.json();
+    }
+    else {
+        console.log("Error " + res.status + ": Could not get walker data");
+        return Promise.reject(res.status);
+      }
+    }).then((walker) => {
+      walkerID[i].innerText = walker.firstName + " " + walker.lastName;
+    }).catch((error) => {
+      if (error === 404) {
+          alert("Session expired! Please log in again");
+          window.location.href = "login.html";
+      }
+      else {
+          console.log("????");
+      }
+    })
+  }
+}
+
+// helper function for populateReportTable
+// gets the users names
+function reportuser() {
+  const userID = document.getElementsByClassName("user")
+  const dogID = document.getElementsByClassName("dog");
+  for(let i=0; i < userID.length; i++){
+    const dog = dogID[i].innerText;
+    const url = '/user/' + userID[i].innerText;
+    fetch(url).then((res) => {
+    if (res.status === 200) {
+        return res.json();
+    }
+    else {
+        console.log("Error " + res.status + ": Could not get user data");
+        return Promise.reject(res.status);
+      }
+    }).then((user) => {
+      userID[i].innerText = user.firstName + " " + user.lastName;
+      for (let j=0; j < user.userDogs.length; j++) {
+        if(user.userDogs[j]._id == dog){
+          dogID[i].innerText = user.userDogs[j].dogName
+        }
+      }
+    }).catch((error) => {
+      if (error === 404) {
+          alert("Session expired! Please log in again");
+          window.location.href = "login.html";
+      }
+      else {
+          console.log("????");
+      }
+    })
+  }
+}
+
+// helper function for populateReportTable
+// lets the admin perform an action
+function reportaction(){
+  const action = document.getElementsByClassName("action");
+
+  for(let i=0; i<action.length; i++){
+    if(action[i].innerText == 'Pending'){
+      action[i].innerHTML = "<button type='button' class='btn btn-primary btn-sm refundButton' onclick='refund()'>Refund</button>" +
+      "<button type='button' class='btn btn-secondary btn-sm rejectButton' onclick='reject()'>Reject</button>"
+    }
+  }
+}
+
+// refund button onclick function
+function refund(){
+  alert("Refunded")
+
+  //reload the table to reflect new patch
+  populateReportTable();
+}
+
+//reject button onclick function
+function reject(){
+  alert("Rejected")
+
+  //reload the table to reflect new patch
+  populateReportTable();
+}
+
+// populates the all owners table
 function populateOwnerTable() {
-  // populates the all dog users table
-  // get all users with dogs
   const url = '/allusers';
 
   fetch(url).then((res) => {
@@ -147,14 +250,16 @@ function populateAllWalks() {
         return Promise.reject(res.status);
     }
   }).then((walks) => {
-    console.log(walks)
-        const table = $('#walkTable');
-        $.each(walks, function(index, value) {
-          console.log(value)
-          // TODO
-          // current routes not working to get all walks
+      const table = $('#walkTable');
+      $.each(walks, function(index, value) {
 
-        })
+        table.append("<tr><td>" + value._id + "</td><td class='walker'>" + value.walkerId + "</td><td class='user'>" +
+        value.userId + "</td><td class='dog'>" + value.dogId + "</td><td>" + new Date(value.dateJoined).toLocaleDateString() +
+        "</td><td>"  + value.duration + "</td><td>" + value.price + "</td></tr>");
+
+      })
+      walkerName();
+      userName();
     }).catch((error) => {
       if (error === 404) {
           alert("Session expired! Please log in again");
@@ -164,6 +269,55 @@ function populateAllWalks() {
           console.log("????");
       }
     })
+}
+
+// helper function for walk table
+// gets walker names
+function walkerName() {
+  const walkerID = document.getElementsByClassName("walker");
+
+  for (let i=0; i<walkerID.length; i++) {
+    const url = '/walker/' + walkerID[i].innerText;
+    fetch(url).then((res) => {
+      if (res.status === 200) {
+          return res.json();
+      }
+      else {
+          console.log("Error " + res.status + ": Could not get walk data");
+          return Promise.reject(res.status);
+      }
+    }).then((walker) => {
+        walkerID[i].innerText = walker.firstName + " " + walker.lastName;
+    })
+  }
+}
+
+// helper function for walk table
+// gets user names and dog names
+function userName() {
+  const userID = document.getElementsByClassName("user");
+  const dogID = document.getElementsByClassName("dog");
+
+  for (let i=0; i<userID.length; i++) {
+    const dog = dogID[i].innerText;
+    const url = '/user/' + userID[i].innerText;
+    fetch(url).then((res) => {
+      if (res.status === 200) {
+          return res.json();
+      }
+      else {
+          console.log("Error " + res.status + ": Could not get walk data");
+          return Promise.reject(res.status);
+      }
+    }).then((user) => {
+        userID[i].innerText = user.firstName + " " + user.lastName;
+        for (let j=0; j<user.userDogs.length; j++) {
+          if(user.userDogs[j]._id == dog){
+            dogID[i].innerText = user.userDogs[j].dogName
+          }
+        }
+    })
+  }
 }
 
 

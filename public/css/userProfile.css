@@ -268,3 +268,21 @@
 .dog-info {
 	overflow: auto;
 }
+
+.refundButton {
+	background-color: seagreen;
+	border: none;
+}
+
+.refundButton:hover {
+	background-color: #126537;
+}
+
+.rejectButton {
+	background-color: orange;
+	border: none;
+}
+
+.rejectButton:hover {
+	background-color: darkorange;
+}
