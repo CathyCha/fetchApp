@@ -1,28 +1,11 @@
 "use strict";
 
-function editButton() {
-  window.location.href='profileEdit.html';
-}
-
 // DELETE route
 function deleteacc() {
   alert('Are you sure you want to delete this account? You can not restore the account once it is deleted');
   alert('Account deleted.');
   window.location.replace('index.html');
 }
-
-
-
-function profileupload() {
-  alert('Upload Profile Picture from Location');
-}
-
-// -------------------------------------------------------
-// -------------------------------------------------------
-// --------- Functions to be added after phase 1 ---------
-// Functions that need access to data and server calls
-// -------------------------------------------------------
-// -------------------------------------------------------
 
 function populateReportTable() {
   // populates the reports data table
@@ -41,7 +24,7 @@ function populateReportTable() {
 
       $.each(eachreports, function (index, value) {
 
-          table.append("<tr><td>" + value._id + "</td><td>" + value.type + "</td><td class='walker'>" +
+          table.append("<tr><td class='reportid'>" + value._id + "</td><td>" + value.type + "</td><td class='walker'>" +
           value.walkerId + "</td><td class='user'>" + value.userId + "</td><td class='dog'>" + value.dogId +
           "</td><td class='status'>" + value.status + "</td><td class='action'>" + value.action + "</td></tr>");
       });
@@ -126,26 +109,88 @@ function reportuser() {
 // lets the admin perform an action
 function reportaction(){
   const action = document.getElementsByClassName("action");
+  const reportID = document.getElementsByClassName("reportid");
 
   for(let i=0; i<action.length; i++){
     if(action[i].innerText == 'Pending'){
-      action[i].innerHTML = "<button type='button' class='btn btn-primary btn-sm refundButton' onclick='refund()'>Refund</button>" +
-      "<button type='button' class='btn btn-secondary btn-sm rejectButton' onclick='reject()'>Reject</button>"
+      const rid = reportID[i].innerHTML;
+      action[i].innerHTML = "<button type='button' class='btn btn-primary btn-sm refundButton' onclick='refund(" + '"' + String(rid) + '"' +")'>Refund</button>" +
+      "<button type='button' class='btn btn-secondary btn-sm rejectButton' onclick='reject(" + '"' + String(rid) + '"' +")'>Reject</button>"
     }
   }
 }
 
 // refund button onclick function
-function refund(){
+function refund(rid){
   alert("Refunded")
+  const url = "/report/" + rid
+
+  const requestBody = {
+    status: "refunded",
+    action: "complete"
+  }
+
+  const request = new Request(url, {
+      method: 'PATCH',
+      body: JSON.stringify(requestBody),
+      headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+      }
+  })
+
+  fetch(request).then().then((res) => {
+      if (res.status === 200) {
+          //put a message on the page to tell the user
+          updateStatus("Successfully updated!", "green");
+      }
+      else if (res.status === 401 || res.status === 403) {
+          updateStatus("Password incorrect", "red");
+      }
+      else {
+          updateStatus("Something went wrong :(", "red");
+      }
+  }).catch((error) => {
+      console.log(error);
+  });
 
   //reload the table to reflect new patch
   populateReportTable();
 }
 
 //reject button onclick function
-function reject(){
-  alert("Rejected")
+function reject(rid){
+  // alert("Rejected")
+  const url = "/report/" + rid
+
+  const requestBody = {
+    status: "rejected",
+    action: "complete"
+  }
+
+  const request = new Request(url, {
+      method: 'PATCH',
+      body: JSON.stringify(requestBody),
+      headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+      }
+  })
+
+  fetch(request).then().then((res) => {
+      if (res.status === 200) {
+          //put a message on the page to tell the user
+          updateStatus("Successfully updated!", "green");
+      }
+      else if (res.status === 401 || res.status === 403) {
+          updateStatus("Password incorrect", "red");
+      }
+      else {
+          updateStatus("Something went wrong :(", "red");
+      }
+  }).catch((error) => {
+      console.log(error);
+  });
 
   //reload the table to reflect new patch
   populateReportTable();
