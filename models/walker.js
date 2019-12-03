@@ -9,14 +9,14 @@ const WalkerSchema = new mongoose.Schema({
 	homeAddress: { type: String, required: true },
 	city: { type: String, default: "Toronto" },
 	province: { type: String, default: "Ontario" },
-	phoneNumber: { type: Number, minlength: 9},
 	emailAddress: { type: String, required: true },
 	dateJoined: Date,
 	languages: [String],
 	qualifications: [String],
 	ratings: [Number],
 	active: { type: Boolean, default: false },
-	pictureURL: String
+	pictureURL: String,
+	description: String
 });
 
 const Walker = mongoose.model('Walker', WalkerSchema);

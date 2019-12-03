@@ -22,6 +22,9 @@ class walkRequest {
     }
 }
 
+let defaultPicture = "images/defaultprofile.jpg";
+let defaultDescription = "I'll walk your dog for you!";
+
 //storage for server call results
 let userData; //the owner's data
 let walkRequested = false; //whether or not there is an active walk - disables page changes if there is
@@ -257,14 +260,10 @@ function addWalker(walker) {
 
     const walkerPic = document.createElement("img");
     walkerPic.classList.add("walker-pic");
-    if (walker.pictureURL) {
-        walkerPic.src = walker.pictureURL;
-    }
-    else {
-        walkerPic.src = "images/defaultprofile.jpg";
-    }
+    walkerPic.src = walker.pictureURL || defaultPicture;
 
     const walkerBio = document.createElement("div");
+    walkerBio.innerText = walker.description || defaultDescription;
     walkerBio.classList.add("walker-bio");
 
     //add pic and description to walker

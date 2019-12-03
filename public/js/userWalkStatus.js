@@ -14,7 +14,7 @@ class Walker {
 }
 
 //default things for when the walker doesn't have these set
-const defaultDescription = "Hi! I'm a dog walker.";
+const defaultDescription = "I'll walk your dog for you!";
 const defaultPicture = "images/defaultprofile.jpg";
 
 //storage for server call results
@@ -77,7 +77,7 @@ function getInfo(e) {
                 setTimeout(100, finishWalk);
             }
 
-            getDoggo();
+            getWalker();
         }
         else {
             //no active walk, redirect user
@@ -88,7 +88,7 @@ function getInfo(e) {
     });
 }
 
-function getDoggo() {
+function getWalker() {
     const url = '/walker/' + walkRequest.walkerId;
     fetch(url).then((res) => {
         if (res.status === 200) {

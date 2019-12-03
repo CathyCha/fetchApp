@@ -1,5 +1,8 @@
 "use strict";
 
+const defaultDog = "images/defaultdog.jpg";
+const defaultUserPicture = "images/defaultprofile.jpg";
+
 // Initialize the page
 window.addEventListener("load", initializePage);
 function initializePage(e) {
@@ -23,15 +26,9 @@ function initializePage(e) {
         // console.log(joinDate);
         // console.log(niceDate(joinDate));
 
-        //check if the user has uploaded a picture
-        const id = json._id;
-        fetch("/images/uploaded/"+id+".jpg").then((res) => {
-            if (res.status === 200) {
-                document.querySelector("#media-object").src = "images/uploaded/" + id + ".jpg";
-            }
-        }).catch((error) => {
-            //no image uploaded, but this is okay
-        })
+
+        document.querySelector("#media-object").src = json.pictureURL || defaultUserPicture;
+
 
         document.querySelector("#user-description").innerText = json.description || "No description set!";
 
@@ -90,7 +87,7 @@ function displayDogs(dogs) {
         dogInfoDiv.classList.add("dog-info");
         
         const dogPic = document.createElement("img");
-        dogPic.src = dog.pictureURL || "images/rufus.jpg";
+        dogPic.src = dog.pictureURL || defaultDog;
         dogPic.classList.add("user-pic");
         dogInfoDiv.appendChild(dogPic);
 

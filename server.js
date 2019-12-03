@@ -668,6 +668,28 @@ app.patch('walker/:id', (req, res) => {
     })
 })
 
+// Route to update walker active/inactive status - does not need a password
+app.patch('/walker/active', (req, res) => {
+    const id = req.session.user;
+
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()
+    }
+
+    Walker.updateOne( //set walker as no longer active so they don't get a second walk request
+        { _id: id },
+        { $set: { active: req.body.active } },
+        (err, success) => {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                res.status(200).send();
+            }
+        }
+    );
+})
+
 // route for editing a walker's information
 app.patch('/walker', (req, res) => {
     const id = req.session.user;
@@ -677,63 +699,97 @@ app.patch('/walker', (req, res) => {
     }
 
     Walker.findById(id).then((walker) => {
-        if(!walker){
-            res.status(404).send()
-        } else {
-
-            if (req.body.fname) {
-                walker.firstName = req.body.fname;
+        if (!walker) {
+            res.status(404).send(); //could not find user
+        }
+        else {
+            //allow modification of active without a password
+            if ( req.body.active != undefined) {
+                Walker.updateOne( //set walker as no longer active so they don't get a second walk request
+                    { _id: id },
+                    { $set: { active: req.body.active } },
+                    (err, success) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            ; //success
+                        }
+                    }
+                );
             }
-            if (req.body.lname) {
-                walker.lastName = req.body.lname;
-            }
-            if (req.body.email) {
-                walker.emailAddress = req.body.email;
-            }
-            if (req.body.adrs) {
-                walker.homeAddress = req.body.adrs;
-            }
-            if (req.body.city) {
-                walker.city = req.body.city;
-            }
-            if (req.body.prov) {
-                walker.province = req.body.prov;
-            }
-            if (req.body.phone) {
-                walker.phoneNumber = req.body.phone
-            }
-            if (req.body.languages) {
-                walker.languages = req.body.languages
-            }
-            if (req.body.qual) {
-                walker.qualifications = req.body.qual
-            }
-            if (req.body.ratings){
-                walker.ratings = req.body.ratings
-            }
-            if (req.body.active != undefined) {
-                walker.active = req.body.active
-            }
-            if (req.body.description) {
-                walker.description = req.body.description;
-            }
-
-            if (req.body.pwd) {
-                bcrypt.genSalt(10, (err, salt) => {
-                    // password is hashed with the salt
-
-                    bcrypt.hash(req.body.password, salt, (err, hash) => {
-
-                        // Change password
-                        walker.passwordHash = hash
-                    });
-                });
-            }
-
-            walker.save().then((result) => {
-                res.send(result);
-            }, (error) => {
-                res.status(400).send(error);
+            //check user password before making changes
+            bcrypt.compare(req.body.currpwd, walker.passwordHash, (error, result) => {
+                if (error) {
+                    res.status(400).send(error); //bcrypt error
+                }
+                else if (result) {
+                    //update walker
+                    if (req.body.fname) {
+                        walker.firstName = req.body.fname;
+                    }
+                    if (req.body.lname) {
+                        walker.lastName = req.body.lname;
+                    }
+                    if (req.body.email) {
+                        walker.emailAddress = req.body.email;
+                    }
+                    if (req.body.adrs) {
+                        walker.homeAddress = req.body.adrs;
+                    }
+                    if (req.body.city) {
+                        walker.city = req.body.city;
+                    }
+                    if (req.body.prov) {
+                        walker.province = req.body.prov;
+                    }
+                    if (req.body.phone) {
+                        walker.phoneNumber = req.body.phone
+                    }
+                    if (req.body.languages) {
+                        walker.languages = req.body.languages
+                    }
+                    if (req.body.qual) {
+                        walker.qualifications = req.body.qual
+                    }
+                    if (req.body.ratings){
+                        walker.ratings = req.body.ratings
+                    }
+                    if (req.body.active != undefined) {
+                        walker.active = req.body.active
+                    }
+                    if (req.body.description) {
+                        walker.description = req.body.description;
+                    }
+                    if (req.body.qualifications) {
+                        walker.qualifications = req.body.qualifications;
+                    }
+                    if (req.body.languages) {
+                        walker.languages = req.body.languages;
+                    }
+                    if (req.body.pwd) {
+                        bcrypt.genSalt(10, (err, salt) => {
+                            // password is hashed with the salt
+        
+                            bcrypt.hash(req.body.password, salt, (err, hash) => {
+        
+                                // Change password
+                                walker.passwordHash = hash
+                            });
+                        });
+                    }
+                    else {
+                        //save the user if their password didn't change
+                        walker.save().then((result) => {
+                            res.send(result);
+                        }, (error) => {
+                            res.status(400).send(error);
+                        })
+                    }
+                }
+                else {
+                    res.status(401).send(); //invalid password
+                }
             })
         }
     })
@@ -791,7 +847,7 @@ app.get('/walker', (req, res) => {
         }
 
         Walker.findById(id).then((walker) => {
-            if (walker.length == 0) {
+            if (!walker) {
                 res.status(404).send(); //could not find walker
             } else {
                 res.send(walker);

@@ -26,7 +26,7 @@ class WalkRequest {
 
 //default things for when the dog doesn't have these set
 const defaultDescription = "I'm a doggo! Walk me!!";
-const defaultPicture = "images/rufus.jpg";
+const defaultPicture = "images/defaultdog.jpg";
 
 //storage for server call results
 let walkRequest = null; //active walk request
@@ -87,7 +87,7 @@ function getInfo(e) {
 
             updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
 
-            getDoggo();
+            getWalker();
         }
         else {
             //no active walk, redirect user
@@ -98,7 +98,7 @@ function getInfo(e) {
     });
 }
 
-function getDoggo() {
+function getWalker() {
     const url = '/dogs/' + walkRequest.userId;
     fetch(url).then((res) => {
         if (res.status === 200) {

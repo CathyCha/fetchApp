@@ -10,7 +10,6 @@ const UserSchema = new mongoose.Schema({
 	homeAddress: { type: String, required: true },
 	city: { type: String, default: "Toronto" },
 	province: { type: String, default: "Ontario" },
-	phoneNumber: { type: Number, minlength: 9},
 	emailAddress: { type: String, required: true },
 	dateJoined: Date,
 	userDogs: [ DogSchema ],

@@ -5,7 +5,6 @@ class User {
         this.picture = picture;
         this.rating = rating;
         this.description = description;
-
     }
 }
 
@@ -21,7 +20,7 @@ class WalkRequest {
 
 //default things for when the dog doesn't have these set
 const defaultDescription = "I'm a doggo! Walk me!!";
-const defaultPicture = "images/rufus.jpg";
+const defaultPicture = "images/defaultdog.jpg";
 
 const searchButton = document.querySelector("#searchForWalkButton");
 let acceptButton = null;
@@ -77,7 +76,7 @@ function getInfo(e) {
 function setActive(e) {
   e.preventDefault();
 
-  const url = "/walker";
+  const url = "/walker/active";
   const requestBody = {
     active: true
   };
@@ -103,7 +102,7 @@ function setActive(e) {
 function setInactive(e) {
   e.preventDefault();
 
-  const url = "/walker";
+  const url = "/walker/active";
   const requestBody = {
     active: false
   };
