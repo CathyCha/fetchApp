@@ -14,7 +14,8 @@ const UserSchema = new mongoose.Schema({
 	emailAddress: { type: String, required: true },
 	dateJoined: Date,
 	userDogs: [ DogSchema ],
-	pictureURL: String
+	pictureURL: String,
+	description: String
 });
 
 const User = mongoose.model('User', UserSchema);

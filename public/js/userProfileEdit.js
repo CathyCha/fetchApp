@@ -16,10 +16,11 @@ function initializePage(e) {
     }).then((json) => {
         document.querySelector("#fname").value = json.firstName;
         document.querySelector("#lname").value = json.lastName;
-        document.querySelector("#emailAddress").value = json.emailAddress;
+        document.querySelector("#email").value = json.emailAddress;
         document.querySelector("#adrs").value = json.homeAddress;
         document.querySelector("#inputCity").value = json.city;
         document.querySelector("#inputProv").value = json.province;
+        document.querySelector("#description").value = json.description;
 
         //check if the user has uploaded a picture
         const id = json._id;
@@ -103,6 +104,7 @@ function submitChanges(e) {
         adrs: document.querySelector("#adrs").value,
         city: document.querySelector("#inputCity").value,
         prov: document.querySelector("#inputProv").value,
+        description: document.querySelector("#description").value
     }
 
     //only add the new password onto the request if there is one

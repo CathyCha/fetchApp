@@ -4,16 +4,17 @@
 window.addEventListener("load", initializePage);
 function initializePage(e) {
     //fill the boxes with the user's info
-    const url = '/user';
+    const url = '/walker';
     fetch(url).then((res) => {
         if (res.status === 200) {
             return res.json();
         }
         else {
-            console.log("Error " + res.status + ": Could not get user data");
+            console.log("Error " + res.status + ": Could not get walker data");
             return Promise.reject(res.status);
         }
     }).then((json) => {
+        console.log(json);
         document.querySelector("#fname").innerText = json.firstName;
         document.querySelector("#lname").innerText = json.lastName;
         document.querySelector("#emailAddress").innerText = json.emailAddress;
@@ -34,8 +35,6 @@ function initializePage(e) {
         })
 
         document.querySelector("#user-description").innerText = json.description || "No description set!";
-
-        displayDogs(json.userDogs);
 
     }).catch((error) => {
         if (error === 404) {
@@ -80,59 +79,6 @@ function niceDate(date) {
     else {
         return months[month] + " " + day + "th, " + year;
     }
-}
-
-//helper function to display the user's dog(s)
-//takes an array of dogs as input
-function displayDogs(dogs) {
-    dogs.forEach((dog, index) => {
-        const dogInfoDiv = document.createElement("div");
-        dogInfoDiv.classList.add("dog-info");
-        
-        const dogPic = document.createElement("img");
-        dogPic.src = dog.pictureURL || "images/rufus.jpg";
-        dogPic.classList.add("user-pic");
-        dogInfoDiv.appendChild(dogPic);
-
-        const dogBioDiv = document.createElement("div");
-        dogBioDiv.classList.add("user-bio");
-        dogInfoDiv.appendChild(dogBioDiv);
-
-        const dogNameSpan = document.createElement("span");
-        dogNameSpan.classList.add("user-name");
-        dogNameSpan.innerText = dog.dogName;
-        dogBioDiv.appendChild(dogNameSpan);
-
-        const ratingDiv = document.createElement("div");
-        ratingDiv.classList.add("rating");
-        dogBioDiv.appendChild(ratingDiv);
-
-        const starsSpan = document.createElement("span");
-        starsSpan.classList.add("rating-stars");
-        starsSpan.innerText = "★";
-        ratingDiv.appendChild(starsSpan);
-
-        const ratingNumberSpan = document.createElement("span");
-        ratingNumberSpan.classList.add("rating-number");
-        ratingNumberSpan.innerText = average(dog.ratings);
-        ratingDiv.appendChild(ratingNumberSpan);
-
-        const weightSpan = document.createElement("span");
-        weightSpan.classList.add("grey");
-        weightSpan.innerText = dog.weight + "lbs";
-        dogBioDiv.appendChild(weightSpan);
-
-        const editButton = document.createElement("a");
-        editButton.classList.add("btn");
-        editButton.classList.add("btn-primary");
-        editButton.classList.add("editDog");
-        editButton.href="dogEdit.html?id=" + dog._id;
-        editButton.role = "button";
-        editButton.innerText = "Edit";
-        dogBioDiv.appendChild(editButton);
-
-        document.querySelector(".user").appendChild(dogInfoDiv);
-    })
 }
 
 //helper function to find the mean of an array of numbers

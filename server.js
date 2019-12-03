@@ -130,6 +130,7 @@ app.post('/login', (req, res) => {
         req.session.user = "admin";
         req.session.userType = "admin";
         res.redirect('/adminpage.html')
+        return;
     }
 
     else if (!userType) {
@@ -349,6 +350,9 @@ app.patch('/user', (req, res) => {
                     }
                     if (req.body.prov) {
                         user.province = req.body.prov;
+                    }
+                    if (req.body.description) {
+                        user.description = req.body.description;
                     }
                     if (req.body.newpwd) {
                         bcrypt.genSalt(10, (err, salt) => {
@@ -596,18 +600,6 @@ app.get('/walker/:id', (req, res) => {
 	});
 })
 
-/// Route for getting all walkers
-// GET /walker
-app.get('/walker', (req, res) => {
-  Walker.find().then((walkers) => {
-		res.send(walkers)
-	}, (error) => {
-		res.status(500).send(error) // server error
-	}).catch((error) => {
-		res.status(500).send()
-	})
-})
-
 // route for editing a walker's information
 app.patch('walker/:id', (req, res) => {
     const id = req.params.id;
@@ -722,6 +714,9 @@ app.patch('/walker', (req, res) => {
             if (req.body.active != undefined) {
                 walker.active = req.body.active
             }
+            if (req.body.description) {
+                walker.description = req.body.description;
+            }
 
             if (req.body.pwd) {
                 bcrypt.genSalt(10, (err, salt) => {
@@ -779,6 +774,15 @@ app.get('/walker', (req, res) => {
             res.status(500).send(); //server error
         });
     }
+    else if (req.session.userType == "admin") {
+        Walker.find().then((walkers) => {
+            res.send(walkers)
+        }, (error) => {
+            res.status(500).send(error) // server error
+        }).catch((error) => {
+            res.status(500).send()
+        })
+    }
     else {
         const id = req.session.user;
 
@@ -787,7 +791,7 @@ app.get('/walker', (req, res) => {
         }
 
         Walker.findById(id).then((walker) => {
-            if (!walker) {
+            if (walker.length == 0) {
                 res.status(404).send(); //could not find walker
             } else {
                 res.send(walker);
@@ -796,7 +800,6 @@ app.get('/walker', (req, res) => {
             res.status(500).send(); //server error
         });
     }
-
 })
 
 /** Walk resource routes **/
@@ -1306,7 +1309,7 @@ app.get('/users/logout', (req, res) => {
     })
 })
 
-const port = process.env.PORT || 3008
+const port = process.env.PORT || 3001
 app.listen(port, () => {
 	console.log(`Listening on port ${port}...`)
 });

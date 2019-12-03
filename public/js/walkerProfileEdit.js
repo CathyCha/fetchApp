@@ -15,12 +15,13 @@ function initializePage(e) {
         }
     }).then((json) => {
         console.log(json);
-        document.querySelector("#fname").innerText = json.firstName;
-        document.querySelector("#lname").innerText = json.lastName;
-        document.querySelector("#number").innerText = json.phoneNumber;
-        document.querySelector("#email").innerText = json.emailAddress;
-        document.querySelector("#qual").innerText = json.qualifications;
-        document.querySelector("#lang").innerText = json.languages;
+        document.querySelector("#fname").value = json.firstName;
+        document.querySelector("#lname").value = json.lastName;
+        document.querySelector("#emailAddress").value = json.emailAddress;
+        document.querySelector("#adrs").value = json.homeAddress | "";
+        document.querySelector("#inputCity").value = json.city || "";
+        document.querySelector("#inputProv").value = json.province || "";
+        document.querySelector("#description").value = json.description || "";
 
         const id = json._id;
         fetch("/images/uploaded/"+id+".jpg").then((res) => {
@@ -36,7 +37,7 @@ function initializePage(e) {
             window.location.href = "login.html";
         }
         else {
-            console.log("????");
+            console.log(error);
         }
     })
 }
