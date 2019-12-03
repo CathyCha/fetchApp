@@ -134,7 +134,7 @@ function populateWalkerTable() {
 
 function populateAllWalks() {
   // manipulates DOM to show all walks in data
-  const url = '/allwalks'
+  const url = '/walk/{}'
   fetch(url).then((res) => {
     if (res.status === 200) {
         return res.json();
