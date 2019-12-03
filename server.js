@@ -238,9 +238,55 @@ app.post('/user', (req, res) => {
                             dateJoined: new Date(),
                             userDogs: []
                         });
-
+                        // console.log(user)
                         user.save().then((result) => {
-                            res.send(result);
+                            res.status(200).send(result);
+                        }, (error) => {
+                            res.status(400).send(error);
+                        })
+                    });
+                });
+            }
+        });
+    }
+    else {
+        res.status(400).send("Bad request");
+    }
+});
+
+app.post('/walker', (req, res) => {
+
+    if (req.body.username && req.body.password) {
+        //check if username already taken
+        Walker.findOne({username: req.body.username}).then((walker) => {
+            if (req.body.username === "admin") {
+                res.status(403).send("Cannot use username 'admin'");
+            }
+            else if (walker) {
+                res.status(403).send("Username taken");
+            }
+            else {
+                bcrypt.genSalt(10, (err, salt) => {
+                    // password is hashed with the salt
+                    bcrypt.hash(req.body.password, salt, (err, hash) => {
+                        const walker = new Walker({
+                            username: req.body.username,
+                            passwordHash: hash,
+                            firstName: req.body.firstName,
+                            lastName: req.body.lastName,
+                            homeAddress: req.body.homeAddress,
+                            city: req.body.city,
+                            province: req.body.province,
+                            phoneNumber: req.body.phoneNumber,
+                            emailAddress: req.body.emailAddress,
+                            dateJoined: new Date(),
+                            languages: [],
+                            qualifications: [],
+                            ratings: []
+                        });
+                        walker.save().then((result) => {
+                            console.log(walker)
+                           res.status(200).send(result);
                         }, (error) => {
                             res.status(400).send(error);
                         })
@@ -514,58 +560,6 @@ app.get('/dogs/:userid', (req, res) => {
 	"emailAddress": "john@smith.com"
 }
 */
-app.post('/walker', (req, res) => {
-
-    if (req.body.username && req.body.password) {
-        //check if username already taken
-        Walker.findOne({username: req.body.username}).then((walker) => {
-            if (req.body.username === "admin") {
-                res.status(403).send("Cannot use username 'admin'");
-            }
-            else if (walker) {
-                res.status(403).send("Username taken");
-            }
-            else {
-                bcrypt.genSalt(10, (err, salt) => {
-                    // password is hashed with the salt
-                    bcrypt.hash(req.body.password, salt, (err, hash) => {
-                        /*
-                        //to compare to another password
-                        bcrypt.compare("password", hash, (error, res) => {
-                            console.log(error, res);
-                        });*/
-
-                        const walker = new Walker({
-                            username: req.body.username,
-                            passwordHash: hash,
-                            firstName: req.body.firstName,
-                            lastName: req.body.lastName,
-                            homeAddress: req.body.homeAddress,
-                            city: req.body.city,
-                            province: req.body.province,
-                            phoneNumber: req.body.phoneNumber,
-                            emailAddress: req.body.emailAddress,
-                            dateJoined: new Date(),
-                            languages: [],
-                            qualifications: [],
-                            ratings: []
-                        });
-
-                        walker.save().then((result) => {
-                            res.send(result);
-                        }, (error) => {
-                            res.status(400).send(error);
-                        })
-                    });
-                });
-            }
-        });
-    }
-    else {
-        res.status(400).send("Bad request");
-    }
-});
-
 // Route for getting all active walkers
 app.get('/walker/active', (req, res) => {
     const query = { active: true };
