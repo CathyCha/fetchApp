@@ -1197,7 +1197,7 @@ app.patch('/walk/:id', (req, res) => {
 app.post('/report', (req, res) => {
     const walkerId = req.body.walkerId;
     const userId = req.body.userId;
-    const dogId = req.body.userId;
+    const dogId = req.body.dogId;
     const walkId = req.body.walkId;
     const description = req.body.description;
 
