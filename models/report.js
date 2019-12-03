@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 
 const ReportSchema = new mongoose.Schema({
     type: { type: String, required: true },
+    description: { type: String },
     walkerId: { type: String, required: true },
     userId: { type: String, required: true },
     dogId: { type: String, required: true },

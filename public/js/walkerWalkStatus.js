@@ -78,9 +78,12 @@ function getInfo(e) {
             timeLeft = timeDifference(finishTime, now);
             if (timeLeft < 0) {
                 timeLeft = 0;
-                walkDone = true;
             }
             updateTimeLeft(timeLeft);
+
+            if (timeLeft == 0 && now > finishTime) { //walk finished
+                setTimeout(100, finishWalk);
+            }
 
             updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
 
@@ -245,11 +248,6 @@ function displayDoggo(dog, request) {
     //add box as child for area
     const userArea = document.querySelector("#right-pane-body");
     userArea.appendChild(selectUserPopup);
-
-    //super hacky... but here we go
-    if (walkRequest.completed) {
-        requestRating();
-    }
 }
 
 /***********************
@@ -413,10 +411,17 @@ function updatePage() {
         timeLeft = timeDifference(finishTime, now);
         if (timeLeft < 0) {
             timeLeft = 0;
-            walkDone = true;
         }
-        updateTimeLeft(timeLeft);
-        if (timeLeft == 0) { //walk finished
+        if (timeLeft == 0 && finishTime > now) {
+            updateTimeLeft("<1");
+        }
+        else {
+            updateTimeLeft(timeLeft);
+        }
+
+        updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
+
+        if (timeLeft == 0 && now > finishTime) { //walk finished
             finishWalk();
         }
     }).catch((error) => {
@@ -447,6 +452,18 @@ let feedbackDiv = null;
 let doneButton = null;
 
 function finishWalk() {
+    //only finish the walk once
+    if (walkDone) {
+        return;
+    }
+    //skip reporting to the server that we're done if it already knows
+    if (walkRequest.completed) {
+        requestRating();
+        walkDone = true;
+        return;
+    }
+
+    walkDone = true;
     //stop the page updating if the walk is done
     clearInterval(updatePageInterval);
 
@@ -481,7 +498,9 @@ function finishWalk() {
 
 function requestRating() {
     const dogNeeds = document.getElementById("walk-needs-container")
-    dogNeeds.parentNode.removeChild(dogNeeds)
+    if (dogNeeds) {
+        dogNeeds.parentNode.removeChild(dogNeeds)
+    }
     //resize the picture
     const walkerPic = document.querySelector(".walker-popup-image");
     walkerPic.style.maxHeight = "100px";
@@ -523,7 +542,6 @@ function starMouseover(e) {
     if (rating != 0) {
         return;
     }
-
     //find which star was mouseovered
     const target = e.target;
 
@@ -662,7 +680,95 @@ function reportProblem(e) {
 
 function submit(e) {
     e.preventDefault();
-    console.log("I'm done!");
+
+    const dogRating = rating;
+    const complaints = [];
+    if (dogRating != 5) {
+        const feedbackDiv = document.querySelector(".feedback-container");
+        Array.prototype.forEach.call(feedbackDiv.children, (child) => {
+            if (child.classList.contains('feedback') && child.style.backgroundColor == "green") {
+                complaints.push(child.innerText);
+            }
+        })
+    }
+
+    //submit to server
+    const url = '/walk/' + walkRequest._id;
+    const requestBody = {
+        dogRating: dogRating,
+        dogComplaints: complaints
+    }
+    const request = new Request(url, {
+        method: 'PATCH',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            const feedbackBox = document.querySelector(".feedback-box");
+            if (feedbackBox) {
+                submitReport(complaints);
+            }
+            else {
+                window.location.href = "pastWalks.html"
+            }
+        }
+        else {
+            return Promise.reject(res.status);
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+function submitReport(complaints) {
+    let type;
+    const feedbackBox = document.querySelector(".feedback-box");
+
+    if (complaints.length == 0) {
+        type = "Unspecified";
+    }
+    else {
+        type = complaints[0];
+        for (let i = 1; i < complaints.length; i++) {
+            type += ", " + complaints[i];
+        }
+    }
+
+    //submit to server
+    const url = '/report';
+    const requestBody = {
+        type: type,
+        description: feedbackBox.value,
+        walkerId: walkRequest.walkerId,
+        userId: walkRequest.userId,
+        dogId: walkRequest.dogId,
+        walkId: walkRequest._id
+    }
+
+    const request = new Request(url, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            window.location.href = "pastWalks.html"
+        }
+        else {
+            return Promise.reject(res.status);
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
 }
 
 /*******************

@@ -63,11 +63,19 @@ function getInfo(e) {
             timeLeft = timeDifference(finishTime, now);
             if (timeLeft < 0) {
                 timeLeft = 0;
-                walkDone = true;
             }
-            updateTimeLeft(timeLeft);
+            if (timeLeft == 0 && finishTime > now) {
+                updateTimeLeft("<1");
+            }
+            else {
+                updateTimeLeft(timeLeft);
+            }
 
             updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
+
+            if (timeLeft == 0 && now > finishTime) { //walk finished
+                setTimeout(100, finishWalk);
+            }
 
             getDoggo();
         }
@@ -254,10 +262,9 @@ function updatePage() {
         timeLeft = timeDifference(finishTime, now);
         if (timeLeft < 0) {
             timeLeft = 0;
-            walkDone = true;
         }
-        if (timeLeft == 0 && now > finishTime) {
-            updateTimeLeft("<1"); //TODO: test this to make sure it works
+        if (timeLeft == 0 && finishTime > now) {
+            updateTimeLeft("<1");
         }
         else {
             updateTimeLeft(timeLeft);
@@ -265,9 +272,7 @@ function updatePage() {
 
         updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
 
-        if (walkDone) {
-            //we don't want to stop updating the page - walker might add notes or locations
-            //clearInterval(updatePageInterval); 
+        if (timeLeft == 0 && now > finishTime) { //walk finished
             finishWalk();
         }
     }).catch((error) => {
@@ -298,6 +303,14 @@ let feedbackDiv = null;
 let doneButton = null;
 
 function finishWalk() {
+
+    //only finish the walk once
+    if (walkDone) {
+        return;
+    }
+
+    walkDone = true;
+
     //resize the picture
     const walkerPic = document.querySelector(".walker-popup-image");
     walkerPic.style.maxHeight = "100px";
@@ -473,8 +486,95 @@ function reportProblem(e) {
 
 function submit(e) {
     e.preventDefault();
-    //submit all info to the server here
-    window.location.replace("mywalk.html");
+    
+    const walkerRating = rating;
+    const complaints = [];
+    if (walkerRating != 5) {
+        const feedbackDiv = document.querySelector(".feedback-container");
+        Array.prototype.forEach.call(feedbackDiv.children, (child) => {
+            if (child.classList.contains('feedback') && child.style.backgroundColor == "green") {
+                complaints.push(child.innerText);
+            }
+        })
+    }
+
+    //submit to server
+    const url = '/walk/' + walkRequest._id;
+    const requestBody = {
+        walkerRating: walkerRating,
+        walkerComplaints: complaints
+    }
+    const request = new Request(url, {
+        method: 'PATCH',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            const feedbackBox = document.querySelector(".feedback-box");
+            if (feedbackBox) {
+                submitReport(complaints);
+            }
+            else {
+                window.location.href = "pastWalks.html"
+            }
+        }
+        else {
+            return Promise.reject(res.status);
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+function submitReport(complaints) {
+    let type;
+    const feedbackBox = document.querySelector(".feedback-box");
+
+    if (complaints.length == 0) {
+        type = "Unspecified";
+    }
+    else {
+        type = complaints[0];
+        for (let i = 1; i < complaints.length; i++) {
+            type += ", " + complaints[i];
+        }
+    }
+
+    //submit to server
+    const url = '/report';
+    const requestBody = {
+        type: type,
+        description: feedbackBox.value,
+        walkerId: walkRequest.walkerId,
+        userId: walkRequest.userId,
+        dogId: walkRequest.dogId,
+        walkId: walkRequest._id
+    }
+
+    const request = new Request(url, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    fetch(request).then((res) => {
+        if (res.status === 200) {
+            window.location.href = "pastWalks.html"
+        }
+        else {
+            return Promise.reject(res.status);
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
 }
 
 /*******************

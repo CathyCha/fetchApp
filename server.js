@@ -1014,6 +1014,9 @@ app.patch('/walk/:id', (req, res) => {
                     return;
                 }
                 walk.walkerRating = req.body.walkerRating;
+                if (walk.walkerRating != 5 && req.body.walkerComplaints) {
+                    walk.walkerComplaints = req.body.walkerComplaints;
+                }
                 Walker.updateOne(
                     { _id: walk.walkerId },
                     { $push: { ratings: parseInt(req.body.walkerRating, 10)} },
@@ -1034,6 +1037,9 @@ app.patch('/walk/:id', (req, res) => {
                     return;
                 }
                 walk.dogRating = req.body.dogRating;
+                if (walk.dogRating != 5 && req.body.dogComplaints) {
+                    walk.dogComplaints = req.body.dogComplaints;
+                }
                 User.updateOne(
                     { "_id": walk.userId, "userDogs._id": walk.dogId },
                     {
@@ -1074,6 +1080,7 @@ app.patch('/walk/:id', (req, res) => {
 /* example body:
 {
     "type" : "Unprofessional",
+    "description" : "John put a clown costume on my dog. How dare he!",
     "walkerId" : "5ddf04dd765a2b0624face6c",
     "userId" : "5ddf0314d7048e253836ec22",
     "dogId" : "5ddf258ceae46928e0e903ac",
@@ -1085,6 +1092,7 @@ app.post('/report', (req, res) => {
     const userId = req.body.userId;
     const dogId = req.body.userId;
     const walkId = req.body.walkId;
+    const description = req.body.description;
 
     if (!ObjectID.isValid(walkerId) || !ObjectID.isValid(dogId) || !ObjectID.isValid(userId) || !ObjectID.isValid(walkId)) {
 		res.status(404).send();
@@ -1092,11 +1100,13 @@ app.post('/report', (req, res) => {
 
     const report = new Report({
         type: req.body.type,
+        description: description,
         walkerId: walkerId,
         userId: userId,
         dogId: dogId,
         walkId: walkId
     })
+
 
     report.save().then((result) => {
         res.send(result);
