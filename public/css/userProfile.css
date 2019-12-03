@@ -252,6 +252,18 @@
 	background-color: darkorange;
 }
 
+#addDog {
+	float: right;
+	margin-right: 10px;
+	color: white;
+	background-color: seagreen;
+	border: none;
+}
+
+#addDog:hover {
+	background-color: #126537;
+}
+
 .dog-info {
 	overflow: auto;
 	margin-bottom: 20px;
