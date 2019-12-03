@@ -18,7 +18,7 @@
   color: grey;
 }
 
-#walkerName {
+.walkerName {
   font-weight: bold;
   font-size: 25px;
 }

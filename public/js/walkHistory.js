@@ -31,7 +31,6 @@ function initializePage(e) {
       // got all walks for user, update the view
       $.each(walks, function (index, value) {
         const name = [];
-
         const doc = document.getElementById("main");
         const container = document.createElement("div");
         container.className = "container-fluid";
@@ -43,38 +42,9 @@ function initializePage(e) {
         container.appendChild(walkHistory);
 
         // get walker name with id
-        const walkUrl = '/walker/' + String(value.walkerId);
-        // const name = setTimeout(helperforWalker(walkUrl), 500);
-
-        fetch(walkUrl).then((res) => {
-          if (res.status === 200) {
-              return res.json();
-          }
-          else {
-              console.log("Error " + res.status + ": Could not get user data");
-              return Promise.reject(res.status);
-          }
-        }).then((walker) => {
-          const fname = walker.firstName;
-          const lname = walker.lastName;
-          name.push(fname, lname);
-          return name;
-          // walkerName.innerText = fname + " " lname;
-        }).catch((error) => {
-          if (error === 404) {
-              alert("Session expired! Please log in again");
-              window.location.href = "login.html";
-          }
-          else {
-              console.log("????");
-          }
-        });
-
-        console.log(name)
-
         const walkerName = document.createElement("p");
-        walkerName.id = "walkerName";
-        walkerName.innerText = name[0] + " " + name[1];
+        walkerName.className = "walkerName";
+        walkerName.innerText = String(value.walkerId);
 
         const walkDate = document.createElement("span");
         walkDate.id = "walkDate";
@@ -128,6 +98,7 @@ function initializePage(e) {
 
         walkHistory.appendChild(row);
       });
+      initHelper();
       }).catch((error) => {
         if (error === 404) {
             alert("Session expired! Please log in again");
@@ -147,4 +118,32 @@ function initializePage(e) {
       }
     })
 
+}
+// helper function to get name for each walker
+function initHelper(){
+  const walkerName = document.getElementsByClassName("walkerName");
+
+  for (let i=0; i < walkerName.length; i++){
+    const walkArray = walkerName[i].innerHTML.split("<span");
+    const url = '/walker/' + walkArray[0];
+    fetch(url).then((res) => {
+      if (res.status === 200) {
+          return res.json();
+      }
+      else {
+          console.log("Error " + res.status + ": Could not get walker data");
+          return Promise.reject(res.status);
+      }
+    }).then((walker) => {
+      walkerName[i].innerHTML = walker.firstName + " " + walker.lastName + "<span" + walkArray[1];
+    }).catch((error) => {
+      if (error === 404) {
+          alert("Session expired! Please log in again");
+          window.location.href = "login.html";
+      }
+      else {
+          console.log("????");
+      }
+    })
+  }
 }
