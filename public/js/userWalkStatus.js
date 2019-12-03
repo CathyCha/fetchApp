@@ -49,7 +49,6 @@ function getInfo(e) {
     }).then((json) => {
         if (json.length > 0 && json[0].accepted) {
             walkRequest = json[0];
-            console.log(walkRequest);
             timeLeft = walkRequest.duration;
             updateTimeLeft(timeLeft);
 
@@ -239,7 +238,6 @@ function updatePage() {
         }
     }).then((json) => {
         const walkRequestUpdated = json;
-        console.log(walkRequestUpdated);
 
         //update notes
         if (walkRequestUpdated.notes.length > walkRequest.notes.length) {
@@ -285,7 +283,6 @@ function updatePage() {
  ************************************/
 
 function updatePrice(duration, numNeeds) {
-    console.log(duration, numNeeds);
     const priceSpan = document.querySelector("#price");
     const priceEstimate = 8 + 2*duration/5 + 5*numNeeds;
     priceSpan.innerText = "$" + priceEstimate.toFixed(2).toString();
@@ -524,7 +521,13 @@ function submit(e) {
             }
         }
         else {
-            return Promise.reject(res.status);
+            if (res.status === 403) {
+                alert("Session expired! Please log in again");
+                window.location.href = "login.html";
+            }
+            else {
+                return Promise.reject(res.status);
+            }
         }
     }).catch((error) => {
         console.log(error);

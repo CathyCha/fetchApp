@@ -1252,7 +1252,7 @@ app.get('/report/:id', (req, res) => {
         res.status(500).send()
     })
 })
-//TODO: PATCH report
+
 app.patch('/report/:id', (req, res) => {
     const id = req.params.id
     if(!ObjectID.isValid(id)){

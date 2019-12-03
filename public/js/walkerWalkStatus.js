@@ -109,7 +109,6 @@ function getWalker() {
         }
     }).then((json) => {
         doggo = json.filter((dog) => dog._id == walkRequest.dogId)[0];
-        console.log(doggo);
         initializeMap();
     }).catch((error) => {
         console.log(error);
@@ -282,7 +281,6 @@ function addWalkerNote(message) {
         }
     }).then((json) => {
         walkRequest = json;
-        console.log(walkRequest);
     }).catch((error) => {
         console.log(error);
     });
@@ -331,7 +329,6 @@ function mapClick(e) {
         }
     }).then((json) => {
         walkRequest = json;
-        console.log(walkRequest);
     }).catch((error) => {
         console.log(error);
     });
@@ -382,10 +379,24 @@ function adjustTime(change) {
         }
     }).then((json) => {
         walkRequest = json;
-        console.log(json);
-        timeLeft += change;
-        updateTimeLeft(timeLeft);
+        const finishTime = new Date(walkRequest.endTime);
+        const now = new Date();
+        timeLeft = timeDifference(finishTime, now);
+        if (timeLeft < 0) {
+            timeLeft = 0;
+        }
+        if (timeLeft == 0 && finishTime > now) {
+            updateTimeLeft("<1");
+        }
+        else {
+            updateTimeLeft(timeLeft);
+        }
+
         updatePrice(walkRequest.duration, walkRequest.walkNeeds.length);
+
+        if (timeLeft == 0 && now > finishTime) { //walk finished
+            finishWalk();
+        }
     }).catch((error) => {
         console.log(error);
     });
@@ -434,7 +445,6 @@ function updatePage() {
  ************************************/
 
 function updatePrice(duration, numNeeds) {
-    console.log(duration, numNeeds);
     const priceSpan = document.querySelector("#price");
     const priceEstimate = 8 + 2*duration/5 + 5*numNeeds;
     priceSpan.innerText = "$" + priceEstimate.toFixed(2).toString();
@@ -718,7 +728,13 @@ function submit(e) {
             }
         }
         else {
-            return Promise.reject(res.status);
+            if (res.status === 403) {
+                alert("Session expired! Please log in again");
+                window.location.href = "login.html";
+            }
+            else {
+                return Promise.reject(res.status);
+            }
         }
     }).catch((error) => {
         console.log(error);

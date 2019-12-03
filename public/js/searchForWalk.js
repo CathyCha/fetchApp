@@ -243,6 +243,20 @@ function fillWalkInfo(dog, request){
   bio.appendChild(desc_txt)
   info.appendChild(bio)
 
+  const pickupInstructionsDiv = document.getElementById("pickup-instructions");
+  while (pickupInstructionsDiv.firstChild) {
+    pickupInstructionsDiv.removeChild(pickupInstructionsDiv.firstChild); //remove all children
+  }
+  const pickupLabel = document.createElement("span");
+  pickupLabel.classList.add("label");
+  pickupLabel.innerText = "Pickup instructions";
+  pickupInstructionsDiv.appendChild(pickupLabel);
+
+  const pickupText = document.createElement("div");
+  pickupText.innerText = request.pickupInstructions;
+  pickupText.classList.add("pickup-instructions");
+  pickupInstructionsDiv.appendChild(pickupText);
+
   const walkLenDiv = document.getElementById("walk-length")
   while(walkLenDiv.firstChild){
     walkLenDiv.removeChild(walkLenDiv.firstChild) // remove all child elements

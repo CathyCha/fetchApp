@@ -93,10 +93,15 @@ right pane styling
 	height: 100%;
 }
 
+.pickup-instructions {
+	margin-left: 20px;
+	margin-right: 20px;
+	text-align: center;
+}
+
 #walk-length {
   width: 40%;
-  margin-top: 25px;
-  margin-left: 105px;
+  margin: 10px auto;
 }
 
 .walk-length-number {
