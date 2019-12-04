@@ -60,7 +60,17 @@ The user can edit their profile, view their dog's profile, delete their account,
 
 <br>
 
-------- did up to here
+User can also register dogs under their profile to be walked. 
+
+![](readme/registerDog.png)
+
+<br>
+
+Dog profile can also be edited, with the corresponding edit button beside the dog profile. 
+
+![](readme/editDog.png)
+
+<br>
 
 <strong>Request Walker </strong>
 
@@ -72,22 +82,25 @@ On this page, the user selects the dog that they would like walked and the param
 
 The estimated price updates automatically based on selected parameters. Once the user has selected their parameters, they select the dog's location on the map, and available walkers are shown. Selecting a walker shows a confirmation screen and the ability to enter pickup instructions for the dog, such as how to get to the dog.
 
-![](readme/requestwalk2.png)
+##ADD PIC
 
 <br>
 
 Clicking confirm brings the user to the walk status page.
 
-![](readme/requestwalk3.png)
+##ADD PIC
 
 <br>
 
-On the walk status page, the user gets updates from the walker on their location. We plan on using the Google Maps API for automated location updates in Phase 2, so this page approximates that functionality. The user can view the estimated time until the walk is complete, notes from the walker, and the estimated price. Once the walk is completed, the user is asked to rate their walker and report anything they were unsatisfied about. The user is also given the option to submit a complaint that is sent to an admin.
+On the walk status page, the user gets updates from the walker on their location. The user can view the estimated time until the walk is complete, notes from the walker, and the estimated price. Once the walk is completed, the user is asked to rate their walker and report anything they were unsatisfied about. The user is also given the option to submit a complaint that is sent to an admin.
+
+##ADD PIC
 
 <br>
 
 There is also a walk history page that displays all the walks the user has completed. 
 
+##ADD PIC
 ![](readme/walkhistory.png)
 
 <br>
@@ -95,7 +108,7 @@ There is also a walk history page that displays all the walks the user has compl
 
 ### Walker User
 
-Once you sign in as a Dog user, this takes the user to the User Profile page (same view as the dog user profile, without the dog)
+Once you sign in as a walker user, this takes the user to the Walker Profile page (same view as the dog user profile, without the dog)
 
 <br>
 
@@ -109,15 +122,15 @@ Once a dog walking request is available, the view will show a walk description o
 
 <br>
 
-Once the walker accepts the walk, the view shows the walk in progress, with the ability of the walker to add notes while walking to update to the dog owner. As mentioned above, we plan on using the Google Maps API for automated location updates in Phase 2.
+Once the walker accepts the walk, the view shows the walk in progress, with the ability of the walker to add notes while walking to update to the dog owner.
 
-![](readme/walking.png)
+## ADD PIC
 
 <br>
 
 Once the walk is finished, the right box allows for rating and comment input. 
 
-![](readme/rating.png)
+## ADD PIC
 
 <br>
 <br>
@@ -126,10 +139,12 @@ Once the walk is finished, the right box allows for rating and comment input.
 
 The admin has access to all reports, all dog users, and all admins. 
 
-<img src="readme/reports.png" style="width:400px;">
-<img src="readme/allwalkers.png" style="width:400px;">
-<img src="readme/alldogs.png" style="width:400px;">
-<img src="readme/allwalks.png" style="width:400px;">
+Admin can search for reports by id and can refund the user or reject the report.
+
+<img src="readme/reports.png">
+<img src="readme/allwalkers.png">
+<img src="readme/alldogs.png">
+<img src="readme/allwalks.png">
 
 
 <br>
