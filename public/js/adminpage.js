@@ -299,7 +299,7 @@ function populateAllWalks() {
       $.each(walks, function(index, value) {
 
         table.append("<tr><td>" + value._id + "</td><td class='walker'>" + value.walkerId + "</td><td class='user'>" +
-        value.userId + "</td><td class='dog'>" + value.dogId + "</td><td>" + new Date(value.dateJoined).toLocaleDateString() +
+        value.userId + "</td><td class='dog'>" + value.dogId + "</td><td>" + new Date(value.endTime).toLocaleDateString() +
         "</td><td>"  + value.duration + "</td><td>" + value.price + "</td></tr>");
 
       })
