@@ -2,6 +2,8 @@
 
 A dog walking application. 
 
+Heroku link: https://infinite-tor-53655.herokuapp.com/ 
+
 <br>
 
 ## Login 
@@ -101,7 +103,6 @@ On the walk status page, the user gets updates from the walker on their location
 There is also a walk history page that displays all the walks the user has completed. 
 
 ##ADD PIC
-![](readme/walkhistory.png)
 
 <br>
 <br>
