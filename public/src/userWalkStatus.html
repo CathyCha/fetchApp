@@ -3,22 +3,22 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>My Walk</title>
+	<title>Walk in Progress</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="css/userProfile.css">
+	<link rel="stylesheet" type="text/css" href="../css/userProfile.css">
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/common.css">
-	<link rel="stylesheet" type="text/css" href="css/walkerWalkStatus.css">
+	<link rel="stylesheet" type="text/css" href="../css/common.css">
+	<link rel="stylesheet" type="text/css" href="../css/userWalkStatus.css">
 </head>
 
 <body>
 
 <div class="sidenav">
-	<img class="logo" src="images/Logo_copy.png">
-	<a id="curr" href="searchForWalk.html">Start Walking</a>
-	<a href="walkerProfile.html">Profile</a>
-	<a href="pastWalks.html">Walk History</a>
+	<img class="logo" src="../images/Logo_copy.png">
+	<a href="requestWalk.html">Request Walker</a>
+	<a href="userProfile.html">Profile</a>
+	<a href="myWalk.html">Walk History</a>
 </div>
 
 <div class="topPanelBox"></div>
@@ -33,11 +33,7 @@
 				<span class="label">
 					Estimated Walk Finish Time
                 </span>
-                <span id="finish-time-container">
-					<span id="less-time" class="time-adjust">-</span>
-					<span id="finish-time"><!-- Put time here --></span>
-					<span id="more-time" class="time-adjust">+</span>
-				</span>
+                <p id="finish-time"> 30 min</p>
 
 			</div>
 			<div id="walker-notes">
@@ -55,7 +51,7 @@
 					Estimated price
 				</span>
 				<span id="price">
-					<!-- price goes here -->
+					$20
 				</span>
 			</div>
 		</div>
@@ -74,7 +70,7 @@
 	</div>
 	<div class="right-pane">
 		<h2 class="pane-title">
-			Dog Info
+			My Walker
 		</h2>
 		<div id="right-pane-body">
 			<div id="walker-container">
@@ -86,7 +82,7 @@
 
 <div class="bottomPanelBox"></div>
 
-<script type="text/javascript" src="js/walkerWalkStatus.js"> </script>
+<script type="text/javascript" src="../js/userWalkStatus.js"> </script>
 
 </body>
 
