@@ -375,7 +375,7 @@ function searchTable(tid) {
   const tr = table.getElementsByTagName("tr")
   let td;
   for(let i = 1; i < tr.length; i++){
-    td = tr[i].getElementsByTagName("th")[0]
+    td = tr[i].getElementsByTagName("td")[0]
     if (td) {
       let val = td.textContent || td.innerText
       if(val.indexOf(rid) > -1){
